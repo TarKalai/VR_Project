@@ -5,7 +5,7 @@
 # project(infoh502-cpp)
 project(infoh502-cpp)
 #set the minimal version of cmake and the minimal version of the c++ language
-cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 14)     
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -37,7 +37,7 @@ include_directories(3rdParty/glad/include/
 
 
 if(COMPILE_SRC)
-	add_subdirectory(SRC)
+	add_subdirectory(src)
 endif()
 
 # if(COMPILE_LAB03)
