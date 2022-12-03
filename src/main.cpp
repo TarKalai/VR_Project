@@ -1,8 +1,21 @@
 #include<iostream>
+//for debug
+#include <fstream>
 
 //include glad before GLFW to avoid header conflict or define "#define GLFW_INCLUDE_NONE"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
+#include<glm/gtc/type_ptr.hpp>
+
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#include "camera.h"
+#include "shader.h"
 
 #include <chrono>
 #include <thread>
@@ -14,6 +27,7 @@ const int height = 500;
 
 GLuint compileShader(std::string shaderCode, GLenum shaderType);
 GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
+void processInput(GLFWwindow *window);
 
 
 
@@ -66,15 +80,18 @@ void APIENTRY glDebugOutput(GLenum source,
 }
 #endif
 
+Camera camera(glm::vec3(0.0, 0.0, 0.1));
+
 int main(int argc, char* argv[])
 {
-	std::cout << "Welcome to exercice Four: FPS counter" << std::endl;
-	std::cout << "Let's count how many frames per second (FPS) you have" << std::endl;
-	std::cout << "1. Make a function that compute the FPS at each loop of the animation" << std::endl;
-	std::cout << "Hint: Take a look at glfwGetTime()" << std::endl;
-	std::cout << "2. Check the refresh rate of your screen, is it similar ?" << std::endl;
+	std::cout << "Welcome to exercice 14: " << std::endl;
+	std::cout << "Refactoring\n"
+		"At this point your code should start to be ugly.\n"
+		"It's time to do a good refactoring of your code from ex 13.\n"
+		"Make classes for your shader and camera. \n";
 
 	//Boilerplate
+	//Create the OpenGL context 
 	if (!glfwInit()) {
 		throw std::runtime_error("Failed to initialise GLFW \n");
 	}
@@ -88,8 +105,8 @@ int main(int argc, char* argv[])
 #endif
 
 
-	//1.b Create the window
-	GLFWwindow* window = glfwCreateWindow(width, height, "Solution 04", nullptr, nullptr);
+	//Create the window
+	GLFWwindow* window = glfwCreateWindow(width, height, "Solution 14", nullptr, nullptr);
 	if (window == NULL)
 	{
 		glfwTerminate();
@@ -116,34 +133,74 @@ int main(int argc, char* argv[])
 #endif
 
 	const std::string sourceV = "#version 330 core\n"
-		"layout(location = 0) in vec3 position; \n"
+		"in vec3 position; \n"
+		"in vec2 texcoord; \n"
+		"out vec2 v_tex; \n"
+	
+		"uniform mat4 M; \n"
+		"uniform mat4 V; \n"
+		"uniform mat4 P; \n"
 		" void main(){ \n"
-		"gl_Position = vec4(position, 1);\n"
+		"gl_Position = P*M*V*vec4(position, 1);\n"
+		"v_tex = texcoord; \n"
+
 		"}\n"; 
 	const std::string sourceF = "#version 330 core\n"
+		"out vec4 FragColor;"
 		"precision mediump float; \n"
-		"out vec4 fragColor;\n"
+		"in vec2 v_tex; \n"
+		"uniform sampler2D ourTexture; \n"
 		"void main() { \n"
-		" fragColor = vec4(1.0, 0.0, 0.0, 1.0); \n"
+		"FragColor = texture(ourTexture, v_tex); \n"
 		"} \n";
 
-	
-	
-	GLuint shaderV = compileShader(sourceV, GL_VERTEX_SHADER);
-	GLuint shaderF = compileShader(sourceF, GL_FRAGMENT_SHADER);
-	GLuint program = compileProgram(shaderV, shaderF);
+	//1. With the shader class defined , you can either define string for your shader in the code
+	//Shader shader(sourceV, sourceF);
+
+	//Or you can have your shader written in text files
+	char fileVert[128] = "../../src/vertSrc.txt";
+	char fileFrag[128] = "../../src/fragSrc.txt";
+	Shader shader(fileVert, fileFrag);
 
 	// First object!
-	const float positionsData[9] = {
-		// vertices
-		-1.0, -1.0, 0.0,
-		1.0, -1.0, 0.0,
-		0.0, 1.0, 0.0,
+	const float positionsData[15] = {
+		// vertices		  // texture coords
+		-1.0, -1.0, 0.0,	0.0, 0.0,
+		 1.0, -1.0, 0.0,	1.0, 0.0,
+		 0.0,  1.0, 0.0,	0.5, 1.0,
 	};
 
-	//Create the buffer
 
-	//TODO explain why we need a VAO AND a VBO
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	
+	stbi_set_flip_vertically_on_load(true);
+	int imWidth, imHeight, imNrChannels;
+	char file[128] = "../../image/horse.jpg";
+	unsigned char* data = stbi_load(file, &imWidth, &imHeight, &imNrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to Load texture" << std::endl;
+		const char* reason = stbi_failure_reason();
+		std::cout << reason << std::endl;
+	}
+
+	stbi_image_free(data);
+
+	//Create the buffer
 	GLuint VBO, VAO;
 	//generate the buffer and the vertex array
 	glGenVertexArrays(1, &VAO);
@@ -154,19 +211,23 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(positionsData), positionsData, GL_STATIC_DRAW);
 
-	auto attribute = glGetAttribLocation(program, "position");
+	auto attribute = glGetAttribLocation(shader.ID, "position");
 	glEnableVertexAttribArray(attribute);
-	glVertexAttribPointer(attribute, 3, GL_FLOAT, false, 0, 0);
+	glVertexAttribPointer(attribute, 3, GL_FLOAT, false, 5 * sizeof(float), (void*)0);
+
+	auto att_tex = glGetAttribLocation(shader.ID, "texcoord");
+	glEnableVertexAttribArray(att_tex);
+	glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
 	//desactive the buffer
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+
 	double prev = 0;
 	int deltaFrame = 0;
-	//there is multiple way to implement the same solution,
-	//Here is an example using a lambda function
-	auto fps = [&](void) {
-		double now = glfwGetTime();
+	//fps function
+	auto fps = [&](double now) {
 		double deltaTime = now - prev;
 		deltaFrame++;
 		if (deltaTime > 0.5) {
@@ -178,20 +239,45 @@ int main(int argc, char* argv[])
 		}
 	};
 
+
+	glm::mat4 model = glm::mat4(1.0);
+	model = glm::translate(model,glm::vec3(0.5,0.5,-1.0));
+	model = glm::scale(model, glm::vec3(0.5,0.5,1.0));
+
+
+	glm::mat4 view = camera.GetViewMatrix();
+	glm::mat4 perspective = glm::perspective(45.0, 500.0/500.0, 0.01, 100.0);
+
 	//sync with the screen refresh rate
 	glfwSwapInterval(1);
 	//Rendering
+	
 	while (!glfwWindowShouldClose(window)) {
+		processInput(window);
+		view = camera.GetViewMatrix();
 		glfwPollEvents();
+		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+		
 
 		glBindVertexArray(VAO);
 
-		glUseProgram(program);
+		//2. Use the shader Class to send the uniform
+		shader.use();
+
+		shader.setMatrix4("M", model);
+		shader.setMatrix4("V", view);
+		shader.setMatrix4("P", perspective);
+		
+		shader.setInteger("ourTexture", 0);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		//"1. Make a function that compute the FPS at each loop of the animation"
-		fps();
+		
+		fps(now);
 		glfwSwapBuffers(window);
 	}
 
@@ -202,47 +288,30 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-GLuint compileShader(std::string shaderCode, GLenum shaderType)
-{
-	GLuint shader = glCreateShader(shaderType);
-	const char* code = shaderCode.c_str();
-	glShaderSource(shader, 1, &code, NULL);
-	glCompileShader(shader);
 
-	GLchar infoLog[1024];
-	GLint success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-		std::string t = "undetermined";
-		if (shaderType == GL_VERTEX_SHADER) {
-			t = "vertex shader";
-		}
-		else if (shaderType == GL_FRAGMENT_SHADER) {
-			t = "fragment shader";
-		}
-		std::cout << "ERROR::SHADER_COMPILATION_ERROR of the " << t << ": " << shaderType << infoLog << std::endl;
-	}
-	return shader;
-}
+void processInput(GLFWwindow *window){
+	//3. Use the cameras class to change the parameters of the camera
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 
-GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader)
-{
-	GLuint programID = glCreateProgram();
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(UP, 1);
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(DOWN, 1);
 
-	glAttachShader(programID, vertexShader);
-	glAttachShader(programID, fragmentShader);
-	glLinkProgram(programID);
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(LEFT, 1);
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(RIGHT, 1);
 
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(FORWARD, 1);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(BACKWARD, 1);
 
-	GLchar infoLog[1024];
-	GLint success;
-	glGetProgramiv(programID, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(programID, 1024, NULL, infoLog);
-		std::cout << "ERROR::PROGRAM_LINKING_ERROR:  " << infoLog << std::endl;
-	}
-	return programID;
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+		camera.ProcessKeyboardRotation(-1, 0.0); 
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+		camera.ProcessKeyboardRotation(1, 0.0);
+
 }

@@ -1,0 +1,8 @@
+#version 330 core
+out vec4 FragColor;
+precision mediump float; 
+in vec2 v_tex; 
+uniform sampler2D ourTexture; 
+void main() { 
+FragColor = texture(ourTexture, v_tex); 
+}
