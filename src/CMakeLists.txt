@@ -1,29 +1,22 @@
 project("SRC")
 
 #Put the sources into a variable
-# set(SOURCES_EX_01 "exercises/ex01/ex01.cpp")
-# set(SOURCES_EX_02 "exercises/ex02/ex02.cpp")
-# set(SOURCES_EX_03 "exercises/ex03/ex03.cpp")
-# set(SOURCES_EX_04 "exercises/ex04/ex04.cpp")
-# set(SOURCES_EX_05 "exercises/ex05/ex05.cpp")
-# set(SOURCES_EX_06 "exercises/ex06/ex06.cpp")
-# set(SOURCES_EX_07 "exercises/ex07/ex07.cpp")
-# set(SOURCES_EX_08 "exercises/ex08/ex08.cpp")
-# set(SOURCES_EX_09 "exercises/ex09/ex09.cpp")
-# set(SOURCES_EX_10 "exercises/ex10/ex10.cpp")
-# set(SOURCES_EX_11 "exercises/ex11/ex11.cpp")
-# set(SOURCES_EX_12 "exercises/ex12/ex12.cpp")
+
 # set(SOURCES_EX_13 "exercises/ex13/ex13.cpp")
 set(SOURCES_MAIN "main.cpp")
+set(SOURCES_WINDOW "window.cpp")
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}
 #Specify that you want to generate an executable with a certain name using a set of sources
+
 add_executable(${PROJECT_NAME}_main ${SOURCES_MAIN})
+
 #Specify which libraries you want to use with your executable
 target_link_libraries(${PROJECT_NAME}_main PUBLIC OpenGL::GL glfw glad)
 
-# add_executable(${PROJECT_NAME}_ex02 ${SOURCES_EX_02})
-# target_link_libraries(${PROJECT_NAME}_ex02 PUBLIC OpenGL::GL glfw glad)
+
+add_executable(${PROJECT_NAME}_window ${SOURCES_WINDOW})
+target_link_libraries(${PROJECT_NAME}_window PUBLIC OpenGL::GL glfw glad)
 
 # add_executable(${PROJECT_NAME}_ex03 ${SOURCES_EX_03})
 # target_link_libraries(${PROJECT_NAME}_ex03 PUBLIC OpenGL::GL glfw glad)
