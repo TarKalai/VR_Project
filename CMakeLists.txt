@@ -37,6 +37,7 @@ option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(3rdParty/glfw)
+add_subdirectory(3rdParty/bullet3)
 
 
 
@@ -44,7 +45,8 @@ include_directories(3rdParty/glad/include/
                     # 3rdParty/glew/include/
                     3rdParty/glfw/include/
                     3rdParty/glm/
-                    3rdParty/stb/)
+                    3rdParty/stb/
+                    3rdParty/bullet3/src/)
 
 
 if(COMPILE_SRC)
@@ -54,3 +56,4 @@ endif()
 # if(COMPILE_LAB03)
 # 	add_subdirectory(LAB03)
 # endif()
+

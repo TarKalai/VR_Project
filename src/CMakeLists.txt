@@ -4,7 +4,6 @@ project("SRC")
 
 # set(SOURCES_EX_13 "exercises/ex13/ex13.cpp")
 set(SOURCES_MAIN "main.cpp")
-set(SOURCES_WINDOW "window.cpp")
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}
 #Specify that you want to generate an executable with a certain name using a set of sources
@@ -12,11 +11,12 @@ set(SOURCES_WINDOW "window.cpp")
 add_executable(${PROJECT_NAME}_main ${SOURCES_MAIN})
 
 #Specify which libraries you want to use with your executable
-target_link_libraries(${PROJECT_NAME}_main PUBLIC OpenGL::GL glfw glad)
+target_link_libraries(${PROJECT_NAME}_main PUBLIC OpenGL::GL glfw glad
+                        BulletDynamics BulletCollision LinearMath)
+    
 
-
-add_executable(${PROJECT_NAME}_window ${SOURCES_WINDOW})
-target_link_libraries(${PROJECT_NAME}_window PUBLIC OpenGL::GL glfw glad)
+# add_executable(${PROJECT_NAME}_window ${SOURCES_WINDOW})
+# target_link_libraries(${PROJECT_NAME}_window PUBLIC OpenGL::GL glfw glad)
 
 # add_executable(${PROJECT_NAME}_ex03 ${SOURCES_EX_03})
 # target_link_libraries(${PROJECT_NAME}_ex03 PUBLIC OpenGL::GL glfw glad)

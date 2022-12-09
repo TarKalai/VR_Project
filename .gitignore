@@ -2,6 +2,7 @@
 out/
 .vs/
 build/
+bullet3/
 CMakeSettings.json
 
 # Prerequisites
