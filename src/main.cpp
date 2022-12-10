@@ -1,6 +1,6 @@
 #include<iostream>
-//for debug
-#include <fstream>
+
+
 
 //include glad before GLFW to avoid header conflict or define "#define GLFW_INCLUDE_NONE"
 #include <glad/glad.h>
@@ -9,19 +9,16 @@
 #include <glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
-
-#include "btBulletDynamicsCommon.h"
-
+#include<glm/gtc/matrix_inverse.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+
 #include "camera.h"
 #include "shader.h"
-
-#include <chrono>
-#include <thread>
-
+#include "object.h"
+#include "physics.h"
 
 const int width = 500;
 const int height = 500;
@@ -29,8 +26,7 @@ const int height = 500;
 
 GLuint compileShader(std::string shaderCode, GLenum shaderType);
 GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
-void processInput(GLFWwindow *window);
-
+void processInput(GLFWwindow* window);
 
 
 #ifndef NDEBUG
@@ -82,15 +78,18 @@ void APIENTRY glDebugOutput(GLenum source,
 }
 #endif
 
-Camera camera(glm::vec3(0.0, 0.0, 0.1));
+Camera camera(glm::vec3(0.0, 0.0, -6.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
+
 
 int main(int argc, char* argv[])
 {
-	std::cout << "Welcome to exercice 14: " << std::endl;
-	std::cout << "Refactoring\n"
-		"At this point your code should start to be ugly.\n"
-		"It's time to do a good refactoring of your code from ex 13.\n"
-		"Make classes for your shader and camera. \n";
+	std::cout << "Welcome to exercice 3: " << std::endl;
+	std::cout << "Light - Diffuse Gouraud\n"
+		"Implement Gouraud shading on a sphere.\n"
+		"You need to :\n"
+		"	- make a sphere and export it from Blender or use .obj files we give you \n"
+		"	- put the light somewhere (and send the vec3 with the position to the shader)\n"
+		"	- normals are UNITARY vectors, use the transform described in the slides \n";
 
 	//Boilerplate
 	//Create the OpenGL context 
@@ -108,7 +107,7 @@ int main(int argc, char* argv[])
 
 
 	//Create the window
-	GLFWwindow* window = glfwCreateWindow(width, height, "Solution 14", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Exercise 03", nullptr, nullptr);
 	if (window == NULL)
 	{
 		glfwTerminate();
@@ -116,11 +115,15 @@ int main(int argc, char* argv[])
 	}
 
 	glfwMakeContextCurrent(window);
+
+
 	//load openGL function
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		throw std::runtime_error("Failed to initialize GLAD");
 	}
+
+	glEnable(GL_DEPTH_TEST);
 
 #ifndef NDEBUG
 	int flags;
@@ -136,95 +139,81 @@ int main(int argc, char* argv[])
 
 	const std::string sourceV = "#version 330 core\n"
 		"in vec3 position; \n"
-		"in vec2 texcoord; \n"
-		"out vec2 v_tex; \n"
-	
+		"in vec3 normal; \n"
+
+		"out vec3 v_diffuse; \n"
+
 		"uniform mat4 M; \n"
+		"uniform mat4 itM; \n"
 		"uniform mat4 V; \n"
 		"uniform mat4 P; \n"
-		" void main(){ \n"
-		"gl_Position = P*M*V*vec4(position, 1);\n"
-		"v_tex = texcoord; \n"
+		"uniform vec3 u_light_pos; \n"
 
+		//Think about which uniform you may need
+		" void main(){ \n"
+		"vec4 frag_coord = M*vec4(position, 1.0); \n"
+		"gl_Position = P*V*frag_coord;\n"
+		//3. transform correctly the normals
+		"vec3 norm = vec3(itM * vec4(normal, 1.0)); \n"
+		//3. use Gouraud : compute the diffuse light with the normals at the vertices
+		"vec3 L = normalize(u_light_pos - frag_coord.xyz); \n" // direction from light to surface
+		"float diffusion = max(0.0, dot(norm, L)); \n"
+		"v_diffuse = vec3(diffusion);\n" //same component in every direction
 		"}\n"; 
 	const std::string sourceF = "#version 330 core\n"
 		"out vec4 FragColor;"
 		"precision mediump float; \n"
-		"in vec2 v_tex; \n"
-		"uniform sampler2D ourTexture; \n"
+		"in vec3 v_diffuse; \n"
+
 		"void main() { \n"
-		"FragColor = texture(ourTexture, v_tex); \n"
+		"FragColor = vec4(v_diffuse, 1.0); \n"
 		"} \n";
 
-	//1. With the shader class defined , you can either define string for your shader in the code
-	//Shader shader(sourceV, sourceF);
+	char fileVert[128] = "../vertSrc.txt";
+	char fileFrag[128] = "../fragSrc.txt";
 
-	//Or you can have your shader written in text files
-	char fileVert[128] = "../../src/vertSrc.txt";
-	char fileFrag[128] = "../../src/fragSrc.txt";
-	Shader shader(fileVert, fileFrag);
+    PhysicalWorld world = PhysicalWorld(); // BULLET3
 
-	// First object!
-	const float positionsData[15] = {
-		// vertices		  // texture coords
-		-1.0, -1.0, 0.0,	0.0, 0.0,
-		 1.0, -1.0, 0.0,	1.0, 0.0,
-		 0.0,  1.0, 0.0,	0.5, 1.0,
-	};
+	//Shader shader(fileVert, fileFrag);
+	Shader shader(sourceV, sourceF);
+
+	//1. Load the model for 3 types of spheres
+	char path1[] = "../../objects/sphere_extremely_coarse.obj";
+	char path2[] = "../../objects/sphere_coarse.obj";
+	char path3[] = "../../objects/sphere_smooth.obj";// BULLET3
+
+	Object sphere1(path1, glm::vec3(-4.0, 10., 0.0), 1.);
+	sphere1.makeObject(shader, true, true, false);
+	// TODO put in object ?
+	sphere1.model = glm::scale(sphere1.model, glm::vec3(sphere1.scale));
+	sphere1.model = glm::translate(sphere1.model, sphere1.position);
 
 
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+
+	Object sphere2(path2, glm::vec3(0., 15., 0.), 1.);
+	sphere2.makeObject(shader, true, true, false);
+
+	sphere2.model = glm::scale(sphere2.model, glm::vec3(sphere2.scale));
+	sphere2.model = glm::translate(sphere2.model, sphere2.position);
+
+
+	Object sphere3(path3, glm::vec3(0.5, 10., 0.), 1.);	
+	sphere3.makeObject(shader, true, true, false);
+
+	sphere3.model = glm::scale(sphere3.model, glm::vec3(sphere3.scale));
+	sphere3.model = glm::translate(sphere3.model, sphere3.position);
+
+	std::cout << sphere3.position.x << " " << sphere3.position.y << " " << sphere3.position.z << std::endl;
+	std::cout << sphere2.position.x << " " << sphere2.position.y << " " << sphere2.position.z << std::endl;
+	std::cout << sphere1.position.x << " " << sphere1.position.y << " " << sphere1.position.z << std::endl;
 	
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    
+    world.addSphere(&sphere1);// BULLET3
+	world.addSphere(&sphere2);
+	world.addSphere(&sphere3);
 	
-	stbi_set_flip_vertically_on_load(true);
-	int imWidth, imHeight, imNrChannels;
-	char file[128] = "../../image/horse.jpg";
-	unsigned char* data = stbi_load(file, &imWidth, &imHeight, &imNrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to Load texture" << std::endl;
-		const char* reason = stbi_failure_reason();
-		std::cout << reason << std::endl;
-	}
-
-	stbi_image_free(data);
-
-	//Create the buffer
-	GLuint VBO, VAO;
-	//generate the buffer and the vertex array
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	//define VBO and VAO as active buffer and active vertex array
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positionsData), positionsData, GL_STATIC_DRAW);
-
-	auto attribute = glGetAttribLocation(shader.ID, "position");
-	glEnableVertexAttribArray(attribute);
-	glVertexAttribPointer(attribute, 3, GL_FLOAT, false, 5 * sizeof(float), (void*)0);
-
-	auto att_tex = glGetAttribLocation(shader.ID, "texcoord");
-	glEnableVertexAttribArray(att_tex);
-	glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-	//desactive the buffer
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
+	//2. Choose a position for the light
+	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
 
 	double prev = 0;
 	int deltaFrame = 0;
@@ -234,54 +223,61 @@ int main(int argc, char* argv[])
 		deltaFrame++;
 		if (deltaTime > 0.5) {
 			prev = now;
-			const double fpsCount = (double) deltaFrame / deltaTime;
+			const double fpsCount = (double)deltaFrame / deltaTime;
 			deltaFrame = 0;
 			std::cout << "\r FPS: " << fpsCount;
-			std::cout.flush();
 		}
 	};
 
 
-	glm::mat4 model = glm::mat4(1.0);
-	model = glm::translate(model,glm::vec3(0.5,0.5,-1.0));
-	model = glm::scale(model, glm::vec3(0.5,0.5,1.0));
-
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 perspective = glm::perspective(45.0, 500.0/500.0, 0.01, 100.0);
+	glm::mat4 perspective = camera.GetProjectionMatrix();
 
-	//sync with the screen refresh rate
-	glfwSwapInterval(1);
+
 	//Rendering
-	
+	glfwSwapInterval(1);
+
 	while (!glfwWindowShouldClose(window)) {
+
+		// BULLET3
+		world.animate();
+
 		processInput(window);
 		view = camera.GetViewMatrix();
 		glfwPollEvents();
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glBindVertexArray(VAO);
 
-		//2. Use the shader Class to send the uniform
+		//2. Use the shader Class to send the relevant uniform
 		shader.use();
-
-		shader.setMatrix4("M", model);
+		shader.setMatrix4("M", sphere1.model);
 		shader.setMatrix4("V", view);
 		shader.setMatrix4("P", perspective);
-		
-		shader.setInteger("ourTexture", 0);
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		
+		shader.setVector3f("u_light_pos", light_pos);
+		//what other uniforms do you need to send
+		glm::mat4 itM = glm::inverseTranspose(sphere1.model);
+		shader.setMatrix4("itM", itM);
+		//don't forget to draw your objects
+		sphere1.draw();
+
+		shader.setMatrix4("M", sphere2.model);
+		shader.setMatrix4("itM", glm::inverseTranspose(sphere2.model));
+		sphere2.draw();
+
+		shader.setMatrix4("M", sphere3.model);
+		shader.setMatrix4("itM", glm::inverseTranspose(sphere3.model));
+		sphere3.draw();
+
 		fps(now);
 		glfwSwapBuffers(window);
 	}
+
+	// BULLET3
+	world.clear();
+
 
 	//clean up ressource
 	glfwDestroyWindow(window);
@@ -291,29 +287,28 @@ int main(int argc, char* argv[])
 }
 
 
-void processInput(GLFWwindow *window){
-	//3. Use the cameras class to change the parameters of the camera
+void processInput(GLFWwindow* window) {
+	// Use the cameras class to change the parameters of the camera
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(UP, 1);
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(DOWN, 1);
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(LEFT, 1);
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(RIGHT, 1);
-
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(FORWARD, 1);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(BACKWARD, 1);
+		camera.ProcessKeyboardMovement(LEFT, 0.1);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(RIGHT, 0.1);
 
-	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-		camera.ProcessKeyboardRotation(-1, 0.0); 
-	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
-		camera.ProcessKeyboardRotation(1, 0.0);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(FORWARD, 0.1);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(BACKWARD, 0.1);
 
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		camera.ProcessKeyboardRotation(1, 0.0,1);
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		camera.ProcessKeyboardRotation(-1, 0.0,1);
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		camera.ProcessKeyboardRotation(0.0, 1.0, 1);
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		camera.ProcessKeyboardRotation(0.0, -1.0, 1);
 }
