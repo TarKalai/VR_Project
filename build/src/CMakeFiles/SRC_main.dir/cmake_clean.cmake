@@ -1,10 +1,12 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/SRC_main.dir/main.cpp.o"
-  "CMakeFiles/SRC_main.dir/main.cpp.o.d"
-  "CMakeFiles/SRC_main.dir/physics.cpp.o"
-  "CMakeFiles/SRC_main.dir/physics.cpp.o.d"
-  "SRC_main"
+  "CMakeFiles/SRC_main.dir/main.cpp.obj"
+  "CMakeFiles/SRC_main.dir/main.cpp.obj.d"
+  "CMakeFiles/SRC_main.dir/physics.cpp.obj"
+  "CMakeFiles/SRC_main.dir/physics.cpp.obj.d"
+  "SRC_main.exe"
+  "SRC_main.exe.manifest"
   "SRC_main.pdb"
+  "libSRC_main.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

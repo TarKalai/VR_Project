@@ -1,1 +1,3 @@
-/usr/bin/g++ -g CMakeFiles/SRC_main.dir/main.cpp.o CMakeFiles/SRC_main.dir/physics.cpp.o -o SRC_main  ../3rdParty/glfw/src/libglfw3.a ../libglad.a ../3rdParty/bullet3/src/BulletDynamics/libBulletDynamics.a ../3rdParty/bullet3/src/BulletCollision/libBulletCollision.a ../3rdParty/bullet3/src/LinearMath/libLinearMath.a /usr/lib/libGLX.so /usr/lib/libOpenGL.so /usr/lib/librt.a -lm -ldl 
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\SRC_main.dir/objects.a
+C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\ar.exe qc CMakeFiles\SRC_main.dir/objects.a @CMakeFiles\SRC_main.dir\objects1
+C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\G__~1.EXE -g -Wl,--whole-archive CMakeFiles\SRC_main.dir/objects.a -Wl,--no-whole-archive -o SRC_main.exe -Wl,--out-implib,libSRC_main.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\SRC_main.dir\linkLibs.rsp
