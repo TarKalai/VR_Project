@@ -78,18 +78,12 @@ void APIENTRY glDebugOutput(GLenum source,
 }
 #endif
 
-Camera camera(glm::vec3(0.0, 0.0, -6.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
+Camera camera(glm::vec3(-2.0, 7.0, -15.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
 
 
 int main(int argc, char* argv[])
 {
-	std::cout << "Welcome to exercice 3: " << std::endl;
-	std::cout << "Light - Diffuse Gouraud\n"
-		"Implement Gouraud shading on a sphere.\n"
-		"You need to :\n"
-		"	- make a sphere and export it from Blender or use .obj files we give you \n"
-		"	- put the light somewhere (and send the vec3 with the position to the shader)\n"
-		"	- normals are UNITARY vectors, use the transform described in the slides \n";
+	std::cout << "PRoject is running... " << std::endl;
 
 	//Boilerplate
 	//Create the OpenGL context 
@@ -202,11 +196,6 @@ int main(int argc, char* argv[])
 
 	sphere3.model = glm::scale(sphere3.model, glm::vec3(sphere3.scale));
 	sphere3.model = glm::translate(sphere3.model, sphere3.position);
-
-	std::cout << sphere3.position.x << " " << sphere3.position.y << " " << sphere3.position.z << std::endl;
-	std::cout << sphere2.position.x << " " << sphere2.position.y << " " << sphere2.position.z << std::endl;
-	std::cout << sphere1.position.x << " " << sphere1.position.y << " " << sphere1.position.z << std::endl;
-	
     
     world.addSphere(&sphere1);// BULLET3
 	world.addSphere(&sphere2);
