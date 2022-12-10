@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/SRC_window.dir/window.cpp.o  -o SRC_window  ../3rdParty/glfw/src/libglfw3.a ../libglad.a /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libOpenGL.so -lpthread /usr/lib/x86_64-linux-gnu/librt.so -lm -ldl 

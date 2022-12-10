@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\SRC_main.dir/objects.a
-C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\ar.exe qc CMakeFiles\SRC_main.dir/objects.a @CMakeFiles\SRC_main.dir\objects1
-C:\PROGRA~1\MINGW-~1\X86_64~1.0-P\mingw64\bin\G__~1.EXE -g -Wl,--whole-archive CMakeFiles\SRC_main.dir/objects.a -Wl,--no-whole-archive -o SRC_main.exe -Wl,--out-implib,libSRC_main.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\SRC_main.dir\linkLibs.rsp
