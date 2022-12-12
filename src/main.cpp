@@ -78,14 +78,18 @@ void APIENTRY glDebugOutput(GLenum source,
 }
 #endif
 
-Camera camera(glm::vec3(0.0, 0.0, -6.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
+Camera camera(glm::vec3(-2.0, 7.0, -15.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
 
 
 int main(int argc, char* argv[])
 {
+<<<<<<< HEAD
 	std::cout << "Welcome to the project of group B: " << std::endl;
 	std::cout << "Domino\n"
 		"Play with strange looking dominos\n";
+=======
+	std::cout << "PRoject is running... " << std::endl;
+>>>>>>> 4029c427e87ccb2769001aa027cf60c60afe52a9
 
 	//Boilerplate
 	//Create the OpenGL context 
@@ -185,28 +189,20 @@ int main(int argc, char* argv[])
 	sphere1.model = glm::translate(sphere1.model, sphere1.position);
 
 
-
 	Object sphere2(path2, glm::vec3(0., 15., 0.), 1.);
 	sphere2.makeObject(shader, true, true, false);
-
 	sphere2.model = glm::scale(sphere2.model, glm::vec3(sphere2.scale));
 	sphere2.model = glm::translate(sphere2.model, sphere2.position);
 
-
 	Object sphere3(path3, glm::vec3(0.5, 10., 0.), 1.);	
 	sphere3.makeObject(shader, true, true, false);
-
 	sphere3.model = glm::scale(sphere3.model, glm::vec3(sphere3.scale));
 	sphere3.model = glm::translate(sphere3.model, sphere3.position);
-
-	std::cout << sphere3.position.x << " " << sphere3.position.y << " " << sphere3.position.z << std::endl;
-	std::cout << sphere2.position.x << " " << sphere2.position.y << " " << sphere2.position.z << std::endl;
-	std::cout << sphere1.position.x << " " << sphere1.position.y << " " << sphere1.position.z << std::endl;
-	
     
     world.addSphere(&sphere1);// BULLET3
 	world.addSphere(&sphere2);
 	world.addSphere(&sphere3);
+
 	
 	//2. Choose a position for the light
 	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
