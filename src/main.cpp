@@ -22,11 +22,16 @@
 
 // const int width = 720;
 // const int height = 1280;
-const GLint width = 1900, height = 900;
+const GLint width = 1900, height = 850;
 
 GLuint compileShader(std::string shaderCode, GLenum shaderType);
 GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
 void processInput(GLFWwindow* window);
+
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
+float lastX = width / 2.0f;
+float lastY = height / 2.0f;
+bool firstMouse = true;
 
 
 #ifndef NDEBUG
@@ -83,13 +88,7 @@ Camera camera(glm::vec3(-2.0, 7.0, -15.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
 
 int main(int argc, char* argv[])
 {
-<<<<<<< HEAD
-	std::cout << "Welcome to the project of group B: " << std::endl;
-	std::cout << "Domino\n"
-		"Play with strange looking dominos\n";
-=======
 	std::cout << "PRoject is running... " << std::endl;
->>>>>>> 4029c427e87ccb2769001aa027cf60c60afe52a9
 
 	//Boilerplate
 	//Create the OpenGL context 
@@ -116,6 +115,10 @@ int main(int argc, char* argv[])
 
 	glfwMakeContextCurrent(window);
 
+	//mouse implementation
+	// int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+	// static int oldState = GLFW_RELEASE;
+	// mouse_button_callback(window, mouseState,  )
 
 	//load openGL function
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -137,45 +140,12 @@ int main(int argc, char* argv[])
 	}
 #endif
 
-	const std::string sourceV = "#version 330 core\n"
-		"in vec3 position; \n"
-		"in vec3 normal; \n"
-
-		"out vec3 v_diffuse; \n"
-
-		"uniform mat4 M; \n"
-		"uniform mat4 itM; \n"
-		"uniform mat4 V; \n"
-		"uniform mat4 P; \n"
-		"uniform vec3 u_light_pos; \n"
-
-		//Think about which uniform you may need
-		" void main(){ \n"
-		"vec4 frag_coord = M*vec4(position, 1.0); \n"
-		"gl_Position = P*V*frag_coord;\n"
-		//3. transform correctly the normals
-		"vec3 norm = vec3(itM * vec4(normal, 1.0)); \n"
-		//3. use Gouraud : compute the diffuse light with the normals at the vertices
-		"vec3 L = normalize(u_light_pos - frag_coord.xyz); \n" // direction from light to surface
-		"float diffusion = max(0.0, dot(norm, L)); \n"
-		"v_diffuse = vec3(diffusion);\n" //same component in every direction
-		"}\n"; 
-	const std::string sourceF = "#version 330 core\n"
-		"out vec4 FragColor;"
-		"precision mediump float; \n"
-		"in vec3 v_diffuse; \n"
-
-		"void main() { \n"
-		"FragColor = vec4(v_diffuse, 1.0); \n"
-		"} \n";
-
-	char fileVert[128] = "vertSrc.txt";
-	char fileFrag[128] = "fragSrc.txt";
+	char fileVert[128] = "../../src/Shaders/vertSrc.txt";
+	char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
 
     PhysicalWorld world = PhysicalWorld(); // BULLET3
 
-	// Shader shader(fileVert, fileFrag);
-	Shader shader(sourceV, sourceF);
+	Shader shader(fileVert, fileFrag);
 
 	//1. Load the model for 3 types of spheres
 	char path1[] = "../../objects/sphere_extremely_coarse.obj";
@@ -224,7 +194,7 @@ int main(int argc, char* argv[])
 
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 perspective = camera.GetProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height); //
+	glm::mat4 perspective = camera.GetProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height, 0.01, 100.0);
 
 
 	//Rendering
@@ -303,4 +273,37 @@ void processInput(GLFWwindow* window) {
 		camera.ProcessKeyboardRotation(0.0, 1.0, 1);
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		camera.ProcessKeyboardRotation(0.0, -1.0, 1);
+}
+
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+	float xpos = static_cast<float>(xposIn);
+	float ypos = static_cast<float>(yposIn);
+
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+	printf("the last known pos are: %i, %f", lastX, lastY); 
+
+	camera.ProcessMouseMovement(xoffset, yoffset, true);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) 
+	{	
+		double xpos, ypos;
+		glfwSetCursorPosCallback(window, mouse_callback);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwGetCursorPos(window, &xpos, &ypos);//getting cursor position
+    }
 }
