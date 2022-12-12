@@ -66,7 +66,7 @@ public:
         return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
     }
 
-    glm::mat4 GetProjectionMatrix(float fov=45.0, float ratio=1.0, float near=0.01, float far=100.0)
+    glm::mat4 GetProjectionMatrix(float fov, float ratio, float near=0.01, float far=100.0)
     {
         return glm::perspective(fov, ratio, near, far);
     }

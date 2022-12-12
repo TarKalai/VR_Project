@@ -112,8 +112,8 @@ SRC_main_EXTERNAL_OBJECTS =
 src/SRC_main.exe: src/CMakeFiles/SRC_main.dir/main.cpp.obj
 src/SRC_main.exe: src/CMakeFiles/SRC_main.dir/physics.cpp.obj
 src/SRC_main.exe: src/CMakeFiles/SRC_main.dir/build.make
-src/SRC_main.exe: lib/libglfw3.a
-src/SRC_main.exe: lib/libglad.a
+src/SRC_main.exe: lib/libglfw3_Debug.a
+src/SRC_main.exe: lib/libglad_Debug.a
 src/SRC_main.exe: lib/libBulletDynamics_Debug.a
 src/SRC_main.exe: lib/libBulletCollision_Debug.a
 src/SRC_main.exe: lib/libLinearMath_Debug.a

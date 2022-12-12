@@ -20,9 +20,9 @@
 #include "object.h"
 #include "physics.h"
 
-const int width = 500;
-const int height = 500;
-
+// const int width = 720;
+// const int height = 1280;
+const GLint width = 1900, height = 900;
 
 GLuint compileShader(std::string shaderCode, GLenum shaderType);
 GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
@@ -83,13 +83,9 @@ Camera camera(glm::vec3(0.0, 0.0, -6.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
 
 int main(int argc, char* argv[])
 {
-	std::cout << "Welcome to exercice 3: " << std::endl;
-	std::cout << "Light - Diffuse Gouraud\n"
-		"Implement Gouraud shading on a sphere.\n"
-		"You need to :\n"
-		"	- make a sphere and export it from Blender or use .obj files we give you \n"
-		"	- put the light somewhere (and send the vec3 with the position to the shader)\n"
-		"	- normals are UNITARY vectors, use the transform described in the slides \n";
+	std::cout << "Welcome to the project of group B: " << std::endl;
+	std::cout << "Domino\n"
+		"Play with strange looking dominos\n";
 
 	//Boilerplate
 	//Create the OpenGL context 
@@ -107,7 +103,7 @@ int main(int argc, char* argv[])
 
 
 	//Create the window
-	GLFWwindow* window = glfwCreateWindow(width, height, "Exercise 03", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Project", nullptr, nullptr);
 	if (window == NULL)
 	{
 		glfwTerminate();
@@ -169,12 +165,12 @@ int main(int argc, char* argv[])
 		"FragColor = vec4(v_diffuse, 1.0); \n"
 		"} \n";
 
-	char fileVert[128] = "../vertSrc.txt";
-	char fileFrag[128] = "../fragSrc.txt";
+	char fileVert[128] = "vertSrc.txt";
+	char fileFrag[128] = "fragSrc.txt";
 
     PhysicalWorld world = PhysicalWorld(); // BULLET3
 
-	//Shader shader(fileVert, fileFrag);
+	// Shader shader(fileVert, fileFrag);
 	Shader shader(sourceV, sourceF);
 
 	//1. Load the model for 3 types of spheres
@@ -232,7 +228,7 @@ int main(int argc, char* argv[])
 
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 perspective = camera.GetProjectionMatrix();
+	glm::mat4 perspective = camera.GetProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height); //
 
 
 	//Rendering
