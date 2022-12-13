@@ -2,7 +2,12 @@ project("SRC")
 
 #Put the sources into a variable
 
-set(SOURCES_MAIN "main.cpp" "physics.cpp" "shader.cpp" "object.cpp" "camera.cpp" "physics.h" "shader.h" "object.h" "camera.h") 
+set(SOURCES_MAIN "main.cpp" 
+"physics.cpp" "physics.h" 
+"shader.cpp" "shader.h"
+"object.cpp" "object.h"
+"camera.cpp" "camera.h"
+"debug.h" ) 
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}
 #Specify that you want to generate an executable with a certain name using a set of sources
