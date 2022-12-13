@@ -1,15 +1,15 @@
 #include "camera.h"
 
 
-glm::mat4 Camera::GetViewMatrix(){
+glm::mat4 Camera::getViewMatrix(){
     return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 }
 
-glm::mat4 Camera::GetProjectionMatrix(float fov, float ratio, float near, float far){
+glm::mat4 Camera::getProjectionMatrix(float fov, float ratio, float near, float far){
     return glm::perspective(fov, ratio, near, far);
 }
 
-void Camera::ProcessKeyboardMovement(Camera_Movement direction, float deltaTime){
+void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime){
     float velocity = this->MovementSpeed * deltaTime;
     if (direction == FORWARD)
         this->Position += this->Front * velocity;
@@ -25,7 +25,7 @@ void Camera::ProcessKeyboardMovement(Camera_Movement direction, float deltaTime)
         this->Position -= this->Up * velocity;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch=true){
+void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch=true){
     float YawRot = 0;
     float PitchRot = 0;
 
@@ -48,7 +48,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
     updateCameraVectors();
 }
 
-void Camera::ProcessMouseScroll(float yoffset){
+void Camera::processMouseScroll(float yoffset){
     Zoom -= (float)yoffset;
     if (Zoom < 1.0f)
         Zoom = 1.0f;

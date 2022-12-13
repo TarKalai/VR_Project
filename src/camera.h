@@ -60,22 +60,22 @@ public:
         this->updateCameraVectors();
     }
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-    glm::mat4 GetViewMatrix();
+    glm::mat4 getViewMatrix();
 
-    glm::mat4 GetProjectionMatrix(float fov, float ratio, float near, float far);
+    glm::mat4 getProjectionMatrix(float fov, float ratio, float near, float far);
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboardMovement(Camera_Movement direction, float deltaTime);
+    void processKeyboardMovement(Camera_Movement direction, float deltaTime);
 
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     /* The motivated students can implement rotation using the mouse rather than the keyboard
         * You can draw inspiration from the ProcessKeyboardMovement function
     */
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
+    void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
         
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-    void ProcessMouseScroll(float yoffset);
+    void processMouseScroll(float yoffset);
 
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles

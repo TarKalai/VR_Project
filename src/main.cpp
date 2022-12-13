@@ -188,8 +188,8 @@ int main(int argc, char* argv[])
 
 
 
-	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 perspective = camera.GetProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height, 0.01, 100.0);
+	glm::mat4 view = camera.getViewMatrix();
+	glm::mat4 perspective = camera.getProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height, 0.01, 100.0);
 
 
 	//Rendering
@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
 		world.animate();
 
 		processInput(window);
-		view = camera.GetViewMatrix();
+		view = camera.getViewMatrix();
 		glfwPollEvents();
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -251,19 +251,19 @@ void processInput(GLFWwindow* window) {
 		glfwSetWindowShouldClose(window, true);
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(LEFT, 0.1);
+		camera.processKeyboardMovement(LEFT, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(RIGHT, 0.1);
+		camera.processKeyboardMovement(RIGHT, 0.1);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(FORWARD, 0.1);
+		camera.processKeyboardMovement(FORWARD, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(BACKWARD, 0.1);
+		camera.processKeyboardMovement(BACKWARD, 0.1);
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(UP, 0.1);
+		camera.processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		camera.ProcessKeyboardMovement(DOWN, 0.1);
+		camera.processKeyboardMovement(DOWN, 0.1);
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
 		double xpos, ypos;
@@ -277,7 +277,7 @@ void processInput(GLFWwindow* window) {
 		float xoffset = xpos - camera.lastX;
 		float yoffset = -ypos - camera.lastY; 
 		if (xoffset || yoffset)
-			camera.ProcessMouseMovement(xoffset, yoffset, 1);
+			camera.processMouseMovement(xoffset, yoffset, 1);
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 		camera.firstmouse = true;
