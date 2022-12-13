@@ -12,7 +12,9 @@ enum Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT, 
+    UP,
+    DOWN
 };
 
 // Default camera values
@@ -41,6 +43,11 @@ public:
     float MouseSensitivity;
     float Zoom;
 
+    // mouse movement
+    bool firstmouse = true;
+    float lastX;
+    float lastY;
+
     // constructor with vectors
     
     // constructor with scalar values
@@ -60,8 +67,6 @@ public:
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboardMovement(Camera_Movement direction, float deltaTime);
 
-
-    void ProcessKeyboardRotation(float YawRot, float PitchRot, float deltaTime, GLboolean constrainPitch = true);
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     /* The motivated students can implement rotation using the mouse rather than the keyboard

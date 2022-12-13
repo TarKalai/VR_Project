@@ -28,11 +28,6 @@ GLuint compileShader(std::string shaderCode, GLenum shaderType);
 GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
 void processInput(GLFWwindow* window);
 
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
-float lastX = width / 2.0f;
-float lastY = height / 2.0f;
-bool firstMouse = true;
-
 
 #ifndef NDEBUG
 void APIENTRY glDebugOutput(GLenum source,
@@ -251,6 +246,7 @@ int main(int argc, char* argv[])
 
 void processInput(GLFWwindow* window) {
 	// Use the cameras class to change the parameters of the camera
+	//3. Use the cameras class to change the parameters of the camera
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -264,46 +260,25 @@ void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		camera.ProcessKeyboardMovement(BACKWARD, 0.1);
 
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		camera.ProcessKeyboardRotation(1, 0.0,1);
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		camera.ProcessKeyboardRotation(-1, 0.0,1);
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(UP, 0.1);
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		camera.ProcessKeyboardMovement(DOWN, 0.1);
 
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		camera.ProcessKeyboardRotation(0.0, 1.0, 1);
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		camera.ProcessKeyboardRotation(0.0, -1.0, 1);
-}
-
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
-{
-	float xpos = static_cast<float>(xposIn);
-	float ypos = static_cast<float>(yposIn);
-
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-	lastX = xpos;
-	lastY = ypos;
-	printf("the last known pos are: %i, %f", lastX, lastY); 
-
-	camera.ProcessMouseMovement(xoffset, yoffset, true);
-}
-
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) 
-	{	
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
 		double xpos, ypos;
-		glfwSetCursorPosCallback(window, mouse_callback);
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwGetCursorPos(window, &xpos, &ypos);//getting cursor position
-    }
+		glfwGetCursorPos(window, &xpos, &ypos); 
+		if (camera.firstmouse){
+			camera.lastX = xpos + camera.Yaw*10;
+			camera.lastY = -ypos + camera.Pitch*10;
+			camera.firstmouse = false;
+		}
+
+		float xoffset = xpos - camera.lastX;
+		float yoffset = -ypos - camera.lastY; 
+		if (xoffset || yoffset)
+			camera.ProcessMouseMovement(xoffset, yoffset, 1);
+	}
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+		camera.firstmouse = true;
 }
