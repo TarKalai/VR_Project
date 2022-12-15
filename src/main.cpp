@@ -25,14 +25,8 @@
 #include "process.h"
 
 
-// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
 Display mainWindow; 
 const GLint width = 1900, height = 850;
-
-// GLuint compileShader(std::string shaderCode, GLenum shaderType);
-// GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
-// void processInput(GLFWwindow* mainWindow, Camera camera);
-// void processInput(GLFWwindow* window);
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
@@ -47,19 +41,7 @@ int main(int argc, char* argv[])
 
 	mainWindow = Display(1900, 850); 
 	mainWindow.Initialise(); 
-
-	//Boilerplate
-	//Create the OpenGL context 
-	// if (!glfwInit()) {
-	// 	throw std::runtime_error("Failed to initialise GLFW \n");
-	// }
-	// glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	// glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-
 	
-
     PhysicalWorld world = PhysicalWorld(); // BULLET3
 
 	Shader shader(fileVert, fileFrag);
@@ -119,6 +101,7 @@ int main(int argc, char* argv[])
 	glfwSwapInterval(1);
 	Process process = Process();
 
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
 	// while (!glfwWindowShouldClose(window)) {
 	while (!mainWindow.getShouldClose()){
