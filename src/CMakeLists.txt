@@ -7,6 +7,8 @@ set(SOURCES_MAIN "main.cpp"
 "shader.cpp" "shader.h"
 "object.cpp" "object.h"
 "camera.cpp" "camera.h"
+"display.cpp" "display.h"
+"process.cpp" "process.h"
 "debug.h" ) 
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}

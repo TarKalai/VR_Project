@@ -1,7 +1,7 @@
 from PIL import Image 
 
-PATH = "/home/aurelien/Téléchargements/"
-filename = "cube2persp1.jpg"
+PATH = "C:/Users/takira/Desktop/ULB/MA2-IRCI/Q1/Virtual Reality/VR_Project/image/"
+filename = "CubeMap_Boudiste.jpg"
 
 img = Image.open(f"{PATH}{filename}") 
 width, height = img.size

@@ -19,16 +19,20 @@
 #include "shader.h"
 #include "object.h"
 #include "physics.h"
-#include "debug.h"
+// #include "debug.h"
+
+#include "display.h"
+#include "process.h"
 
 
-
-// Display mainWindow; 
+// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
+Display mainWindow; 
 const GLint width = 1900, height = 850;
 
-GLuint compileShader(std::string shaderCode, GLenum shaderType);
-GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
-void processInput(GLFWwindow* window);
+// GLuint compileShader(std::string shaderCode, GLenum shaderType);
+// GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
+// void processInput(GLFWwindow* mainWindow, Camera camera);
+// void processInput(GLFWwindow* window);
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
@@ -41,56 +45,18 @@ int main(int argc, char* argv[])
 {
 	std::cout << "Project is running... " << std::endl;
 
+	mainWindow = Display(1900, 850); 
+	mainWindow.Initialise(); 
+
 	//Boilerplate
 	//Create the OpenGL context 
-	if (!glfwInit()) {
-		throw std::runtime_error("Failed to initialise GLFW \n");
-	}
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// if (!glfwInit()) {
+	// 	throw std::runtime_error("Failed to initialise GLFW \n");
+	// }
+	// glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	// glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#ifndef NDEBUG
-	//create a debug context to help with Debugging
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-#endif
-
-
-	//Create the window
-	GLFWwindow* window = glfwCreateWindow(width, height, "Project", nullptr, nullptr);
-	if (window == NULL)
-	{
-		glfwTerminate();
-		throw std::runtime_error("Failed to create GLFW window\n");
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// so that the cursor does not appear on the screen. 
-
-	//mouse implementation
-	// int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-	// static int oldState = GLFW_RELEASE;
-	// mouse_button_callback(window, mouseState,  )
-
-	//load openGL function
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		throw std::runtime_error("Failed to initialize GLAD");
-	}
-
-	glEnable(GL_DEPTH_TEST);
-
-#ifndef NDEBUG
-	int flags;
-	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
-	{
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		glDebugMessageCallback(glDebugOutput, nullptr);
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-	}
-#endif
 
 	
 
@@ -145,18 +111,23 @@ int main(int argc, char* argv[])
 
 
 	glm::mat4 view = camera.getViewMatrix();
-	glm::mat4 perspective = camera.getProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height, 0.01, 100.0);
+	// glm::mat4 perspective = camera.getProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height, 0.01, 100.0);
+	glm::mat4 perspective = camera.getProjectionMatrix(45.0, mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 
 
 	//Rendering
 	glfwSwapInterval(1);
+	Process process = Process();
 
-	while (!glfwWindowShouldClose(window)) {
+
+	// while (!glfwWindowShouldClose(window)) {
+	while (!mainWindow.getShouldClose()){
 
 		// BULLET3
 		world.animate();
 
-		processInput(window);
+		process.processInput(mainWindow.getWindow(), camera);
+		// processInput(window);
 		view = camera.getViewMatrix();
 		glfwPollEvents();
 		double now = glfwGetTime();
@@ -185,56 +156,12 @@ int main(int argc, char* argv[])
 		sphere3.draw();
 
 		fps(now);
-		glfwSwapBuffers(window);
+		mainWindow.swapBuffers(); 
+		// glfwSwapBuffers(window);
 	}
 
 	// BULLET3
 	world.clear();
 
-
-	//clean up ressource
-	glfwDestroyWindow(window);
-	glfwTerminate();
-
 	return 0;
-}
-
-
-void processInput(GLFWwindow* window) {
-	// Use the cameras class to change the parameters of the camera
-	//3. Use the cameras class to change the parameters of the camera
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.processKeyboardMovement(LEFT, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.processKeyboardMovement(RIGHT, 0.1);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.processKeyboardMovement(FORWARD, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.processKeyboardMovement(BACKWARD, 0.1);
-
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		camera.processKeyboardMovement(UP, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		camera.processKeyboardMovement(DOWN, 0.1);
-
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos); 
-		if (camera.firstmouse){
-			camera.lastX = xpos + camera.Yaw*10;
-			camera.lastY = -ypos + camera.Pitch*10;
-			camera.firstmouse = false;
-		}
-
-		float xoffset = xpos - camera.lastX;
-		float yoffset = -ypos - camera.lastY; 
-		if (xoffset || yoffset)
-			camera.processMouseMovement(xoffset, yoffset, 1);
-	}
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
-		camera.firstmouse = true;
 }
