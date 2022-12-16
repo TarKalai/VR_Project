@@ -84,6 +84,7 @@ void PhysicalWorld::addSphere(Object *obj){
     btRigidBody* body = new btRigidBody(rbInfo);
 
     dynamicsWorld->addRigidBody(body);
+    //std::cout << "NBR SPHERES " << glObjects.size() << " pos " << obj->position.x << ", " << obj->position.y << ", " << obj->position.z << "scale " << obj->scale << std::endl;
 }
 
 void PhysicalWorld::animate(){
@@ -103,17 +104,16 @@ void PhysicalWorld::animate(){
         {
             trans = obj->getWorldTransform();
         }
-        // vecPtr->operator[](index)
-        // vecPtr->at(index)
+
         Object* glObj = glObjects[j];
         if (glObj != NULL) {
+
             glObj->model = glm::translate(glObj->model, glm::vec3(
             (float(trans.getOrigin().getX()) - glObj->position.x),
             (float(trans.getOrigin().getY()) - glObj->position.y), 
             (float(trans.getOrigin().getZ()) - glObj->position.z))/glObj->scale);
 
             glObj->position = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
-            // TODO check is a copy or not ?
         }
     }
 }

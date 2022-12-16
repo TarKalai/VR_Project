@@ -95,18 +95,22 @@ Object::Object(const char* path, glm::vec3 p, float s, int id){
             vertices.push_back(v3);
         }
     }
-    //std::cout << positions.size() << std::endl;
-    //std::cout << vt_normals.size() << std::endl;
-    //std::cout << vt_textures.size() << std::endl;
     std::cout << "Load model with " << vertices.size() << " vertices" << std::endl;
 
     infile.close();
 
     numVertices = vertices.size();
+
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    //define VBO and VAO as active buffer and active vertex array
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 }
 
-void Object::makeObject(Shader shader, bool position=true, bool normal=true, bool texture=true){ //bool position = true, bool normal = true, bool texture = true
-
+void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal){ 
 
     //Create the VAO and VBO
     //Put your data into your VBO
@@ -130,7 +134,7 @@ void Object::makeObject(Shader shader, bool position=true, bool normal=true, boo
         data[i * 8 + 6] = v.Normal.y;
         data[i * 8 + 7] = v.Normal.z;
     }
-
+    
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
@@ -139,21 +143,21 @@ void Object::makeObject(Shader shader, bool position=true, bool normal=true, boo
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * numVertices, data, GL_STATIC_DRAW);
 
-    if (position) {
-        auto att_pos = glGetAttribLocation(shader.ID, "position");
+    {
+        auto att_pos = glGetAttribLocation(shaderID, "position");
         glEnableVertexAttribArray(att_pos);
         glVertexAttribPointer(att_pos, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0);
     }
     
-    if (texture) {
-        auto att_tex = glGetAttribLocation(shader.ID, "tex_coord");
+    if (shader_texture) {
+        auto att_tex = glGetAttribLocation(shaderID, "tex_coord");
         glEnableVertexAttribArray(att_tex);
         glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         
     }
     
-    if (normal) {
-        auto att_col = glGetAttribLocation(shader.ID, "normal");
+    if (shader_normal) {
+        auto att_col = glGetAttribLocation(shaderID, "normal");
         glEnableVertexAttribArray(att_col);
         glVertexAttribPointer(att_col, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)(5 * sizeof(float)));
     }
@@ -162,6 +166,9 @@ void Object::makeObject(Shader shader, bool position=true, bool normal=true, boo
     glBindVertexArray(0);
     delete[] data;
 
+
+    model = glm::scale(model, glm::vec3(scale));
+    model = glm::translate(model, position);
 }
 
 void Object::draw(){

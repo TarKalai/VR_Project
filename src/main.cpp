@@ -41,41 +41,24 @@ int main(int argc, char* argv[])
 
 	mainWindow = Display(width, height); 
 	mainWindow.Initialise(); 
-	
-    PhysicalWorld world = PhysicalWorld(); // BULLET3
 
-	Shader shader(fileVert, fileFrag);
+    PhysicalWorld world = PhysicalWorld(); // BULLET3
+	Shader shader(fileVert, fileFrag, false, true);
 
 	//1. Load the model for 3 types of spheres
-	char path1[] = "../../objects/sphere_extremely_coarse.obj";
-	char path2[] = "../../objects/sphere_coarse.obj";
-	char path3[] = "../../objects/sphere_smooth.obj";// BULLET3
+	char sphereGeometry[] = "../../objects/sphere_smooth.obj";// BULLET3
 
-	Object sphere1(path1, glm::vec3(-4.0, 10., 0.0), 1., world.glObjects.size());
-	sphere1.makeObject(shader, true, true, false);
-	// TODO put in object ?
-	sphere1.model = glm::scale(sphere1.model, glm::vec3(sphere1.scale));
-	sphere1.model = glm::translate(sphere1.model, sphere1.position);
-    world.addSphere(&sphere1);// BULLET3
-
-
-
-	Object sphere2(path2, glm::vec3(0., 15., 0.), 1., world.glObjects.size());
-	sphere2.makeObject(shader, true, true, false);
-	sphere2.model = glm::scale(sphere2.model, glm::vec3(sphere2.scale));
-	sphere2.model = glm::translate(sphere2.model, sphere2.position);
-	world.addSphere(&sphere2);
-
-
-	Object sphere3(path3, glm::vec3(0.5, 10., 0.), 1., world.glObjects.size());	
-	sphere3.makeObject(shader, true, true, false);
-	sphere3.model = glm::scale(sphere3.model, glm::vec3(sphere3.scale));
-	sphere3.model = glm::translate(sphere3.model, sphere3.position);
-	world.addSphere(&sphere3);
+	//Object obj;
+	for (int i=0; i<1000; i++) {
+		Object* obj = new Object(sphereGeometry, glm::vec3(0., 2.+3*i, 0.), 1., world.glObjects.size());	
+		world.addSphere(obj);  // BULLET crée des bugs !
+		shader.addObject(obj);	
+	}
 
 	
 	//2. Choose a position for the light
 	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
+
 
 	double prev = 0;
 	int deltaFrame = 0;
@@ -120,25 +103,8 @@ int main(int argc, char* argv[])
 
 
 		//2. Use the shader Class to send the relevant uniform
-		shader.use();
-		shader.setMatrix4("M", sphere1.model);
-		shader.setMatrix4("V", view);
-		shader.setMatrix4("P", perspective);
-		shader.setVector3f("u_light_pos", light_pos);
-		//what other uniforms do you need to send
-		glm::mat4 itM = glm::inverseTranspose(sphere1.model);
-		shader.setMatrix4("itM", itM);
-		//don't forget to draw your objects
-		sphere1.draw();
-
-		shader.setMatrix4("M", sphere2.model);
-		shader.setMatrix4("itM", glm::inverseTranspose(sphere2.model));
-		sphere2.draw();
-
-		shader.setMatrix4("M", sphere3.model);
-		shader.setMatrix4("itM", glm::inverseTranspose(sphere3.model));
-		sphere3.draw();
-
+		shader.DrawObjects(view, perspective, light_pos);
+		
 		fps(now);
 		mainWindow.swapBuffers(); 
 		// glfwSwapBuffers(window);
