@@ -11,6 +11,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch){
     this->Pitch = pitch;
     this->updateCameraVectors();
 }
+
 glm::mat4 Camera::getViewMatrix(){
     return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 }

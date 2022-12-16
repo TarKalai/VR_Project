@@ -26,7 +26,7 @@
 
 
 Display mainWindow; 
-const GLint width = 1900, height = 850;
+const GLint width = 1920, height = 1080;
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 {
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(1900, 850); 
+	mainWindow = Display(width, height); 
 	mainWindow.Initialise(); 
 	
     PhysicalWorld world = PhysicalWorld(); // BULLET3
@@ -51,25 +51,26 @@ int main(int argc, char* argv[])
 	char path2[] = "../../objects/sphere_coarse.obj";
 	char path3[] = "../../objects/sphere_smooth.obj";// BULLET3
 
-	Object sphere1(path1, glm::vec3(-4.0, 10., 0.0), 1.);
+	Object sphere1(path1, glm::vec3(-4.0, 10., 0.0), 1., world.glObjects.size());
 	sphere1.makeObject(shader, true, true, false);
 	// TODO put in object ?
 	sphere1.model = glm::scale(sphere1.model, glm::vec3(sphere1.scale));
 	sphere1.model = glm::translate(sphere1.model, sphere1.position);
+    world.addSphere(&sphere1);// BULLET3
 
 
-	Object sphere2(path2, glm::vec3(0., 15., 0.), 1.);
+
+	Object sphere2(path2, glm::vec3(0., 15., 0.), 1., world.glObjects.size());
 	sphere2.makeObject(shader, true, true, false);
 	sphere2.model = glm::scale(sphere2.model, glm::vec3(sphere2.scale));
 	sphere2.model = glm::translate(sphere2.model, sphere2.position);
+	world.addSphere(&sphere2);
 
-	Object sphere3(path3, glm::vec3(0.5, 10., 0.), 1.);	
+
+	Object sphere3(path3, glm::vec3(0.5, 10., 0.), 1., world.glObjects.size());	
 	sphere3.makeObject(shader, true, true, false);
 	sphere3.model = glm::scale(sphere3.model, glm::vec3(sphere3.scale));
 	sphere3.model = glm::translate(sphere3.model, sphere3.position);
-    
-    world.addSphere(&sphere1);// BULLET3
-	world.addSphere(&sphere2);
 	world.addSphere(&sphere3);
 
 	
@@ -148,3 +149,4 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+

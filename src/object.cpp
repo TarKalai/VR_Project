@@ -1,9 +1,10 @@
 #include "object.h"
 
-Object::Object(const char* path, glm::vec3 p, float s){
+Object::Object(const char* path, glm::vec3 p, float s, int id){
 
-    position = p;
-    scale = s;
+    this->position = p;
+    this->scale = s;
+    this->id = id;
 
     // Read the file defined by the path argument 
     // open the .obj file into a text editor and see how the data are organized
@@ -169,4 +170,8 @@ void Object::draw(){
     glBindVertexArray(this->VAO);
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
+}
+
+void Object::print(){
+	std::cout << "object id="<< id << " (" << round(position.x) << round(position.z) << round(position.z) << ")" << std::endl;
 }

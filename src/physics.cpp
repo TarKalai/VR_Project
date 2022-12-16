@@ -1,10 +1,12 @@
 #include "physics.h"
 // #define GRAVITY -9.81f;
 const float GRAVITY = -3.81f;
-PhysicalWorld::PhysicalWorld()
-{
+const float FLOOR_LENGTH = 50.f; //x
+const float FLOOR_WIDTH = 50.f; //y
+
+PhysicalWorld::PhysicalWorld(){
     initializeEngine();
-    createGround(50., 50.);
+    createGround(FLOOR_LENGTH, FLOOR_WIDTH);
 }
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -24,8 +26,8 @@ void PhysicalWorld::initializeEngine(){
 }
 
 
-void PhysicalWorld::createGround(float width, float depth){
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(1.), btScalar(depth)));
+void PhysicalWorld::createGround(float length, float width){
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(length), btScalar(1.), btScalar(width)));
 
     collisionShapes.push_back(groundShape);
     glObjects.push_back(NULL); // Generalize (link to openGL)
@@ -84,8 +86,7 @@ void PhysicalWorld::addSphere(Object *obj){
     dynamicsWorld->addRigidBody(body);
 }
 
-void PhysicalWorld::animate()
-{
+void PhysicalWorld::animate(){
     ///-----stepsimulation_start-----
     dynamicsWorld->stepSimulation(1.f / 60.f, 10);
     //print positions of all objects

@@ -6,6 +6,8 @@
 #include "object.h"
 
 
+
+
 class PhysicalWorld
 {
 public:
@@ -22,7 +24,7 @@ public:
     PhysicalWorld();
 
     void initializeEngine();
-    void createGround(float width=50., float depth=50.);
+    void createGround(float length, float width);
     void addSphere(Object *obj);
     void animate();
     void clear();

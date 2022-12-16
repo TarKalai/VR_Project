@@ -2,17 +2,14 @@
 #include "debug.h"
 #include "process.h"
 
-Display::Display()
-{
-    width=1900; 
-    height=850; 
+Display::Display(){
+    width=1920; 
+    height=1080; 
 }
 
-Display::Display(GLint windowWidth, GLint windowHeight)
-{
+Display::Display(GLint windowWidth, GLint windowHeight){
     width = windowWidth; 
-    height = windowHeight; 
-
+    height = windowHeight;
 }
 
 int Display::Initialise()
@@ -50,8 +47,7 @@ int Display::Initialise()
 
     glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
 		printf("Failed to initialize GLAD");
 	}
 
@@ -62,20 +58,18 @@ int Display::Initialise()
 #ifndef NDEBUG
 	int flags;
 	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
-	{
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	 glDebugMessageCallback(glDebugOutput, nullptr);
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT){
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(glDebugOutput, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 #endif
     return 0;  
 }
 
-Display::~Display()
-    {
+Display::~Display(){
     glfwDestroyWindow(mainWindow);
     glfwTerminate(); 
-    }
+}
 

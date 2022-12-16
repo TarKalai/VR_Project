@@ -9,8 +9,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath){
     // ensure ifstream objects can throw exceptions:
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    try
-    {
+    
+    try {
         // open files
         vShaderFile.open(vertexPath);
         fShaderFile.open(fragmentPath);
@@ -24,9 +24,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath){
         // convert stream into string
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
-    }
-    catch (std::ifstream::failure& e)
-    {
+    } catch (std::ifstream::failure& e) {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: " << e.what() << std::endl;
     }
     const char* vShaderCode = vertexCode.c_str();
@@ -39,26 +37,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath){
 
 void Shader::use(){
     glUseProgram(ID);
-}
-
-void Shader::setInteger(const GLchar *name, GLint value){
-    glUniform1i(glGetUniformLocation(ID, name), value);
-}
-
-void Shader::setFloat(const GLchar* name, GLfloat value){
-    glUniform1f(glGetUniformLocation(ID, name), value);
-}
-
-void Shader::setVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z){
-    glUniform3f(glGetUniformLocation(ID, name), x, y, z);
-}
-
-void Shader::setVector3f(const GLchar* name, const glm::vec3& value) {
-    glUniform3f(glGetUniformLocation(ID, name), value.x, value.y, value.z);
-}
-    
-void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix) {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 GLuint Shader::compileShader(std::string shaderCode, GLenum shaderType){
@@ -102,4 +80,24 @@ GLuint Shader::compileProgram(GLuint vertexShader, GLuint fragmentShader){
         std::cout << "ERROR::PROGRAM_LINKING_ERROR:  " << infoLog << std::endl;
     }
     return programID;
+}
+
+void Shader::setInteger(const GLchar *name, GLint value){
+    glUniform1i(glGetUniformLocation(ID, name), value);
+}
+
+void Shader::setFloat(const GLchar* name, GLfloat value){
+    glUniform1f(glGetUniformLocation(ID, name), value);
+}
+
+void Shader::setVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z){
+    glUniform3f(glGetUniformLocation(ID, name), x, y, z);
+}
+
+void Shader::setVector3f(const GLchar* name, const glm::vec3& value) {
+    glUniform3f(glGetUniformLocation(ID, name), value.x, value.y, value.z);
+}
+    
+void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix) {
+    glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
