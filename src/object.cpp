@@ -1,10 +1,12 @@
 #include "object.h"
 
-Object::Object(const char* path, glm::vec3 p, float s, int id){
+Object::Object() {}
 
-    this->position = p;
-    this->scale = s;
-    this->id = id;
+Object::Object(const char* path, glm::vec3 obj_pos, float obj_scale, int identifier){
+
+    position = obj_pos;
+    scale = obj_scale;
+    id = identifier;
 
     // Read the file defined by the path argument 
     // open the .obj file into a text editor and see how the data are organized

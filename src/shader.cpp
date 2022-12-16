@@ -40,6 +40,35 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, bool texture, b
         ID = compileProgram(vertex, fragment);
 	}
 
+void Shader::use() 
+    {
+        glUseProgram(ID);
+    }
+
+void Shader::setInteger(const GLchar *name, GLint value) 
+    {
+    glUniform1i(glGetUniformLocation(ID, name), value);
+    }
+
+void Shader::setFloat(const GLchar* name, GLfloat value)
+    {
+    glUniform1f(glGetUniformLocation(ID, name), value);
+    }
+
+void Shader::setVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z) 
+    {
+    glUniform3f(glGetUniformLocation(ID, name), x, y, z);
+    }
+
+void Shader::setVector3f(const GLchar* name, const glm::vec3& value) 
+    {
+    glUniform3f(glGetUniformLocation(ID, name), value.x, value.y, value.z);
+    }
+    
+void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix) 
+    {
+    glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
+    }
 
 void Shader::addObject(Object *obj) {
     obj->MakeObject(ID, shader_texture, shader_normal);
@@ -104,24 +133,4 @@ void Shader::DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_
 		setMatrix4("itM", glm::inverseTranspose(object->model));
         object->draw();
     }
-}
-
-void Shader::setInteger(const GLchar *name, GLint value){
-    glUniform1i(glGetUniformLocation(ID, name), value);
-}
-
-void Shader::setFloat(const GLchar* name, GLfloat value){
-    glUniform1f(glGetUniformLocation(ID, name), value);
-}
-
-void Shader::setVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z){
-    glUniform3f(glGetUniformLocation(ID, name), x, y, z);
-}
-
-void Shader::setVector3f(const GLchar* name, const glm::vec3& value) {
-    glUniform3f(glGetUniformLocation(ID, name), value.x, value.y, value.z);
-}
-    
-void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix) {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 }

@@ -26,7 +26,7 @@
 
 
 Display mainWindow; 
-const GLint width = 1920, height = 1080;
+const GLint width = 1900, height = 850;
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 {
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(width, height); 
+	mainWindow = Display(1900, 850); 
 	mainWindow.Initialise(); 
 
     PhysicalWorld world = PhysicalWorld(); // BULLET3
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	char sphereGeometry[] = "../../objects/sphere_smooth.obj";// BULLET3
 
 	//Object obj;
-	for (int i=0; i<1000; i++) {
+	for (int i=0; i<100; i++) {
 		Object* obj = new Object(sphereGeometry, glm::vec3(0., 2.+3*i, 0.), 1., world.glObjects.size());	
 		world.addSphere(obj);  // BULLET crée des bugs !
 		shader.addObject(obj);	
@@ -115,4 +115,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-

@@ -6,7 +6,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <cmath>
 
 
 #include <glad/glad.h>
@@ -26,8 +25,8 @@ class Object
 public:
 	glm::vec3 position;
 	float scale;
-	int id;
 	// VAO object, VBO shader
+	int id;
 	GLuint VAO, VBO;
 
 	std::vector<glm::vec3> vt_positions;
@@ -39,8 +38,10 @@ public:
 
 	glm::mat4 model = glm::mat4(1.0);
 
-	Object(const char* path, glm::vec3 p, float s, int id);
+	Object();
 
+	Object(const char* path, glm::vec3 obj_pos, float obj_scale, int identifier);
+	
 	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
 
 	void draw();
