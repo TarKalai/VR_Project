@@ -3,18 +3,27 @@
 
 #include <glad/glad.h>
 #include<glm/gtc/type_ptr.hpp>
+#include<glm/gtc/matrix_inverse.hpp>
 
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector> 
+
+#include "object.h"
 
 class Shader
 {
 public:
 	GLuint ID;
 
-    Shader(const char* vertexPath, const char* fragmentPath); 
+    std::vector<Object*> objectList;
+    
+    bool shader_texture;
+    bool shader_normal;
+
+    Shader(const char* vertexPath, const char* fragmentPath, bool texture, bool normal); 
 
 	void use(); 
 
@@ -27,6 +36,12 @@ public:
     void setVector3f(const GLchar* name, const glm::vec3& value);
 
     void setMatrix4(const GLchar* name, const glm::mat4& matrix); 
+
+    void addObject(Object* obj);
+
+    void DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_pos);
+
+
 
 
 private:

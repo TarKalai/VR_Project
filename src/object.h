@@ -14,8 +14,6 @@
 #include <glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 
-#include "shader.h"
-
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec2 Texture;
@@ -27,6 +25,8 @@ class Object
 public:
 	glm::vec3 position;
 	float scale;
+	// VAO object, VBO shader
+	GLuint VAO, VBO;
 
 	std::vector<glm::vec3> vt_positions;
 	std::vector<glm::vec2> vt_textures;
@@ -35,14 +35,12 @@ public:
 
 	int numVertices;
 
-	GLuint VBO, VAO;
-
 	glm::mat4 model = glm::mat4(1.0);
 
-
-	Object(const char* path, glm::vec3 p, float s);
-
-	void makeObject(Shader shader, bool position, bool normal, bool texture);
+	Object();
+	Object(const char* path, glm::vec3 obj_pos, float obj_scale);
+	
+	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
 
 	void draw();
 };
