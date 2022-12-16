@@ -1,5 +1,8 @@
 #include "object.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 Object::Object() {}
 
 Object::Object(const char* path, glm::vec3 obj_pos, float obj_scale, int identifier){
@@ -112,8 +115,8 @@ Object::Object(const char* path, glm::vec3 obj_pos, float obj_scale, int identif
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 }
 
-void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal){ 
-
+void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath){ 
+    has_texture = shader_texture;
     //Create the VAO and VBO
     //Put your data into your VBO
     //Define VBO and VAO as active buffer and active vertex array
@@ -152,10 +155,34 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
     }
     
     if (shader_texture) {
+        glGenTextures(1, &texture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        //3. Define the parameters for the texture
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_set_flip_vertically_on_load(true);
+        int imWidth, imHeight, imNrChannels;
+        unsigned char* data = stbi_load(texturePath, &imWidth, &imHeight, &imNrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else {
+            std::cout << "Failed to Load texture" << std::endl;
+            const char* reason = stbi_failure_reason();
+            std::cout << reason << std::endl;
+        }
+
+	    stbi_image_free(data);
         auto att_tex = glGetAttribLocation(shaderID, "tex_coord");
         glEnableVertexAttribArray(att_tex);
         glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        
+        u_texture = glGetUniformLocation(shaderID, "imTexture");
     }
     
     if (shader_normal) {
@@ -177,6 +204,11 @@ void Object::draw(){
 
     //bind your vertex arrays and call glDrawArrays
     glBindVertexArray(this->VAO);
+    if (has_texture){
+        glUniform1i(u_texture, 0);
+        glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+    }
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
 }

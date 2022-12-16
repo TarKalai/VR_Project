@@ -20,10 +20,11 @@ public:
 
     std::vector<Object*> objectList;
     
-    bool shader_texture;
-    bool shader_normal;
+    bool shaderTexture;
+    bool shaderNormal;
+    char * texturePath;
 
-    Shader(const char* vertexPath, const char* fragmentPath, bool texture, bool normal); 
+    Shader(char* imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal); 
 
 	void use(); 
 

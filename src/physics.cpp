@@ -1,10 +1,10 @@
 #include "physics.h"
 // #define GRAVITY -9.81f;
 const float GRAVITY = -3.81f;
-PhysicalWorld::PhysicalWorld()
+PhysicalWorld::PhysicalWorld(Object *obj)
 {
     initializeEngine();
-    createGround(50., 50.);
+    createGround(obj, 50., 50.);
 }
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -24,15 +24,15 @@ void PhysicalWorld::initializeEngine(){
 }
 
 
-void PhysicalWorld::createGround(float width, float depth){
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(1.), btScalar(depth)));
+void PhysicalWorld::createGround(Object *obj, float width, float depth){
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(0.), btScalar(depth)));
 
     collisionShapes.push_back(groundShape);
-    glObjects.push_back(NULL); // Generalize (link to openGL)
+    glObjects.push_back(obj); // Generalize (link to openGL)
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0, -1, 0));
+    groundTransform.setOrigin(btVector3(0, 0, 0));
 
     btScalar mass(0.);
 
@@ -51,6 +51,7 @@ void PhysicalWorld::createGround(float width, float depth){
     //add the body to the dynamics world
     dynamicsWorld -> addRigidBody(body);
 }
+
 
 void PhysicalWorld::addSphere(Object *obj){
     //create a dynamic rigidbody

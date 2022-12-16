@@ -19,10 +19,10 @@ public:
     std::vector<Object*> glObjects;
 
     // constructor
-    PhysicalWorld();
+    PhysicalWorld(Object *obj);
 
     void initializeEngine();
-    void createGround(float width=50., float depth=50.);
+    void createGround(Object *obj, float width=50., float depth=50.);
     void addSphere(Object *obj);
     void animate();
     void clear();
