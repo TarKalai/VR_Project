@@ -1,10 +1,13 @@
 #include "object.h"
+#include "glm/ext.hpp" 
+#include "glm/gtx/string_cast.hpp"
 
 Object::Object() {}
 
-Object::Object(const char* path, glm::vec3 obj_pos, float obj_scale, int identifier){
+Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier){
 
     position = obj_pos;
+    rotation = obj_rot;
     scale = obj_scale;
     id = identifier;
 
@@ -168,9 +171,28 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
     glBindVertexArray(0);
     delete[] data;
 
+    // Example to modify the position, rotation and scale of an object(to keep in case ^^)
+    //model = glm::translate(model, position);
+    //model = glm::rotate(model, (float) 3.14/5, glm::vec3(0.0f, 0.0f, 1.f));
+    //model = glm::scale(model, glm::vec3(1,3,2));
+    //std::cout << glm::to_string(model) << std::endl;
 
-    model = glm::scale(model, glm::vec3(scale));
-    model = glm::translate(model, position);
+    setPosRot(position, rotation);
+}
+
+void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
+    position = obj_pos;
+    rotation = obj_rot;
+    float x1 = (cos(rotation.y)*cos(rotation.z)) * scale.x; 
+    float x2 = (sin(rotation.x)*sin(rotation.y)*cos(rotation.z) - cos(rotation.x)*sin(rotation.z)) * scale.y;
+    float x3 = (cos(rotation.x)*sin(rotation.y)*cos(rotation.z) + sin(rotation.x)*sin(rotation.z)) * scale.z;
+    float y1 = (cos(rotation.y)*sin(rotation.z)) * scale.x;
+    float y2 = (sin(rotation.x)*sin(rotation.y)*sin(rotation.z) + cos(rotation.x)*cos(rotation.z)) * scale.y;
+    float y3 = (cos(rotation.x)*sin(rotation.y)*sin(rotation.z) - sin(rotation.x)*cos(rotation.z)) * scale.z;
+    float z1 = (-sin(rotation.y)) * scale.x;
+    float z2 = (sin(rotation.x)*cos(rotation.y)) * scale.y;
+    float z3 = (cos(rotation.x)*cos(rotation.y)) * scale.z;
+    model = glm::mat4(x1,y1,z1,0,x2,y2,z2,0,x3,y3,z3,0,position.x,position.y,position.z,1);
 }
 
 void Object::draw(){
@@ -182,5 +204,5 @@ void Object::draw(){
 }
 
 void Object::print(){
-	std::cout << "object id="<< id << " (" << round(position.x) << round(position.z) << round(position.z) << ")" << std::endl;
+	std::cout << "object id="<< id << " (" << round(position.x) << ", " << round(position.z) << ", " << round(position.z) << ")" << std::endl;
 }

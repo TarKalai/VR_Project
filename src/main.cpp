@@ -1,5 +1,5 @@
 #include<iostream>
-
+#include<cstdlib>
 
 
 //include glad before GLFW to avoid header conflict or define "#define GLFW_INCLUDE_NONE"
@@ -26,34 +26,57 @@
 
 
 Display mainWindow; 
-const GLint width = 1900, height = 850;
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
 
-Camera camera(glm::vec3(-2.0, 7.0, -15.0), glm::vec3(0.0, 1.0, 0.0), 90.0);
+Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
+
+float getRandom(float from=-4, float to=4) {
+	int mod = (to - from)*100;
+	return float(rand()%mod + 100*from)/100;
+}
 
 
 int main(int argc, char* argv[])
 {
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(1900, 850); 
+	mainWindow = Display(); 
 	mainWindow.Initialise(); 
 
     PhysicalWorld world = PhysicalWorld(); // BULLET3
 	Shader shader(fileVert, fileFrag, false, true);
 
-	//1. Load the model for 3 types of spheres
-	char sphereGeometry[] = "../../objects/sphere_smooth.obj";// BULLET3
+	char sphereGeometry[] = "../../objects/sphere.obj";
+	char cubeGeometry[] = "../../objects/cube.obj";
 
-	//Object obj;
-	for (int i=0; i<100; i++) {
-		Object* obj = new Object(sphereGeometry, glm::vec3(0., 2.+3*i, 0.), 1., world.glObjects.size());	
-		world.addSphere(obj);  // BULLET crée des bugs !
-		shader.addObject(obj);	
+	Object sphere;
+	for (int i=0; i<40; i++) {
+		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
+		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
+		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
+		Object* sphere = new Object(sphereGeometry, pos, rot, scale, world.glObjects.size());	
+		world.addSphere(sphere);  
+		shader.addObject(sphere);
 	}
+	Object cube;
+	for (int i=0; i<10; i++) {
+		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
+		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
+		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
+		Object* cube = new Object(cubeGeometry, pos, rot, scale, world.glObjects.size());	
+		world.addCube(cube);  
+		shader.addObject(cube);
+	}
+
+	// Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
+	// world.addSphere(&sphere);  
+	// shader.addObject(&sphere);
+	// Object cube = Object(cubeGeometry, glm::vec3(-3.5, 4, 0.), glm::vec3(0., 0, 0), glm::vec3(1., 2, 5), world.glObjects.size());	
+	// world.addCube(&cube);
+	// shader.addObject(&cube);
 
 	
 	//2. Choose a position for the light
@@ -85,7 +108,7 @@ int main(int argc, char* argv[])
 	glfwSwapInterval(1);
 	Process process = Process();
 
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
 	// while (!glfwWindowShouldClose(window)) {
 	while (!mainWindow.getShouldClose()){

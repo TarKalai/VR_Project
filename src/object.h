@@ -24,7 +24,8 @@ class Object
 {
 public:
 	glm::vec3 position;
-	float scale;
+	glm::vec3 rotation;
+	glm::vec3 scale;
 	// VAO object, VBO shader
 	int id;
 	GLuint VAO, VBO;
@@ -39,10 +40,12 @@ public:
 	glm::mat4 model = glm::mat4(1.0);
 
 	Object();
-
-	Object(const char* path, glm::vec3 obj_pos, float obj_scale, int identifier);
+	
+	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier);
 	
 	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
+
+	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 
 	void draw();
 

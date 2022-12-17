@@ -1,10 +1,18 @@
 #include "physics.h"
+#include <math.h>
+#include "glm/ext.hpp" 
+#include "glm/gtx/string_cast.hpp"
 // #define GRAVITY -9.81f;
-const float GRAVITY = -3.81f;
+#define PI 3.141592653589793238462643383279502884197169399375105820974944
+const float GRAVITY = -9.81f;
+const float FLOOR_LENGTH = 50.0f; 
+const float FLOOR_WIDTH = 50.0f;
+
 PhysicalWorld::PhysicalWorld()
 {
     initializeEngine();
-    createGround(50., 50.);
+    
+    createGround(FLOOR_LENGTH, FLOOR_WIDTH);
 }
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -24,8 +32,8 @@ void PhysicalWorld::initializeEngine(){
 }
 
 
-void PhysicalWorld::createGround(float width, float depth){
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(1.), btScalar(depth)));
+void PhysicalWorld::createGround(float length, float width){
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(length), btScalar(1.), btScalar(width)));
 
     collisionShapes.push_back(groundShape);
     glObjects.push_back(NULL); // Generalize (link to openGL)
@@ -54,9 +62,22 @@ void PhysicalWorld::createGround(float width, float depth){
 
 void PhysicalWorld::addSphere(Object *obj){
     //create a dynamic rigidbody
+    if (obj->scale.x!=obj->scale.y || obj->scale.y!=obj->scale.z) { // Check if it's a sphere
+        std::cout << "The sphere has not spherical dimensions !" << std::endl;
+        exit(-1);
+    }
+    btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale.x));
+    addObject(obj, colShape);
+}
 
-    //btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-    btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale));
+void PhysicalWorld::addCube(Object *obj){
+    //create a dynamic rigidbody
+    btCollisionShape* colShape = new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
+    addObject(obj, colShape);
+}
+
+void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape){
+    //btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale));
     collisionShapes.push_back(colShape);
     glObjects.push_back(obj);
 
@@ -74,7 +95,17 @@ void PhysicalWorld::addSphere(Object *obj){
         colShape->calculateLocalInertia(mass, localInertia);
 
 
-    startTransform.setOrigin(btVector3(obj->position.x, obj->position.y, obj->position.z)); // Position
+    startTransform.setOrigin(btVector3(obj->position.x, obj->position.y, obj->position.z)); // Initial Position
+    
+    // Initial Rotation with quaternion
+    float roll = obj->rotation.x; // roll = x-axis rotation
+    float pitch = obj->rotation.y; // pitch = y-axis rotation
+    float yaw = obj->rotation.z; // yaw = z-axis rotation
+    float qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
+    float qy = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
+    float qz = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
+    float qw = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
+    startTransform.setRotation(btQuaternion(qx,qy,qz,qw)); 
 
     //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
     btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
@@ -82,13 +113,12 @@ void PhysicalWorld::addSphere(Object *obj){
     btRigidBody* body = new btRigidBody(rbInfo);
 
     dynamicsWorld->addRigidBody(body);
-    //std::cout << "NBR SPHERES " << glObjects.size() << " pos " << obj->position.x << ", " << obj->position.y << ", " << obj->position.z << "scale " << obj->scale << std::endl;
 }
 
 void PhysicalWorld::animate()
 {
     ///-----stepsimulation_start-----
-    dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+    dynamicsWorld->stepSimulation(1.f / 60.f, 1);
     //print positions of all objects
     for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--) // go through all the objects
     {
@@ -106,13 +136,10 @@ void PhysicalWorld::animate()
 
         Object* glObj = glObjects[j];
         if (glObj != NULL) {
-
-            glObj->model = glm::translate(glObj->model, glm::vec3(
-            (float(trans.getOrigin().getX()) - glObj->position.x),
-            (float(trans.getOrigin().getY()) - glObj->position.y), 
-            (float(trans.getOrigin().getZ()) - glObj->position.z))/glObj->scale);
-
-            glObj->position = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+            btScalar roll, pitch, yaw;
+            trans.getRotation().getEulerZYX(yaw,pitch,roll);
+            glm::vec3 translation = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+            glObj->setPosRot(translation, glm::vec3(roll, pitch, yaw));
         }
     }
 }

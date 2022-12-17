@@ -32,7 +32,8 @@ int Display::Initialise()
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     #endif
 
-	mainWindow = glfwCreateWindow(width, height, "Project", glfwGetPrimaryMonitor(), NULL);
+	//mainWindow = glfwCreateWindow(width, height, "Project", glfwGetPrimaryMonitor(), NULL); # Fullscreen
+	mainWindow = glfwCreateWindow(width, height, "Project", NULL, NULL);
 
     if(!mainWindow){
         printf("The window was not created.");
