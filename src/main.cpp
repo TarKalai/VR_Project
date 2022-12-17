@@ -11,9 +11,6 @@
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtc/matrix_inverse.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 
 #include "camera.h"
 #include "shader.h"
@@ -29,6 +26,10 @@ Display mainWindow;
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
+char groundVertex[128] = "../../src/Shaders/vertGround.txt";
+char groundFrag[128] = "../../src/Shaders/fragGround.txt";
+char groundImage[128] = "../../image/container.jpg";
+
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -38,19 +39,22 @@ float getRandom(float from=-4, float to=4) {
 	return float(rand()%mod + 100*from)/100;
 }
 
-
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
 	mainWindow = Display(); 
 	mainWindow.Initialise(); 
 
-    PhysicalWorld world = PhysicalWorld(); // BULLET3
-	Shader shader(fileVert, fileFrag, false, true);
+	Shader shader(NULL, fileVert, fileFrag, false, true);
+	Shader groundShader(groundImage, groundVertex, groundFrag, true, false);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
+	char groundGeometry[] = "../../objects/ground.obj";
+
+	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(1.), 0);
+    PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
+	groundShader.addObject(&ground_obj);
 
 	Object sphere;
 	for (int i=0; i<40; i++) {
@@ -78,7 +82,6 @@ int main(int argc, char* argv[])
 	// world.addCube(&cube);
 	// shader.addObject(&cube);
 
-	
 	//2. Choose a position for the light
 	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
 
@@ -127,6 +130,7 @@ int main(int argc, char* argv[])
 
 		//2. Use the shader Class to send the relevant uniform
 		shader.DrawObjects(view, perspective, light_pos);
+		groundShader.DrawObjects(view, perspective, light_pos);
 		
 		fps(now);
 		mainWindow.swapBuffers(); 

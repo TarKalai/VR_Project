@@ -30,6 +30,10 @@ public:
 	int id;
 	GLuint VAO, VBO;
 
+	bool has_texture;
+	GLuint u_texture;
+	GLuint texture;
+
 	std::vector<glm::vec3> vt_positions;
 	std::vector<glm::vec2> vt_textures;
 	std::vector<glm::vec3> vt_normals;
@@ -43,7 +47,7 @@ public:
 	
 	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier);
 	
-	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
+	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath);
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 

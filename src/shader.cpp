@@ -1,9 +1,10 @@
 #include "shader.h"
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
+Shader::Shader(char *imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
 	{   
-        shader_texture = texture;
-        shader_normal = normal;
+        texturePath = imagePath;
+        shaderTexture = texture;
+        shaderNormal = normal;
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
         std::string fragmentCode;
@@ -71,7 +72,7 @@ void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix)
     }
 
 void Shader::addObject(Object *obj) {
-    obj->MakeObject(ID, shader_texture, shader_normal);
+    obj->MakeObject(ID, shaderTexture, shaderNormal, texturePath);
     objectList.push_back(obj);
 }
 
