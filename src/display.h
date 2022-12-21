@@ -20,6 +20,8 @@ public:
     GLFWwindow* getWindow(){return mainWindow;}
 
     ~Display(); 
+    bool firstmouse; 
+
 
 
 
@@ -28,6 +30,7 @@ private:
     GLFWwindow *mainWindow; 
     GLint width, height; 
     GLint bufferWidth, bufferHeight; 
+    
 
 
 };

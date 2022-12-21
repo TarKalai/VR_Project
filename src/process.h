@@ -13,6 +13,7 @@ class Process{
 public: 
     Process(); 
     void processInput(GLFWwindow* window, Camera &camera); 
+    void HandleMouse(GLFWwindow* window, Camera &camera); 
 
     ~Process(); 
 private: 

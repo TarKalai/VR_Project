@@ -1,6 +1,7 @@
 #include "process.h"
 #include "camera.h"
 #include "string.h"
+#include "display.h"
 
 
 
@@ -26,23 +27,30 @@ void Process::processInput(GLFWwindow* window, Camera &camera) {
 		camera.processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		camera.processKeyboardMovement(DOWN, 0.1);
+	
+	HandleMouse(window, camera); 
 
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos); 
-		if (camera.firstmouse){
-			camera.lastX = xpos + camera.Yaw*10;
-			camera.lastY = -ypos + camera.Pitch*10;
-			camera.firstmouse = false;
-		}
+	
+}
 
-		float xoffset = xpos - camera.lastX;
-		float yoffset = -ypos - camera.lastY; 
-		if (xoffset || yoffset)
-			camera.processMouseMovement(xoffset, yoffset, 1);
+void Process::HandleMouse(GLFWwindow* window, Camera &camera){
+
+	double xpos, ypos, xpos_i, ypos_i;
+	glfwGetCursorPos(window, &xpos, &ypos); 
+	if (camera.firstmouse){
+		camera.lastX = xpos + camera.Yaw*10;
+		camera.lastY = -ypos + camera.Pitch*10;
+		camera.firstmouse = false;
 	}
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+
+	float xoffset = xpos - camera.lastX;
+	float yoffset = -ypos - camera.lastY; 
+	if (xoffset || yoffset)
+		camera.processMouseMovement(xoffset, yoffset, 1);
+	glfwGetCursorPos(window, &xpos_i, &ypos_i); 
+	if (xpos_i - xpos != 0 | ypos_i - ypos !=0 )
 		camera.firstmouse = true;
+
 }
 
 Process::~Process(){}

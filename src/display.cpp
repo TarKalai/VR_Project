@@ -3,8 +3,10 @@
 #include "process.h"
 
 Display::Display(){
-    width=1920; 
-    height=1080; 
+    // width=1920; 
+    // height=1080;
+    width=700; 
+    height=700; 
 }
 
 Display::Display(GLint windowWidth, GLint windowHeight){
