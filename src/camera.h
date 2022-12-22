@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <cstdio>
 
 #include <glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
@@ -30,7 +31,7 @@ public:
     static float PITCH; //= 0.0f;
     const float SPEED = 2.5f;
     const float SENSITIVITY = 0.1f;
-    const float ZOOM = 45.0f;
+    float ZOOM = 45.0f;
    
     // camera Attributes
     glm::vec3 Position;
@@ -68,10 +69,17 @@ public:
     /* The motivated students can implement rotation using the mouse rather than the keyboard
         * You can draw inspiration from the ProcessKeyboardMovement function
     */
+
+//    vois ScrollHandler(GLFWwindow * window); 
+
     void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
+
+    void ProcessMouseScroll(float yoffset);
         
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-    void processMouseScroll(float yoffset);
+    void static ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset);
+
+    void CreateCallBacks(GLFWwindow* window, double xoffset, double yoffset); 
 
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles

@@ -1,10 +1,12 @@
 #include "camera.h"
 
+
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch){
     this->Front = glm::vec3(0.0f, 0.0f, -1.0f); 
     this->MovementSpeed = SPEED; 
     this->MouseSensitivity = SENSITIVITY; 
     this->Zoom = ZOOM; 
+    // printf("I AM IN THE CONSTRUCTOR: %f, %f ", Zoom, ZOOM); 
     this->Position = position; 
     this->WorldUp = up;
     this->Yaw = yaw;
@@ -55,16 +57,38 @@ void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constr
             this->Pitch = 89.0f;
         if (this->Pitch < -89.0f)
             this->Pitch = -89.0f;
-    }
+    }   
     updateCameraVectors();
 }
 
-void Camera::processMouseScroll(float yoffset){
-    Zoom -= (float)yoffset;
-    if (Zoom < 1.0f)
-        Zoom = 1.0f;
-    if (Zoom > 45.0f)
-        Zoom = 45.0f;
+// void Camera::ProcessMouseScroll(float yoffset){
+//     ZOOM -= (float)yoffset;
+//     if (ZOOM < 1.0f)
+//         ZOOM = 1.0f;
+//     if (ZOOM > 45.0f)
+//         ZOOM = 45.0f;
+// }
+
+// void Camera::ScrollHandler(GLFWwindow * window){
+//     glfwGetWindowUserPointer(window, reinterpret_cast<Camera *>(this));
+
+// }
+
+void Camera::ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset){
+
+
+    Camera *camera = reinterpret_cast<Camera*>(glfwGetWindowUserPointer(window)); 
+
+    if (camera)
+        camera->ZOOM -= (float)yoffset;
+        if (camera->ZOOM < 1.0f)
+            camera->ZOOM = 1.0f;
+        if (camera->ZOOM > 45.0f)
+            camera->ZOOM = 45.0f;
+}
+
+void Camera::CreateCallBacks(GLFWwindow* window, double xoffset, double yoffset){
+    glfwSetScrollCallback(window, ScrollCallBack); 
 }
 
 void Camera::updateCameraVectors(){

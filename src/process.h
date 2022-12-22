@@ -14,7 +14,7 @@ public:
     Process(); 
     void processInput(GLFWwindow* window, Camera &camera); 
     void HandleMouse(GLFWwindow* window, Camera &camera); 
-
+    void processMouseScroll(float yoffset, Camera &camera); 
     ~Process(); 
 private: 
 }; 

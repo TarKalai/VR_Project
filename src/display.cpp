@@ -2,6 +2,14 @@
 #include "debug.h"
 #include "process.h"
 
+#include "camera.h"
+
+
+
+
+float fov = 45; 
+
+
 Display::Display(){
     // width=1920; 
     // height=1080;
@@ -45,7 +53,10 @@ int Display::Initialise()
 
     glfwMakeContextCurrent(mainWindow);  // Everything that will be done will bejoined to this window
 
-	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// so that the cursor does not appear on the screen. 
+    glfwSetFramebufferSizeCallback(mainWindow, framebuffer_size_callback);
+    // glfwSetScrollCallback(mainWindow, scroll_callback);
+
+	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// GLFW_CURSOR_DISABLED so that the cursor does not appear on the screen. 
 
 
     glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
@@ -69,6 +80,21 @@ int Display::Initialise()
 	}
 #endif
     return 0;  
+}
+
+void Display::framebuffer_size_callback(GLFWwindow* window, int width, int height){
+    // make sure the viewport matches the new window dimensions;
+    glViewport(0, 0, width, height);
+}
+
+void Display::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    if (fov >= 1.0f && fov <= 45.0f)
+        fov -= yoffset;
+    if (fov <= 1.0f)
+        fov = 1.0f;
+    if (fov >= 45.0f)
+        fov = 45.0f;
 }
 
 Display::~Display(){

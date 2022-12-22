@@ -30,6 +30,7 @@ void Process::processInput(GLFWwindow* window, Camera &camera) {
 	
 	HandleMouse(window, camera); 
 
+
 	
 }
 
@@ -50,7 +51,31 @@ void Process::HandleMouse(GLFWwindow* window, Camera &camera){
 	glfwGetCursorPos(window, &xpos_i, &ypos_i); 
 	if (xpos_i - xpos != 0 | ypos_i - ypos !=0 )
 		camera.firstmouse = true;
+	
+	// processMouseScroll(yoffset, camera); 
+	// camera.processMouseScroll(yoffset); 
+	camera.CreateCallBacks(window, xoffset, yoffset); 
 
+	
+	// if (glfwGetMouseButton(window, 1) == GLFW_PRESS){
+	// 	// printf("I GOT PRESSED %f, %f", camera.ZOOM, yoffset); 
+	// 	if (camera.ZOOM >= 1.0f && camera.ZOOM <= 45.0f)
+    //     	camera.ZOOM -= yoffset;
+	// 	if (camera.ZOOM < 1.0f)
+	// 		camera.ZOOM = 1.0f;
+	// 	if (camera.ZOOM > 45.0f)
+	// 		camera.ZOOM = 45.0f;
+	// }
+	// camera.processMouseScroll(yoffset); 
 }
+
+// void Process::processMouseScroll(float yoffset, Camera &camera){
+// 	// if (camera.ZOOM < 45.0f && camera.ZOOM > 1.0f)
+//     camera.ZOOM -= (float)yoffset*0.00001;
+//     if (camera.ZOOM <= 1.0f)
+//         camera.ZOOM = 1.0f;
+//     if (camera.ZOOM >= 45.0f)
+//         camera.ZOOM = 45.0f;
+// }
 
 Process::~Process(){}

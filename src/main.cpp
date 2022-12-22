@@ -102,25 +102,30 @@ int main(int argc, char* argv[]){
 
 
 
-	glm::mat4 view = camera.getViewMatrix();
-	// glm::mat4 perspective = camera.getProjectionMatrix(45.0, (GLfloat)width/(GLfloat)height, 0.01, 100.0);
-	glm::mat4 perspective = camera.getProjectionMatrix(45.0, mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
+	// glm::mat4 view = camera.getViewMatrix();
+	// // printf("camera value: %f", camera.ZOOM); 
+	// glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
+
 
 
 	//Rendering
 	glfwSwapInterval(1);
 	Process process = Process();
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
-	// while (!glfwWindowShouldClose(window)) {
+    glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
+
+
 	while (!mainWindow.getShouldClose()){
 
 		// BULLET3
 		world.animate();
 
 		process.processInput(mainWindow.getWindow(), camera);
-		// processInput(window);
+		glm::mat4 view = camera.getViewMatrix();
+		printf("camera value: %f", camera.ZOOM); 
+		glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 		view = camera.getViewMatrix();
 		glfwPollEvents();
 		double now = glfwGetTime();
@@ -134,7 +139,6 @@ int main(int argc, char* argv[]){
 		
 		fps(now);
 		mainWindow.swapBuffers(); 
-		// glfwSwapBuffers(window);
 	}
 
 	// BULLET3
