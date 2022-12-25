@@ -1,8 +1,13 @@
 #version 330 core
+
 in vec2 v_tex;
+
 out vec4 groundColor;
+
 precision mediump float;
+
 uniform sampler2D imTexture;
+
 void main() {
-groundColor = texture(imTexture, v_tex);
+    groundColor = texture(imTexture, v_tex);
 }

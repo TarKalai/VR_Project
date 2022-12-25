@@ -2,10 +2,15 @@
 #include "glm/ext.hpp" 
 #include "glm/gtx/string_cast.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
-Object::Object() {}
+
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "stb_image.h"
+
+Object::Object() {
+    
+
+}
 
 Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier){
 
@@ -230,8 +235,16 @@ void Object::draw(){
         glUniform1i(u_texture, 0);
         glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
+    // for(unsigned strip = 0; strip < numStrips; strip++){
+    //     glDrawElements(GL_TRIANGLE_STRIP,   // primitive type
+    //     numTrisPerStrip+2,   // number of indices to render
+    //     GL_UNSIGNED_INT,     // index data type
+    //     (void*)(sizeof(unsigned) * (numTrisPerStrip+2) * strip)); // offset to starting index
+    // }
     }
+    // else{
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    // }
 
 }
 

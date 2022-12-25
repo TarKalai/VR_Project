@@ -7,7 +7,7 @@ const float GRAVITY = -3.81f;
 PhysicalWorld::PhysicalWorld(Object *obj)
 {
     initializeEngine();
-    createGround(obj, 50., 50.);
+    createGround(obj, 100., 100.);
 }
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL

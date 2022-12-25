@@ -14,6 +14,9 @@
 #include <glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 
+#include "stb_image.h"
+
+
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec2 Texture;
@@ -39,7 +42,20 @@ public:
 	std::vector<glm::vec3> vt_normals;
 	std::vector<Vertex> vertices;
 
+	int width, height, nrChannels;
+
+
+    unsigned char *data = stbi_load("../../image/iceland_heightmap.png", &width, &height, &nrChannels, 0); 
+	//  = stbi_load("../../image/iceland_heightmap.png", &width, &height, &nrChannels, 0);
+	// can be done in .cpp // create constructor for the floor ? 
+
+
 	int numVertices;
+
+    int rez = 1;
+
+	const int numStrips = (height-1)/rez;
+    const int numTrisPerStrip = (width/rez)*2-2;
 
 	glm::mat4 model = glm::mat4(1.0);
 
