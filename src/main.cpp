@@ -213,7 +213,7 @@ int main(int argc, char* argv[]){
 	glfwSwapInterval(1);
 	Process process = Process();
 
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
@@ -240,9 +240,9 @@ int main(int argc, char* argv[]){
 		shader.DrawObjects(view, perspective, light_pos);
 		groundShader.DrawObjects(view, perspective, light_pos); // Create DrawGround ? 
 		terrainShader.use(); 
-		terrainShader.setMatrix4("V",view);
-        terrainShader.setMatrix4("P", perspective);
-        terrainShader.setMatrix4("M", object.model);
+		terrainShader.setMatrix4("view",view);
+        terrainShader.setMatrix4("projection", perspective);
+        terrainShader.setMatrix4("model", object.model);
 
 
 		glBindVertexArray(terrainVAO);
