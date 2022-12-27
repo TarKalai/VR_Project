@@ -83,8 +83,7 @@ int main(int argc, char* argv[]){
 	// shader.addObject(&cube);
 
 	//2. Choose a position for the light
-	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
-
+	const glm::vec3 light_pos = glm::vec3(0.0, 2.0, 0.0);
 
 	double prev = 0;
 	int deltaFrame = 0;
@@ -108,14 +107,31 @@ int main(int argc, char* argv[]){
 
 
 
+
+	float ambient = 0.1;
+	float diffuse = 0.5;
+	float specular = 0.8;
+
+	glm::vec3 materialColor = glm::vec3(0.5f,0.6,0.8);
+
+	shader.use(); 
+	shader.setFloat("shininess", 32.0f);
+	shader.setVector3f("materialColour", materialColor);
+	shader.setFloat("light.ambient_strength", ambient);
+	shader.setFloat("light.diffuse_strength", diffuse);
+	shader.setFloat("light.specular_strength", specular);
+	shader.setFloat("light.constant", 1.0);
+	shader.setFloat("light.linear", 0.14);
+	shader.setFloat("light.quadratic", 0.07);
+
+
 	//Rendering
 	glfwSwapInterval(1);
 	Process process = Process();
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
-
 
 	while (!mainWindow.getShouldClose()){
 
@@ -124,7 +140,7 @@ int main(int argc, char* argv[]){
 
 		process.processInput(mainWindow.getWindow(), camera);
 		glm::mat4 view = camera.getViewMatrix();
-		printf("camera value: %f", camera.ZOOM); 
+		// printf("camera value: %f", camera.ZOOM); 
 		glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 		view = camera.getViewMatrix();
 		glfwPollEvents();
@@ -134,8 +150,8 @@ int main(int argc, char* argv[]){
 
 
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, perspective, light_pos);
-		groundShader.DrawObjects(view, perspective, light_pos);
+		shader.DrawObjects(view, perspective, light_pos, camera.Position);
+		groundShader.DrawObjects(view, perspective, light_pos, camera.Position);
 		
 		fps(now);
 		mainWindow.swapBuffers(); 

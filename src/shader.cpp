@@ -122,11 +122,15 @@ GLuint Shader::compileProgram(GLuint vertexShader, GLuint fragmentShader)
         return programID;
     }
 
-void Shader::DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_pos) {
+void Shader::DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_pos, glm::vec3 camera_position) {
     use();
+    double now = glfwGetTime();
     setMatrix4("V", view);
     setMatrix4("P", perspective);
-    setVector3f("u_light_pos", light_pos);
+    setVector3f("u_view_pos", camera_position);
+    auto delta = light_pos + glm::vec3(0.0,0.0,2 * std::sin(now));
+		//std::cout << delta.z <<std::endl;
+	setVector3f("light.light_pos", delta);
     int i = 0;
     for(Object* object : objectList) {
         i += 1;
