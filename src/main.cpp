@@ -30,7 +30,6 @@ char groundVertex[128] = "../../src/Shaders/vertGround.txt";
 char groundFrag[128] = "../../src/Shaders/fragGround.txt";
 char groundImage[128] = "../../image/container.jpg";
 
-
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
 
@@ -83,7 +82,7 @@ int main(int argc, char* argv[]){
 	// shader.addObject(&cube);
 
 	//2. Choose a position for the light
-	const glm::vec3 light_pos = glm::vec3(0.0, 2.0, 0.0);
+	const glm::vec3 light_pos = glm::vec3(0.0, 3.0, 0.0); //0.0, 15.0, -25.0
 
 	double prev = 0;
 	int deltaFrame = 0;
@@ -108,14 +107,14 @@ int main(int argc, char* argv[]){
 
 
 
-	float ambient = 0.1;
-	float diffuse = 0.5;
-	float specular = 0.8;
+	float ambient = 1.0;
+	float diffuse = 0.0; //0.5;
+	float specular = 0.0; //0.8;
 
 	glm::vec3 materialColor = glm::vec3(0.5f,0.6,0.8);
 
 	shader.use(); 
-	shader.setFloat("shininess", 32.0f);
+	shader.setFloat("shininess", 2.0f);
 	shader.setVector3f("materialColour", materialColor);
 	shader.setFloat("light.ambient_strength", ambient);
 	shader.setFloat("light.diffuse_strength", diffuse);
@@ -135,12 +134,12 @@ int main(int argc, char* argv[]){
 
 	while (!mainWindow.getShouldClose()){
 
+
 		// BULLET3
 		world.animate();
 
 		process.processInput(mainWindow.getWindow(), camera);
 		glm::mat4 view = camera.getViewMatrix();
-		// printf("camera value: %f", camera.ZOOM); 
 		glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 		view = camera.getViewMatrix();
 		glfwPollEvents();

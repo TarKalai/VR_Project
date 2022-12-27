@@ -68,7 +68,7 @@ int Display::Initialise()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE); // If the objects are behind the camera then they will not be rendered => Makes everything go faster. 
     // This may cause a bug with the Normals, if a bug is observed (holes in objects) disabling this line may solve it. 
-
+    glEnable(GL_FRAGMENT_COLOR_MATERIAL_FACE_SGIX);
     glViewport(0, 0, bufferWidth, bufferHeight);
 
 #ifndef NDEBUG
