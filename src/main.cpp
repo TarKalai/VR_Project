@@ -82,7 +82,6 @@ int main(int argc, char* argv[]){
 	// shader.addObject(&cube);
 
 	//2. Choose a position for the light
-	const glm::vec3 light_pos = glm::vec3(0.0, 3.0, 0.0); //0.0, 15.0, -25.0
 
 	double prev = 0;
 	int deltaFrame = 0;
@@ -98,6 +97,7 @@ int main(int argc, char* argv[]){
 		}
 	};
 
+	glm::vec3 light_pos = glm::vec3(0.0, 15.0, -25.0); //0.0, 15.0, -25.0
 
 
 	// glm::mat4 view = camera.getViewMatrix();
@@ -108,14 +108,14 @@ int main(int argc, char* argv[]){
 
 
 	float ambient = 1.0;
-	float diffuse = 0.0; //0.5;
-	float specular = 0.0; //0.8;
+	float diffuse = 0.5; //0.5;
+	float specular = 0.8; //0.8;
 
 	glm::vec3 materialColor = glm::vec3(0.5f,0.6,0.8);
 
 	shader.use(); 
-	shader.setFloat("shininess", 2.0f);
-	shader.setVector3f("materialColour", materialColor);
+	shader.setFloat("shininess", 32.0f);
+	shader.setVector3f("materialColor", materialColor);
 	shader.setFloat("light.ambient_strength", ambient);
 	shader.setFloat("light.diffuse_strength", diffuse);
 	shader.setFloat("light.specular_strength", specular);
@@ -144,13 +144,21 @@ int main(int argc, char* argv[]){
 		view = camera.getViewMatrix();
 		glfwPollEvents();
 		double now = glfwGetTime();
+		
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	
 
+
+		// glColorMaterial(GL_FRONT, GL_DIFFUSE); 
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, perspective, light_pos, camera.Position);
-		groundShader.DrawObjects(view, perspective, light_pos, camera.Position);
+		shader.DrawObjects(view, perspective, camera.Position);
+		groundShader.DrawObjects(view, perspective, camera.Position);
+		// glDisable(GL_COLOR_MATERIAL);
+	 	// auto delta = light_pos + glm::vec3(0.0,0.0,2 * std::sin(now));
+		// std::cout << delta.z <<std::endl;
+		// shader.setVector3f("light.light_pos", delta);
 		
 		fps(now);
 		mainWindow.swapBuffers(); 
