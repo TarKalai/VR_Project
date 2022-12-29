@@ -47,5 +47,6 @@ void main() {
     float attenuation = 1/(light.constant + light.linear*distance + light.quadratic*distance*distance); 
     float light = light.ambient_strength + attenuation*(diffuse + specular); 
 
-    FragColor = vec4(materialColor*vec3(light)*vertexColor.xyz, 1.0);
+    //FragColor = vec4(materialColor*vec3(light)*vertexColor.xyz, 1.0);
+    FragColor = vec4(materialColor*vec3(light), 1.0);
 }

@@ -19,6 +19,5 @@ void main(){
     v_frag_coord = frag_coord.xyz; 
 
     vertexColor = vec4(clamp(position, 0.0, 1.0), 1.0);
-    
-    //vec3 v_normal = vec3(itM * vec4(normal, 1.0));
+
 }
