@@ -43,7 +43,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constr
     float PitchRot = 0;
 
     if (xoffset)
-        YawRot -= xoffset*.1;
+        YawRot += xoffset*.1;
     if (yoffset)
         PitchRot -= yoffset*.1;
 

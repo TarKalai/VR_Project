@@ -9,21 +9,25 @@
 
 float fov = 45; 
 
-
 Display::Display(){
-    // width=1920; 
-    // height=1080;
+    cursor_disabled = false;
     width=700; 
     height=700; 
 }
 
-Display::Display(GLint windowWidth, GLint windowHeight){
+Display::Display(bool cursor){
+    cursor_disabled = cursor;
+    width=700; 
+    height=700; 
+}
+
+Display::Display(GLint windowWidth, GLint windowHeight, bool cursor){
+    cursor_disabled = cursor;
     width = windowWidth; 
     height = windowHeight;
 }
 
-int Display::Initialise()
-{
+int Display::Initialise(){
     // Initialise Glfw
     if(!glfwInit()){
         printf("The inititialisation of glfw failed.");
@@ -55,8 +59,9 @@ int Display::Initialise()
 
     glfwSetFramebufferSizeCallback(mainWindow, framebuffer_size_callback);
     // glfwSetScrollCallback(mainWindow, scroll_callback);
-
-	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// GLFW_CURSOR_DISABLED so that the cursor does not appear on the screen. 
+    
+    if (cursor_disabled)
+	    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// GLFW_CURSOR_DISABLED so that the cursor does not appear on the screen. 
 
 
     glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
@@ -89,8 +94,7 @@ void Display::framebuffer_size_callback(GLFWwindow* window, int width, int heigh
     glViewport(0, 0, width, height);
 }
 
-void Display::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
+void Display::scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
     if (fov >= 1.0f && fov <= 45.0f)
         fov -= yoffset;
     if (fov <= 1.0f)

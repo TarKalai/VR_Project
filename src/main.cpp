@@ -42,7 +42,7 @@ float getRandom(float from=-4, float to=4) {
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(); 
+	mainWindow = Display(true); 
 	mainWindow.Initialise(); 
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
@@ -116,6 +116,7 @@ int main(int argc, char* argv[]){
 
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
+	process.initMousePosition(mainWindow.getWindow(), camera, mainWindow.getCursorDisabled());
 
 	while (!mainWindow.getShouldClose()){
 
@@ -124,7 +125,6 @@ int main(int argc, char* argv[]){
 
 		process.processInput(mainWindow.getWindow(), camera);
 		glm::mat4 view = camera.getViewMatrix();
-		printf("camera value: %f", camera.ZOOM); 
 		glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 		view = camera.getViewMatrix();
 		glfwPollEvents();

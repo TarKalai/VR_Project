@@ -48,7 +48,6 @@ public:
     float Zoom;
 
     // mouse movement
-    bool firstmouse = true;
     float lastX;
     float lastY;
 

@@ -7,10 +7,16 @@
 
 class Display{
 public: 
-    Display(); 
-    Display(GLint windowWidth, GLint windowHeight); 
+
+    Display();
+    Display(bool cursor); 
+    Display(GLint windowWidth, GLint windowHeight, bool cursor); 
 
     int Initialise(); 
+
+    
+    void static framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    void static scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
     GLfloat getBufferWidth(){return bufferWidth;}
     GLfloat getBufferHeight(){return bufferHeight;}
@@ -19,13 +25,9 @@ public:
     void swapBuffers(){glfwSwapBuffers(mainWindow);}
 
     GLFWwindow* getWindow(){return mainWindow;}
-    void static framebuffer_size_callback(GLFWwindow* window, int width, int height);
-    void static scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
+    bool getCursorDisabled(){return cursor_disabled;}
+    
     ~Display(); 
-    bool firstmouse; 
-
-
 
 
 private: 
@@ -33,6 +35,7 @@ private:
     GLFWwindow *mainWindow; 
     GLint width, height; 
     GLint bufferWidth, bufferHeight; 
+    bool cursor_disabled;
     
 
 

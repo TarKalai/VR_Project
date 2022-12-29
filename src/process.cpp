@@ -8,6 +8,7 @@
 Process::Process(){}
 
 void Process::processInput(GLFWwindow* window, Camera &camera) {
+
 	// Use the cameras class to change the parameters of the camera
 	//3. Use the cameras class to change the parameters of the camera
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -34,48 +35,39 @@ void Process::processInput(GLFWwindow* window, Camera &camera) {
 	
 }
 
-void Process::HandleMouse(GLFWwindow* window, Camera &camera){
-
-	double xpos, ypos, xpos_i, ypos_i;
-	glfwGetCursorPos(window, &xpos, &ypos); 
-	if (camera.firstmouse){
-		camera.lastX = xpos + camera.Yaw*10;
-		camera.lastY = -ypos + camera.Pitch*10;
-		camera.firstmouse = false;
+void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){
+	if (cursor_disabled){
+		int height, width;
+		glfwGetWindowSize(window, &width, &height);
+		camera.lastX = width/2 - camera.Yaw*10;
+		camera.lastY = height/2 + camera.Pitch*10;
+		printf("size width %d, height %d\n", width, height);
+		
+	}else{
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos); 
+		camera.lastX = xpos - camera.Yaw*10;
+		camera.lastY = ypos + camera.Pitch*10;
 	}
-
-	float xoffset = xpos - camera.lastX;
-	float yoffset = -ypos - camera.lastY; 
-	if (xoffset || yoffset)
-		camera.processMouseMovement(xoffset, yoffset, 1);
-	glfwGetCursorPos(window, &xpos_i, &ypos_i); 
-	if (xpos_i - xpos != 0 | ypos_i - ypos !=0 )
-		camera.firstmouse = true;
-	
-	// processMouseScroll(yoffset, camera); 
-	// camera.processMouseScroll(yoffset); 
-	camera.CreateCallBacks(window, xoffset, yoffset); 
-
-	
-	// if (glfwGetMouseButton(window, 1) == GLFW_PRESS){
-	// 	// printf("I GOT PRESSED %f, %f", camera.ZOOM, yoffset); 
-	// 	if (camera.ZOOM >= 1.0f && camera.ZOOM <= 45.0f)
-    //     	camera.ZOOM -= yoffset;
-	// 	if (camera.ZOOM < 1.0f)
-	// 		camera.ZOOM = 1.0f;
-	// 	if (camera.ZOOM > 45.0f)
-	// 		camera.ZOOM = 45.0f;
-	// }
-	// camera.processMouseScroll(yoffset); 
 }
 
-// void Process::processMouseScroll(float yoffset, Camera &camera){
-// 	// if (camera.ZOOM < 45.0f && camera.ZOOM > 1.0f)
-//     camera.ZOOM -= (float)yoffset*0.00001;
-//     if (camera.ZOOM <= 1.0f)
-//         camera.ZOOM = 1.0f;
-//     if (camera.ZOOM >= 45.0f)
-//         camera.ZOOM = 45.0f;
-// }
+
+void Process::HandleMouse(GLFWwindow* window, Camera &camera){
+
+	double xpos, ypos;
+	float xoffset, yoffset;
+	
+	glfwGetCursorPos(window, &xpos, &ypos); 
+	
+	xoffset = xpos - camera.lastX;
+	yoffset = ypos - camera.lastY; 
+
+	if (xoffset || yoffset)
+		camera.processMouseMovement(xoffset, yoffset, 1);
+
+	camera.CreateCallBacks(window, xoffset, yoffset); 
+
+}
+
 
 Process::~Process(){}
