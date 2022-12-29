@@ -28,7 +28,7 @@ char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
 char groundVertex[128] = "../../src/Shaders/vertGround.txt";
 char groundFrag[128] = "../../src/Shaders/fragGround.txt";
-char groundImage[128] = "../../image/container.jpg";
+char groundImage[128] = "../../image/woodFloor.png";
 
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]){
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
-	char groundGeometry[] = "../../objects/ground.obj";
+	char groundGeometry[] = "../../objects/floor.obj";
 
 	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(1.), 0);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]){
 	glfwSwapInterval(1);
 	Process process = Process();
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
