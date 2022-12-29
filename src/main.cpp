@@ -42,7 +42,7 @@ float getRandom(float from=-4, float to=4) {
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(true); 
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 	mainWindow.Initialise(); 
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
