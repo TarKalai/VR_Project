@@ -172,7 +172,7 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
         unsigned char* data = stbi_load(texturePath, &imWidth, &imHeight, &imNrChannels, 0);
         if (data)
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imWidth, imHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imWidth, imHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
         }
         else {
