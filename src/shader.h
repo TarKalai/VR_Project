@@ -38,9 +38,13 @@ public:
 
     void setMatrix4(const GLchar* name, const glm::mat4& matrix); 
 
+    void SetDirectionalLight(DirectionalLight * dLight); 
+
+    void SetPointLights(PointLight * pLight, unsigned int lightCount);
+
     void addObject(Object* obj);
 
-    void DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_pos);
+    void DrawObjects(glm::mat4 view, glm::mat4 perspective, Camera camera, GLuint uniformSpecularIntensity, GLuint uniformShininess); //, glm::vec3 light_pos);
 
 
 

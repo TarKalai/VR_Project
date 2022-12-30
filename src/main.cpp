@@ -16,13 +16,20 @@
 #include "shader.h"
 #include "object.h"
 #include "physics.h"
-// #include "debug.h"
-
 #include "display.h"
 #include "process.h"
-
+#include "directionalLight.h"
+#include "material.h"
+#include "pointLight.h"
+#include "commonValues.h"
 
 Display mainWindow; 
+
+DirectionalLight mainLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
+
+Material shinyMaterial; 
+Material dullMaterial; 
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
@@ -41,6 +48,39 @@ float getRandom(float from=-4, float to=4) {
 
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
+
+	shinyMaterial = Material(1.0f, 32); 
+    dullMaterial = Material(0.3f, 4); 
+
+    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
+                                0.1f, 0.3f, 
+                                0.0f, 0.0f, -1.0f); // direction of the light
+
+								unsigned int pointLightCount =0; 
+    
+    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
+                                0.1f, 0.4f,
+                                4.0f,0.0f, 0.0f,
+                                0.3f, 0.2f, 0.1f);
+    pointLightCount++; 
+    
+    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
+                                0.1f, 1.0f,
+                                -4.0f,0.0f, 0.0f,
+                                0.3f, 0.1f, 0.1f);
+
+    pointLightCount++; 
+
+    
+    pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
+                                0.1f, 1.0f,
+                                -2.0f,0.0f, 0.0f,
+                                0.3f, 0.2f, 0.1f);
+
+    pointLightCount++;
+
+	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
+    uniformSpecularIntensity=0, uniformShininess=0; 
 
 	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 	mainWindow.Initialise(); 
@@ -83,7 +123,7 @@ int main(int argc, char* argv[]){
 	// shader.addObject(&cube);
 
 	//2. Choose a position for the light
-	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
+	// const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
 
 
 	double prev = 0;
@@ -134,8 +174,9 @@ int main(int argc, char* argv[]){
 
 
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, perspective, light_pos);
-		groundShader.DrawObjects(view, perspective, light_pos);
+
+		shader.DrawObjects(view, perspective, uniformEyePosition, &mainLight, uniformSpecularIntensity, uniformShininess); //, light_pos);
+		groundShader.DrawObjects(view, perspective,uniformEyePosition,  &mainLight, uniformSpecularIntensity, uniformShininess); //, light_pos);
 		
 		fps(now);
 		mainWindow.swapBuffers(); 

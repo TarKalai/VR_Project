@@ -187,9 +187,9 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
         glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         u_texture = glGetUniformLocation(shaderID, "imTexture");
     }
-    
+
     if (shader_normal) {
-        auto att_col = glGetAttribLocation(shaderID, "normal");
+        auto att_col = glGetAttribLocation(shaderID, "normal"); //  "normal"
         glEnableVertexAttribArray(att_col);
         glVertexAttribPointer(att_col, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)(5 * sizeof(float)));
     }
