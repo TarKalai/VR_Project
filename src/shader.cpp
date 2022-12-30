@@ -77,18 +77,50 @@ void Shader::addObject(Object *obj) {
 
 
 void Shader::SetDirectionalLight(DirectionalLight * dLight){
-    dLight->UseLight(glGetUniformLocation(ID, "directionalLight.base.ambientIntensity"), glGetUniformLocation(ID, "directionalLight.base.color"), 
-    glGetUniformLocation(ID, "directionalLight.base.diffuseIntensity"), glGetUniformLocation(ID, "directionalLight.direction"));
+
+    uniformDirectionalLight.uniformAmbientIntensity = glGetUniformLocation(ID, "directionalLight.base.ambientIntensity");
+    uniformDirectionalLight.uniformColor =   glGetUniformLocation(ID, "directionalLight.base.color"); 
+    uniformDirectionalLight.uniformDiffuseIntensity = glGetUniformLocation(ID, "directionalLight.base.diffuseIntensity"); 
+    uniformDirectionalLight.uniformDirection = glGetUniformLocation(ID, "directionalLight.direction");
+
+    dLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity,uniformDirectionalLight.uniformColor,
+    uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
 }
 
 void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount){
 
     if(lightCount > MAX_POINT_LIGHTS) lightCount = MAX_POINT_LIGHTS; 
 
-    glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
+    glUniform1i(glGetUniformLocation(ID, "pointLightCount"), lightCount); // make sure it is an int ! to go through the loop
+
+    for (size_t i = 0; i < MAX_POINT_LIGHTS; i ++){
+
+        char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.color", i); // we are going to print to a buffer
+        uniformPointLight[i].uniformColor = glGetUniformLocation(ID, locBuff); 
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.ambientIntensity", i); // we are going to print to a buffer
+        uniformPointLight[i].uniformAmbientIntensity = glGetUniformLocation(ID, locBuff); 
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.diffuseIntensity", i); // we are going to print to a buffer
+        uniformPointLight[i].uniformDiffuseIntensity = glGetUniformLocation(ID, locBuff); 
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].position", i); // we are going to print to a buffer
+        uniformPointLight[i].uniformPosition = glGetUniformLocation(ID, locBuff); 
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].constant", i); // we are going to print to a buffer
+        uniformPointLight[i].uniformConstant = glGetUniformLocation(ID, locBuff); 
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].linear", i); // we are going to print to a buffer
+        uniformPointLight[i].uniformLinear = glGetUniformLocation(ID, locBuff); 
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].exponent", i); // we are going to print to a buffer
+        uniformPointLight[i].uniformExponent = glGetUniformLocation(ID, locBuff); 
+    }
+
 
     for(size_t i=0; i < lightCount; i++){
-
         pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, uniformPointLight[i].uniformColor, 
                         uniformPointLight[i].uniformDiffuseIntensity, uniformPointLight[i].uniformPosition,
                         uniformPointLight[i].uniformConstant, uniformPointLight[i].uniformLinear, uniformPointLight[i].uniformExponent); 
@@ -142,19 +174,27 @@ GLuint Shader::compileProgram(GLuint vertexShader, GLuint fragmentShader)
         return programID;
     }
 
-void Shader::DrawObjects(glm::mat4 view, glm::mat4 perspective, 
-Camera camera, DirectionalLight mainLight, GLuint uniformSpecularIntensity, GLuint uniformShininess){
+void Shader::DrawObjects(glm::mat4 view, 
+                         glm::mat4 perspective, 
+                         glm::vec3 position_cam, 
+                         DirectionalLight* mainLight, 
+                         GLuint uniformSpecularIntensity, 
+                         GLuint uniformShininess, 
+                         PointLight * pLight, 
+                         unsigned int lightCount){
     use();
-    setMatrix4("V", view);
-    setMatrix4("P", perspective);
-    setVector3f("eyePosition", camera.Position);
+    setMatrix4("view", view); //V
+    setMatrix4("projection", perspective); //P
+    setVector3f("eyePosition", position_cam);
     SetDirectionalLight(mainLight);
+    setFloat("material.specularIntensity", uniformSpecularIntensity); 
+    setFloat("material.shininess",uniformShininess); 
+    SetPointLights(pLight, lightCount);
 
-    // setVector3f("u_light_pos", light_pos);
     int i = 0;
     for(Object* object : objectList) {
         i += 1;
-        setMatrix4("M", object->model);
+        setMatrix4("model", object->model);
 		// setMatrix4("itM", glm::inverseTranspose(object->model));
         object->draw();
     }

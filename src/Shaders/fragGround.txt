@@ -1,8 +1,114 @@
 #version 330 core
-in vec2 v_tex;
-out vec4 groundColor;
-precision mediump float;
-uniform sampler2D imTexture;
-void main() {
-groundColor = texture(imTexture, v_tex);
+
+in vec4 vertexColor;
+in vec2 TexCoord; // will be interpollated if the points are not exactly on the expected points. //v_tex
+in vec3 Normal; 
+in vec3 FragPos;
+
+out vec4 color;
+
+
+const int MAX_POINT_LIGHTS = 3; 
+
+struct Light
+{
+    vec3 color; 
+    float ambientIntensity; 
+    float diffuseIntensity; 
+};
+
+struct DirectionalLight{
+    Light base; 
+    vec3 direction; 
+}; 
+
+struct PointLight 
+{
+    Light base; 
+    vec3 position; 
+    float constant;
+    float linear; 
+    float exponent; 
+
+};
+
+struct Material{
+    float specularIntensity; 
+    float shininess; 
+};
+
+uniform int pointLightCount; 
+
+uniform DirectionalLight directionalLight;
+uniform PointLight pointLights[MAX_POINT_LIGHTS]; 
+
+uniform sampler2D theTexture; 
+uniform Material material;
+
+uniform vec3 eyePosition; // camera position
+
+vec4 CalcLightByDirection(Light light, vec3 direction) // in the point light calculation there is a part where we need to compute the light based on the direction, directional light calculate all of it by direction. 
+{
+    vec4 ambientColor = vec4(light.color, 1.0f)*light.ambientIntensity; // convert the color into vec4
+
+    float diffuseFactor = max(dot(normalize(Normal), normalize(direction)), 0.0f); // 0 if it is neg. 
+    // By taking the norm we have length of 1 for the magnitude of the vectors, so the result of 
+    // dot product is: dot(A, B) = |A||B|cos(angle) where |A| = 1 = |B|, we effectivly get the angle. 
+
+    vec4 diffuseColor = vec4(light.color, 1.0f)*light.diffuseIntensity * diffuseFactor; // diffuseFactor check if the light is at an angle that can be allowed to appear. 
+    
+    vec4 specularColor = vec4(0,0,0,0); 
+
+    if(diffuseFactor>0.0f)
+    {
+        vec3 fragToEye = normalize(eyePosition - FragPos); // we just want the direction where the fragment is from the eye
+        vec3 reflectedVertex = reflect(direction, normalize(Normal)); // we want ot know where the light ray is reflected around the normal. The first argument is what we want ot reflect and the scd is what we are reflecting it around. 
+        // we are reflecting the light direction across the normal pointing out of the object. 
+        // if fragToEye is the same as reflectedVertex then we will see bright light because specular is most intance at that point. 
+
+        float specularFactor = dot(fragToEye, reflectedVertex); 
+
+        if (specularFactor >0.0f){
+            specularFactor = pow(specularFactor, material.shininess); //We update the specular factor
+            specularColor = vec4(light.color * material.specularIntensity * specularFactor, 1.0f);  
+        }
+    }
+
+    return (ambientColor+diffuseColor+specularColor);
+
+}
+
+vec4 CalcDirectionalLight()
+{
+    return CalcLightByDirection(directionalLight.base, directionalLight.direction); 
+} 
+
+vec4 CalcPointLight()
+{
+    vec4 totalColor = vec4(0, 0, 0, 0);
+    for(int i=0; i < pointLightCount; i++)
+    {
+        vec3 direction = FragPos - pointLights[i].position; // we get the vector from the pointLight to the fragment = direction
+        float distance = length(direction); 
+        direction = normalize(direction);
+
+        vec4 color = CalcLightByDirection(pointLights[i].base, direction); 
+        float attenuation = pointLights[i].exponent * distance * distance + pointLights[i].linear*distance + pointLights[i].constant;
+
+        totalColor += (color/attenuation);
+    }
+
+    return totalColor; 
+}
+
+
+void main(){
+
+    vec4 finalColor = CalcDirectionalLight();
+    
+    finalColor += CalcPointLight(); 
+
+    color = texture(theTexture, TexCoord)*finalColor;
+    
+    
 }

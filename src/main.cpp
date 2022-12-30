@@ -21,7 +21,6 @@
 #include "directionalLight.h"
 #include "material.h"
 #include "pointLight.h"
-#include "commonValues.h"
 
 Display mainWindow; 
 
@@ -53,19 +52,19 @@ int main(int argc, char* argv[]){
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.1f, 0.3f, 
+                                0.5f, 0.3f, 
                                 0.0f, 0.0f, -1.0f); // direction of the light
 
 								unsigned int pointLightCount =0; 
     
     pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-                                0.1f, 0.4f,
+                                0.5f, 0.4f,
                                 4.0f,0.0f, 0.0f,
                                 0.3f, 0.2f, 0.1f);
     pointLightCount++; 
     
     pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
-                                0.1f, 1.0f,
+                                0.5f, 1.0f,
                                 -4.0f,0.0f, 0.0f,
                                 0.3f, 0.1f, 0.1f);
 
@@ -73,7 +72,7 @@ int main(int argc, char* argv[]){
 
     
     pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
-                                0.1f, 1.0f,
+                                0.5f, 1.0f,
                                 -2.0f,0.0f, 0.0f,
                                 0.3f, 0.2f, 0.1f);
 
@@ -86,7 +85,7 @@ int main(int argc, char* argv[]){
 	mainWindow.Initialise(); 
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
-	Shader groundShader(groundImage, groundVertex, groundFrag, true, false);
+	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
@@ -101,7 +100,7 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(sphereGeometry, pos, rot, scale, world.glObjects.size());	
+		Object* sphere = new Object(sphereGeometry, pos, rot, scale, world.glObjects.size());
 		world.addSphere(sphere);  
 		shader.addObject(sphere);
 	}
@@ -175,8 +174,8 @@ int main(int argc, char* argv[]){
 
 		//2. Use the shader Class to send the relevant uniform
 
-		shader.DrawObjects(view, perspective, uniformEyePosition, &mainLight, uniformSpecularIntensity, uniformShininess); //, light_pos);
-		groundShader.DrawObjects(view, perspective,uniformEyePosition,  &mainLight, uniformSpecularIntensity, uniformShininess); //, light_pos);
+		shader.DrawObjects(view, perspective, camera.Position, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount);
+		groundShader.DrawObjects(view, perspective, camera.Position, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount);
 		
 		fps(now);
 		mainWindow.swapBuffers(); 
