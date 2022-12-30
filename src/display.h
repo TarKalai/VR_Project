@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DISPLAY_H
+#define DISPLAY_H
 #include <stdio.h>
 
 #include <glad/glad.h>
