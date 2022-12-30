@@ -1,11 +1,7 @@
 #include "display.h"
 #include "debug.h"
 #include "process.h"
-
 #include "camera.h"
-
-
-
 
 float fov = 45; 
 

@@ -43,9 +43,9 @@ void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constr
     float PitchRot = 0;
 
     if (xoffset)
-        YawRot += xoffset*.1;
+        YawRot += xoffset*MouseSensitivity;
     if (yoffset)
-        PitchRot -= yoffset*.1;
+        PitchRot -= yoffset*MouseSensitivity;
 
     this->Yaw = YawRot;
     this->Pitch = PitchRot;

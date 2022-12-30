@@ -39,15 +39,15 @@ void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_
 	if (cursor_disabled){
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);
-		camera.lastX = width/2 - camera.Yaw*10;
-		camera.lastY = height/2 + camera.Pitch*10;
+		camera.lastX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
+		camera.lastY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
 		printf("size width %d, height %d\n", width, height);
 		
 	}else{
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos); 
-		camera.lastX = xpos - camera.Yaw*10;
-		camera.lastY = ypos + camera.Pitch*10;
+		camera.lastX = xpos - camera.Yaw*(1/camera.MouseSensitivity);
+		camera.lastY = ypos + camera.Pitch*(1/camera.MouseSensitivity);
 	}
 }
 
