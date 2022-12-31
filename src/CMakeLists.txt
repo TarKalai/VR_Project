@@ -13,6 +13,7 @@ set(SOURCES_MAIN "main.cpp"
 "material.cpp" "material.h"
 "pointLight.cpp" "pointLight.h"
 "directionalLight.cpp" "directionalLight.h"
+"spotLight.cpp" "spotLight.h"
 "commonValues.h"
 "debug.h" ) 
 

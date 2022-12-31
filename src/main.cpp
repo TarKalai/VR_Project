@@ -21,11 +21,13 @@
 #include "directionalLight.h"
 #include "material.h"
 #include "pointLight.h"
+#include "spotLight.h"
 
 Display mainWindow; 
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
+SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 Material shinyMaterial; 
 Material dullMaterial; 
@@ -52,31 +54,59 @@ int main(int argc, char* argv[]){
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.5f, 0.3f, 
+                                0.1f, 0.1f, 
                                 0.0f, 0.0f, -1.0f); // direction of the light
 
-								unsigned int pointLightCount =0; 
+	unsigned int pointLightCount =0; 
     
-    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-                                0.5f, 0.4f,
-                                4.0f,0.0f, 0.0f,
-                                0.3f, 0.2f, 0.1f);
-    pointLightCount++; 
+    // pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
+    //                             0.4f, 1.0f,
+    //                             2.0f,2.0f, 2.0f,
+    //                             0.3f, 0.2f, 0.1f);
+    // pointLightCount++; 
     
-    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
-                                0.5f, 1.0f,
-                                -4.0f,0.0f, 0.0f,
-                                0.3f, 0.1f, 0.1f);
+    // pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
+    //                             0.4f, 1.0f,
+    //                             -10.0f,5.0f, 10.0f,
+    //                             0.3f, 0.1f, 0.1f);
 
-    pointLightCount++; 
+    // pointLightCount++; 
 
     
-    pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
-                                0.5f, 1.0f,
-                                -2.0f,0.0f, 0.0f,
-                                0.3f, 0.2f, 0.1f);
+    // pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
+    //                             0.4f, 1.0f,
+    //                             -10.0f,5.0f, -10.0f,
+    //                             0.3f, 0.2f, 0.1f);
 
-    pointLightCount++;
+    // pointLightCount++;
+
+	// pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
+    //                             0.4f, 1.0f,
+    //                             10.0f,5.0f, -10.0f,
+    //                             0.3f, 0.2f, 0.1f);
+
+    // pointLightCount++;
+
+	unsigned int spotLightCount = 0;
+
+    spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
+                                0.0f, 2.0f,
+                                1.0f,5.0f, 1.0f,
+                                0.0f, -1.0f, 0.0f, // points straight down
+                                0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
+                                20.0f);  // spread of the angle : 20°
+    spotLightCount++;
+
+    // glm::vec3 normDir = glm::normalize(glm::vec3(-100.0f, -1.0f, 0.0f)); 
+    // printf("the direction is : %f, %f, %f", normDir.x, normDir.y, normDir.z); 
+
+    spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
+                                0.0f, 2.0f,
+                                0.0f, 2.0f, 0.0f,
+                                0.0f, -1.0f, 0.0f, // point to teh left (very far)
+                                0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
+                                20.0f);  // spread of the angle : 20°
+    spotLightCount++; 
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
@@ -172,10 +202,14 @@ int main(int argc, char* argv[]){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+		
+
+
 		//2. Use the shader Class to send the relevant uniform
 
-		shader.DrawObjects(view, perspective, camera.Position, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount);
-		groundShader.DrawObjects(view, perspective, camera.Position, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount);
+		shader.DrawObjects(view, perspective, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		groundShader.DrawObjects(view, perspective, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		
 		
 		fps(now);
 		mainWindow.swapBuffers(); 

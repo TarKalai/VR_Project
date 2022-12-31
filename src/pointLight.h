@@ -16,14 +16,14 @@ public:
         GLfloat xPos, GLfloat yPos, GLfloat zPos, 
         GLfloat con, GLfloat lin, GLfloat exp); 
     
-    void UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation, 
-                GLfloat diffuseIntensityLocation, GLfloat positionLocation,
-                GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentLocation); 
+    void UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation, 
+                GLuint diffuseIntensityLocation, GLuint positionLocation,
+                GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation); 
 
 
     ~PointLight(); 
 
-private: 
+protected: 
     glm::vec3 position; // where the light is coming from
 
     GLfloat constant, linear, exponent; //ax² + bx + c; cosntant = c, linear = b, exponent =a; 
