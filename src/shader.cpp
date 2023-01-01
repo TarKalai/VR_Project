@@ -247,9 +247,9 @@ void Shader::DrawObjects(glm::mat4 view,
     SetPointLights(pLights, pLightCount);
     SetSpotLights(sLights, sLightCount); 
 
-    // glm::vec3 lowerLight = position_cam; 
-    // lowerLight.y -= 0.3f;
-	// sLights[0].SetFlash(lowerLight, front_cam);
+    glm::vec3 lowerLight = position_cam; 
+    lowerLight.y -= 0.3f;
+	sLights[0].SetFlash(lowerLight, front_cam);
 
     int i = 0;
     for(Object* object : objectList) {

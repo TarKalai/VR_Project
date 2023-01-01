@@ -54,14 +54,14 @@ int main(int argc, char* argv[]){
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.1f, 0.1f, 
-                                0.0f, 0.0f, -1.0f); // direction of the light
+                                0.2f, 0.2f, 
+                                0.0f, -1.0f, 0.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
     
     // pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-    //                             0.4f, 1.0f,
-    //                             2.0f,2.0f, 2.0f,
+    //                             0.3f, 1.0f,
+    //                             4.0f,4.0f, 4.0f,
     //                             0.3f, 0.2f, 0.1f);
     // pointLightCount++; 
     
@@ -90,23 +90,23 @@ int main(int argc, char* argv[]){
 	unsigned int spotLightCount = 0;
 
     spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
-                                0.0f, 2.0f,
-                                1.0f,5.0f, 1.0f,
+                                0.0f, 1.0f,
+                                4.0f,10.0f, 4.0f,
                                 0.0f, -1.0f, 0.0f, // points straight down
                                 0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
                                 20.0f);  // spread of the angle : 20°
     spotLightCount++;
 
-    // glm::vec3 normDir = glm::normalize(glm::vec3(-100.0f, -1.0f, 0.0f)); 
-    // printf("the direction is : %f, %f, %f", normDir.x, normDir.y, normDir.z); 
+    // // glm::vec3 normDir = glm::normalize(glm::vec3(-100.0f, -1.0f, 0.0f)); 
+    // // printf("the direction is : %f, %f, %f", normDir.x, normDir.y, normDir.z); 
 
-    spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
-                                0.0f, 2.0f,
-                                0.0f, 2.0f, 0.0f,
-                                0.0f, -1.0f, 0.0f, // point to teh left (very far)
-                                0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
-                                20.0f);  // spread of the angle : 20°
-    spotLightCount++; 
+    // spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
+    //                             0.0f, 2.0f,
+    //                             0.0f, 2.0f, 0.0f,
+    //                             0.0f, -1.0f, 0.0f, // point to teh left (very far)
+    //                             0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
+    //                             20.0f);  // spread of the angle : 20°
+    // spotLightCount++; 
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
@@ -125,8 +125,12 @@ int main(int argc, char* argv[]){
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
+	Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
+	world.addSphere(&sphere1);  
+	shader.addObject(&sphere1);
+
 	Object sphere;
-	for (int i=0; i<40; i++) {
+	for (int i=0; i<0; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
@@ -135,7 +139,7 @@ int main(int argc, char* argv[]){
 		shader.addObject(sphere);
 	}
 	Object cube;
-	for (int i=0; i<10; i++) {
+	for (int i=0; i<0; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
