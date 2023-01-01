@@ -95,7 +95,7 @@ void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount){
 
     glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
 
-    for (size_t i = 0; i < MAX_POINT_LIGHTS; i ++){
+    for (int i = 0; i < MAX_POINT_LIGHTS; i ++){
 
         char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
 
@@ -122,7 +122,7 @@ void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount){
     }
 
 
-    for(size_t i=0; i < lightCount; i++){
+    for(int i=0; i < lightCount; i++){
         pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, uniformPointLight[i].uniformColor, 
                         uniformPointLight[i].uniformDiffuseIntensity, uniformPointLight[i].uniformPosition,
                         uniformPointLight[i].uniformConstant, uniformPointLight[i].uniformLinear, uniformPointLight[i].uniformExponent); 
@@ -139,7 +139,7 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount){
     glUniform1i(uniformSpotLightCount, lightCount); // make sure it is an int ! to go through the loop
 
 
-    for (size_t i = 0; i < MAX_SPOT_LIGHTS; i ++){
+    for (int i = 0; i < MAX_SPOT_LIGHTS; i ++){
 
         char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
 
@@ -171,14 +171,13 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount){
         uniformSpotLight[i].uniformEdge = glGetUniformLocation(ID, locBuff); 
     }
 
-    for(size_t i=0; i < lightCount; i++){
+    for(int i=0; i < lightCount; i++){
 
         sLight[i].UseLight(uniformSpotLight[i].uniformAmbientIntensity, uniformSpotLight[i].uniformColor, 
                         uniformSpotLight[i].uniformDiffuseIntensity, uniformSpotLight[i].uniformPosition,uniformSpotLight[i].uniformDirection, 
                         uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent,
                         uniformSpotLight[i].uniformEdge); 
     }
-
 }
 
 

@@ -91,7 +91,7 @@ int main(int argc, char* argv[]){
 
     spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
                                 0.0f, 1.0f,
-                                4.0f,10.0f, 4.0f,
+                                0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
                                 0.0f, -1.0f, 0.0f, // points straight down
                                 0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
                                 20.0f);  // spread of the angle : 20°
@@ -100,13 +100,13 @@ int main(int argc, char* argv[]){
     // // glm::vec3 normDir = glm::normalize(glm::vec3(-100.0f, -1.0f, 0.0f)); 
     // // printf("the direction is : %f, %f, %f", normDir.x, normDir.y, normDir.z); 
 
-    // spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
-    //                             0.0f, 2.0f,
-    //                             0.0f, 2.0f, 0.0f,
-    //                             0.0f, -1.0f, 0.0f, // point to teh left (very far)
-    //                             0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
-    //                             20.0f);  // spread of the angle : 20°
-    // spotLightCount++; 
+    spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
+                                0.0f, 2.0f,
+                                4.0f, 10.0f, 4.0f,
+                                0.0f, -1.0f, 0.0f, // point to teh left (very far)
+                                0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
+                                30.0f);  // spread of the angle : 20°
+    spotLightCount++; 
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
