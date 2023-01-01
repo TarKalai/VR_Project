@@ -42,7 +42,7 @@ float getRandom(float from=-4, float to=4) {
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
 	mainWindow.Initialise(); 
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
@@ -56,6 +56,7 @@ int main(int argc, char* argv[]){
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
+	/*
 	Object sphere;
 	for (int i=0; i<40; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
@@ -74,13 +75,14 @@ int main(int argc, char* argv[]){
 		world.addCube(cube);  
 		shader.addObject(cube);
 	}
+	*/
 
-	// Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
-	// world.addSphere(&sphere);  
-	// shader.addObject(&sphere);
-	// Object cube = Object(cubeGeometry, glm::vec3(-3.5, 4, 0.), glm::vec3(0., 0, 0), glm::vec3(1., 2, 5), world.glObjects.size());	
-	// world.addCube(&cube);
-	// shader.addObject(&cube);
+	Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
+	world.addSphere(&sphere);  
+	shader.addObject(&sphere);
+	Object cube = Object(cubeGeometry, glm::vec3(-4, 4, -4), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
+	world.addCube(&cube);
+	shader.addObject(&cube);
 
 	//2. Choose a position for the light
 	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
@@ -126,7 +128,6 @@ int main(int argc, char* argv[]){
 		process.processInput(mainWindow.getWindow(), camera);
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
-		view = camera.getViewMatrix();
 		glfwPollEvents();
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);

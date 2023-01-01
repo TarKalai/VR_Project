@@ -20,13 +20,15 @@ public:
 
     GLfloat getBufferWidth(){return bufferWidth;}
     GLfloat getBufferHeight(){return bufferHeight;}
+    void Update() {glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+}
 
     bool getShouldClose(){return glfwWindowShouldClose(mainWindow); }
     void swapBuffers(){glfwSwapBuffers(mainWindow);}
 
     GLFWwindow* getWindow(){return mainWindow;}
     bool getCursorDisabled(){return cursor_disabled;}
-    
+
     ~Display(); 
 
 
