@@ -18,11 +18,6 @@ public:
     void static framebuffer_size_callback(GLFWwindow* window, int width, int height);
     void static scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-    GLfloat getBufferWidth(){return bufferWidth;}
-    GLfloat getBufferHeight(){return bufferHeight;}
-    void Update() {glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
-}
-
     bool getShouldClose(){return glfwWindowShouldClose(mainWindow); }
     void swapBuffers(){glfwSwapBuffers(mainWindow);}
 

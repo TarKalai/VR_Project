@@ -121,13 +121,12 @@ int main(int argc, char* argv[]){
 	process.initMousePosition(mainWindow.getWindow(), camera, mainWindow.getCursorDisabled());
 
 	while (!mainWindow.getShouldClose()){
-
 		// BULLET3
 		world.animate();
 
 		process.processInput(mainWindow.getWindow(), camera);
 		glm::mat4 view = camera.getViewMatrix();
-		glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
+		glm::mat4 perspective = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 100.0);
 		glfwPollEvents();
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);

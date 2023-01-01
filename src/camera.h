@@ -47,9 +47,9 @@ public:
     float MouseSensitivity;
     float Zoom;
 
-    // mouse movement
-    float lastX;
-    float lastY;
+    // mouse position when start program
+    float initRunX;
+    float initRunY;
 
     // constructor with vectors
     
@@ -58,7 +58,7 @@ public:
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 getViewMatrix();
 
-    glm::mat4 getProjectionMatrix(float fov, float ratio, float near, float far);
+    glm::mat4 getProjectionMatrix(GLFWwindow* window, float near, float far);
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void processKeyboardMovement(Camera_Movement direction, float deltaTime);

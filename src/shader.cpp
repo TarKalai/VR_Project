@@ -1,5 +1,7 @@
 #include "shader.h"
 
+#include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
+
 Shader::Shader(char *imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
 	{   
         texturePath = imagePath;
@@ -132,6 +134,7 @@ void Shader::DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_
         i += 1;
         setMatrix4("M", object->model);
 		setMatrix4("itM", glm::inverseTranspose(object->model));
+        //std::cout << "OBJ " << glm::to_string(perspective*view*glm::vec4(object->position, 1.0)) << std::endl;
         object->draw();
     }
 }

@@ -3,8 +3,6 @@
 #include "string.h"
 #include "display.h"
 
-
-
 Process::Process(){}
 
 void Process::processInput(GLFWwindow* window, Camera &camera) {
@@ -26,7 +24,8 @@ void Process::processInput(GLFWwindow* window, Camera &camera) {
 		camera.processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera.processKeyboardMovement(DOWN, 0.1);
-	
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+		PutDominos(window, camera);
 	HandleMouse(window, camera); 
 
 
@@ -34,19 +33,25 @@ void Process::processInput(GLFWwindow* window, Camera &camera) {
 }
 
 void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){
+	int height, width;
+	glfwGetWindowSize(window, &width, &height);
+	camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
+	camera.initRunY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
+	printf("size width %d, height %d\n", width, height);
+	/* TODO Tarik, this separation is really needed ?
 	if (cursor_disabled){
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);
-		camera.lastX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
-		camera.lastY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
+		camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
+		camera.initRunY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
 		printf("size width %d, height %d\n", width, height);
-		
 	}else{
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos); 
-		camera.lastX = xpos - camera.Yaw*(1/camera.MouseSensitivity);
-		camera.lastY = ypos + camera.Pitch*(1/camera.MouseSensitivity);
+		camera.initRunX = xpos - camera.Yaw*(1/camera.MouseSensitivity);
+		camera.initRunY = ypos + camera.Pitch*(1/camera.MouseSensitivity);
 	}
+	*/
 }
 
 
@@ -57,8 +62,8 @@ void Process::HandleMouse(GLFWwindow* window, Camera &camera){
 	
 	glfwGetCursorPos(window, &xpos, &ypos); 
 	
-	xoffset = xpos - camera.lastX;
-	yoffset = ypos - camera.lastY; 
+	xoffset = xpos - camera.initRunX;
+	yoffset = ypos - camera.initRunY; 
 
 	if (xoffset || yoffset)
 		camera.processMouseMovement(xoffset, yoffset, 1);
@@ -67,5 +72,19 @@ void Process::HandleMouse(GLFWwindow* window, Camera &camera){
 
 }
 
+void Process::PutDominos(GLFWwindow* window, Camera &camera){
+
+	double xpos, ypos;
+	float xoffset, yoffset;
+	
+	glfwGetCursorPos(window, &xpos, &ypos); 
+	
+	xoffset = xpos + camera.initRunX;
+	yoffset = ypos + camera.initRunY; 
+
+	std::cout << "X " << xoffset << " = " << xpos << " + " << camera.initRunX << std::endl;
+	std::cout << "Y " << yoffset << " = " << ypos << " + " << camera.initRunY << std::endl;
+
+}
 
 Process::~Process(){}

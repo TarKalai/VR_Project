@@ -6,7 +6,6 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch){
     this->MovementSpeed = SPEED; 
     this->MouseSensitivity = SENSITIVITY; 
     this->Zoom = ZOOM; 
-    // printf("I AM IN THE CONSTRUCTOR: %f, %f ", Zoom, ZOOM); 
     this->Position = position; 
     this->WorldUp = up;
     this->Yaw = yaw;
@@ -18,8 +17,10 @@ glm::mat4 Camera::getViewMatrix(){
     return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 }
 
-glm::mat4 Camera::getProjectionMatrix(float fov, float ratio, float near, float far){
-    return glm::perspective(fov, ratio, near, far);
+glm::mat4 Camera::getProjectionMatrix(GLFWwindow* window, float near, float far){
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+    return glm::perspective(glm::radians(this->Zoom), (float) width/height, near, far);
 }
 
 void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime){
