@@ -14,19 +14,17 @@ void Process::processInput(GLFWwindow* window, Camera &camera) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		camera.processKeyboardMovement(LEFT, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		camera.processKeyboardMovement(RIGHT, 0.1);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		camera.processKeyboardMovement(FORWARD, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		camera.processKeyboardMovement(BACKWARD, 0.1);
-
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
 		camera.processKeyboardMovement(UP, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera.processKeyboardMovement(DOWN, 0.1);
 	
 	HandleMouse(window, camera); 
