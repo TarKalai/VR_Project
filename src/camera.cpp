@@ -78,13 +78,12 @@ void Camera::ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset){
 
 
     Camera *camera = reinterpret_cast<Camera*>(glfwGetWindowUserPointer(window)); 
-
     if (camera)
-        camera->ZOOM -= (float)yoffset;
-        if (camera->ZOOM < 1.0f)
-            camera->ZOOM = 1.0f;
-        if (camera->ZOOM > 45.0f)
-            camera->ZOOM = 45.0f;
+        camera->Zoom -= (float)yoffset;
+        if (camera->Zoom < 1.0f)
+            camera->Zoom= 1.0f;
+        if (camera->Zoom > 45.0f)
+            camera->Zoom = 45.0f;
 }
 
 void Camera::CreateCallBacks(GLFWwindow* window, double xoffset, double yoffset){

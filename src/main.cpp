@@ -110,7 +110,7 @@ int main(int argc, char* argv[]){
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 
 	mainWindow.Initialise(); 
 
@@ -200,7 +200,7 @@ int main(int argc, char* argv[]){
 		process.processInput(mainWindow.getWindow(), camera, world, shader);
 
 		glm::mat4 view = camera.getViewMatrix();
-		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 100.0);
+		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 1000.0);
 		glfwPollEvents();
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);

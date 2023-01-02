@@ -57,14 +57,13 @@ void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &wo
 
 void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){
 	
-	int height, width;
-	glfwGetWindowSize(window, &width, &height);
-	camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
-	camera.initRunY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
-	printf("size width %d, height %d\n", width, height);
+	// int height, width;
+	// glfwGetWindowSize(window, &width, &height);
+	// camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
+	// camera.initRunY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
+	// printf("size width %d, height %d\n", width, height);
 	
-	/*
-	// TODO Tarik, this separation is really needed ?
+	
 	if (cursor_disabled){
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);
@@ -77,7 +76,7 @@ void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_
 		camera.initRunX = xpos - camera.Yaw*(1/camera.MouseSensitivity);
 		camera.initRunY = ypos + camera.Pitch*(1/camera.MouseSensitivity);
 	}
-	*/
+
 }
 
 
