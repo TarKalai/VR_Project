@@ -6,8 +6,6 @@
 #include <glm/glm.hpp>
 #include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
 
-bool mutex = false;
-
 Process::Process(){}
 
 void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader) {
@@ -29,12 +27,8 @@ void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &wo
 		camera.processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera.processKeyboardMovement(DOWN, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
-		if (mutex)
-			mutex = false;
-		else
-			PutDominos(window, camera, world, shader);
-	}
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
+		PutDominos(window, camera, world, shader);
 	HandleMouse(window, camera); 
 }
 
