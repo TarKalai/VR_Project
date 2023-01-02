@@ -110,7 +110,7 @@ int main(int argc, char* argv[]){
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
 
 	mainWindow.Initialise(); 
 

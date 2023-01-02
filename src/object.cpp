@@ -108,14 +108,6 @@ Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3
     infile.close();
 
     numVertices = vertices.size();
-
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    //define VBO and VAO as active buffer and active vertex array
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 }
 
 void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath){ 

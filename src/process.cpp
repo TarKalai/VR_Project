@@ -16,8 +16,8 @@ if (newState == GL_RELEASE && oldState == GL_PRESS) {
 	// whatever 
 } 
 oldState = newState;
-
 */
+
 void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader) {
 
 	// Use the cameras class to change the parameters of the camera
