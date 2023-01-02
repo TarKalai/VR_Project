@@ -91,6 +91,9 @@ void Process::PutDominos(GLFWwindow* window, Camera &camera, PhysicalWorld &worl
 	glm::vec4 farCoord = glm::vec4(farModel/farModel.w);
 	std::cout << glm::to_string(farCoord) << std::endl;
 
+	// TODO with that
+	// std::cout << "cam " << glm::to_string(camera.Front) << std::endl;
+
 	
 	if (farCoord.y < 0) { // Look towards ground (not sky)
 
@@ -110,28 +113,6 @@ void Process::PutDominos(GLFWwindow* window, Camera &camera, PhysicalWorld &worl
 		world.addCube(cube);
 		shader.addObject(cube);
 	}
-	//*/
-
-	/*
-	glm::mat4 view = camera.getViewMatrix();
-	glm::mat4 projection = camera.getProjectionMatrix(window, 0.01, 100.0);
-	glm::vec4 model = glm::mat4(0,0,0,0,0,0,0,0,0,0,0,0, -0., 1, -0,1) * glm::vec4(0.,0.,0., 1.0);
-	std::cout << glm::to_string(model) << std::endl;
-
-	glm::vec4 tmp = projection*view*model;
-	std::cout << glm::to_string(tmp) << std::endl;
-	glm::vec2 coord = tmp / tmp.w;
-	std::cout << glm::to_string(coord) << std::endl;
-	*/
-
-	/*
-	glm::mat4 inversePrjMat = glm::inverse( projection );
-	float depth = 1.;
-	glm::vec4 viewPosH = inversePrjMat * glm::vec4(xpos, ypos, 2.0*depth - 1.0, 1.0);
-	glm::vec4 viewPos = viewPosH / viewPosH.w;
-	std::cout << glm::to_string(viewPos) << std::endl;
-	//*/
-
 }
 
 Process::~Process(){}
