@@ -1,19 +1,61 @@
-#version 330 core
-in vec3 position;
-in vec3 normal;
-out vec3 v_diffuse;
-out vec4 vertexColor; 
-uniform mat4 M;
-uniform mat4 itM;
-uniform mat4 V;
-uniform mat4 P;
-uniform vec3 u_light_pos;
+
+#version 330
+in vec3 pos;
+in vec3 norm; // normal of the vertex we are looking at, it as a direction
+// we will define the normalas as an average of each vertex. 
+
+out vec4 vertexColor;
+out vec3 Normal; 
+out vec3 FragPos; 
+
+uniform mat4 model;
+uniform mat4 projection;
+uniform mat4 view; 
 void main(){
-vertexColor = vec4(clamp(position, 0.0, 1.0), 1.0);
-vec4 frag_coord = M*vec4(position, 1.0);
-gl_Position = P*V*frag_coord;
-vec3 norm = vec3(itM * vec4(normal, 1.0));
-vec3 L = normalize(u_light_pos - frag_coord.xyz);
-float diffusion = max(0.0, dot(norm, L));
-v_diffuse = vec3(diffusion);
+    gl_Position = projection * view * model * vec4(pos, 1.0);
+    vertexColor = vec4(clamp(pos, 0.0, 1.0), 1.0);
+
+    Normal = mat3(transpose(inverse(model))) * norm; 
+    // Normal is in relation to where the model is, because if we move the light around we are lihghting objects in different ways. 
+    // If we rotate the object the normal doe not move, or if we scale an object the normal will bend so we need to multiply norm by 
+    // the transform of the model. 
+    // if we scale in only one direction it will also create some problems: the normal will start to point upwards
+    // so if we scale the object uniformly the normals stay in the same direction but if we scale in one dir. the normals start to change dir. 
+    // to solve this we take the inverse and take the transpose => invert scaling process
+
+    FragPos =  (model * vec4(pos, 1.0)).xyz; // we only need to know where it is in the world for the light. 
+    // we want vec3 not vec4 we take .xyz
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//#version 330 core
+
+//in vec3 position;
+//in vec3 normal;
+
+//out vec4 vertexColor; 
+
+//uniform mat4 M;
+//uniform mat4 V;
+//uniform mat4 P;
+
+
+//void main(){
+//    gl_Position = P*V*M*vec4(position, 1.0);
+//    vertexColor = vec4(clamp(position, 0.0, 1.0)*normal, 1.0);
+//}

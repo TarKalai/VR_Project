@@ -9,6 +9,12 @@ set(SOURCES_MAIN "main.cpp"
 "camera.cpp" "camera.h"
 "display.cpp" "display.h"
 "process.cpp" "process.h"
+"light.cpp" "light.h"
+"material.cpp" "material.h"
+"pointLight.cpp" "pointLight.h"
+"directionalLight.cpp" "directionalLight.h"
+"spotLight.cpp" "spotLight.h"
+"commonValues.h"
 "debug.h" ) 
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}

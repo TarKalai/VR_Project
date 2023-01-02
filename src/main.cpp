@@ -15,14 +15,24 @@
 #include "camera.h"
 #include "shader.h"
 #include "object.h"
+
 //#include "physics.h"
-// #include "debug.h"
 
 #include "display.h"
 #include "process.h"
-
+#include "directionalLight.h"
+#include "material.h"
+#include "pointLight.h"
+#include "spotLight.h"
 
 Display mainWindow; 
+
+DirectionalLight mainLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
+SpotLight spotLights[MAX_SPOT_LIGHTS];
+
+Material shinyMaterial; 
+Material dullMaterial; 
 
 char fileVert[128] = "../../src/Shaders/vertSrc.txt";
 char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
@@ -42,11 +52,70 @@ float getRandom(float from=-4, float to=4) {
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
+	shinyMaterial = Material(1.0f, 32); 
+    dullMaterial = Material(0.3f, 4); 
+
+    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
+                                0.2f, 0.2f, 
+                                0.0f, -1.0f, 0.0f); // direction of the light
+
+	unsigned int pointLightCount =0; 
+    
+    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
+                                0.3f, 1.0f,
+                                4.0f,4.0f, 4.0f,
+                                0.3f, 0.2f, 0.1f);
+    pointLightCount++; 
+    
+    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
+                                0.4f, 1.0f,
+                                -10.0f,5.0f, 10.0f,
+                                0.3f, 0.1f, 0.1f);
+
+    pointLightCount++; 
+
+    
+    pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
+                                0.4f, 1.0f,
+                                -10.0f,5.0f, -10.0f,
+                                0.3f, 0.2f, 0.1f);
+
+    pointLightCount++;
+
+	pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
+                                0.4f, 1.0f,
+                                10.0f,5.0f, -10.0f,
+                                0.3f, 0.2f, 0.1f);
+
+    pointLightCount++;
+
+	unsigned int spotLightCount = 0;
+
+    spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
+                                0.0f, 1.0f,
+                                0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
+                                0.0f, -1.0f, 0.0f, // points straight down
+                                0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
+                                20.0f);  // spread of the angle : 20°
+    spotLightCount++;
+
+    spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
+                                0.0f, 2.0f,
+                                4.0f, 10.0f, 4.0f,
+                                0.0f, -1.0f, 0.0f, // point to teh left (very far)
+                                0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
+                                30.0f);  // spread of the angle : 20°
+    spotLightCount++; 
+
+	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
+    uniformSpecularIntensity=0, uniformShininess=0; 
+
 	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+
 	mainWindow.Initialise(); 
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
-	Shader groundShader(groundImage, groundVertex, groundFrag, true, false);
+	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
@@ -56,13 +125,16 @@ int main(int argc, char* argv[]){
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
-	/*
+	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
+	// world.addSphere(&sphere1);  
+	// shader.addObject(&sphere1);
+
 	Object sphere;
-	for (int i=0; i<40; i++) {
+	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(sphereGeometry, pos, rot, scale, world.glObjects.size());	
+		Object* sphere = new Object(sphereGeometry, pos, rot, scale, world.glObjects.size());
 		world.addSphere(sphere);  
 		shader.addObject(sphere);
 	}
@@ -75,17 +147,18 @@ int main(int argc, char* argv[]){
 		world.addCube(cube);  
 		shader.addObject(cube);
 	}
-	*/
 
+	/*
 	Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
 	world.addSphere(&sphere);  
 	shader.addObject(&sphere);
 	Object cube = Object(cubeGeometry, glm::vec3(-4, 4, -4), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
 	world.addCube(&cube);
 	shader.addObject(&cube);
+	*/
 
 	//2. Choose a position for the light
-	const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
+	// const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
 
 
 	double prev = 0;
@@ -133,11 +206,10 @@ int main(int argc, char* argv[]){
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-		//2. Use the shader Class to send the relevant uniform*glm::vec4(object->position, 1.0)
-		std::cout << shader.objectList.size() << std::endl;
-		shader.DrawObjects(view, projection, light_pos);
-		groundShader.DrawObjects(view, projection, light_pos);
+		//2. Use the shader Class to send the relevant uniform
+		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		
 		
 		fps(now);
 		mainWindow.swapBuffers(); 

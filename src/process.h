@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <stdio.h>
 // #include "camera.h"
@@ -21,4 +22,6 @@ public:
     void PutDominos(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader);
     ~Process(); 
 private: 
+    bool fullscreen = false;
+    bool was_pressed = false;
 }; 

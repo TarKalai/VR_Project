@@ -152,7 +152,7 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * numVertices, data, GL_STATIC_DRAW);
 
     {
-        auto att_pos = glGetAttribLocation(shaderID, "position");
+        auto att_pos = glGetAttribLocation(shaderID, "pos"); //position
         glEnableVertexAttribArray(att_pos);
         glVertexAttribPointer(att_pos, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0);
     }
@@ -182,14 +182,14 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
         }
 
 	    stbi_image_free(data);
-        auto att_tex = glGetAttribLocation(shaderID, "tex_coord");
+        auto att_tex = glGetAttribLocation(shaderID, "tex");
         glEnableVertexAttribArray(att_tex);
         glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        u_texture = glGetUniformLocation(shaderID, "imTexture");
+        u_texture = glGetUniformLocation(shaderID, "theTexture");
     }
-    
+
     if (shader_normal) {
-        auto att_col = glGetAttribLocation(shaderID, "normal");
+        auto att_col = glGetAttribLocation(shaderID, "norm"); //  "normal"
         glEnableVertexAttribArray(att_col);
         glVertexAttribPointer(att_col, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)(5 * sizeof(float)));
     }

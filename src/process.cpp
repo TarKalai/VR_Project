@@ -8,12 +8,35 @@
 
 Process::Process(){}
 
+
+/*
+static int oldState = GL_RELEASE; 
+int newState = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT); 
+if (newState == GL_RELEASE && oldState == GL_PRESS) { 
+	// whatever 
+} 
+oldState = newState;
+
+*/
 void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader) {
 
 	// Use the cameras class to change the parameters of the camera
 	//3. Use the cameras class to change the parameters of the camera
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
+		if (fullscreen && !was_pressed) {
+			glfwSetWindowSize(window, 700, 700);
+			fullscreen = !fullscreen;
+		}
+		else if (!was_pressed) {
+			glfwSetWindowSize(window, 1920, 1080);
+			fullscreen = !fullscreen;
+		}
+		was_pressed = true;
+	} else {
+		was_pressed = false;
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		camera.processKeyboardMovement(LEFT, 0.1);
@@ -33,12 +56,15 @@ void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &wo
 }
 
 void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){
+	
 	int height, width;
 	glfwGetWindowSize(window, &width, &height);
 	camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
 	camera.initRunY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
 	printf("size width %d, height %d\n", width, height);
-	/* TODO Tarik, this separation is really needed ?
+	
+	/*
+	// TODO Tarik, this separation is really needed ?
 	if (cursor_disabled){
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);

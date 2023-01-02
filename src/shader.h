@@ -13,6 +13,13 @@
 
 #include "object.h"
 
+#include "directionalLight.h"
+#include "pointLight.h"
+#include "spotLight.h"
+#include "commonValues.h"
+
+
+
 class Shader
 {
 public:
@@ -38,11 +45,59 @@ public:
 
     void setMatrix4(const GLchar* name, const glm::mat4& matrix); 
 
+    void SetDirectionalLight(DirectionalLight * dLight); 
+
+    void SetPointLights(PointLight * pLight, unsigned int lightCount);
+
+    void SetSpotLights(SpotLight * sLight, unsigned int lightCount); 
+
     void addObject(Object* obj);
 
-    void DrawObjects(glm::mat4 view, glm::mat4 projection, glm::vec3 light_pos);
+    void DrawObjects(glm::mat4 view, 
+                     glm::mat4 projection, 
+                     glm::vec3 position_cam, glm::vec3 front_cam,
+                     DirectionalLight* mainLight, 
+                     GLuint uniformSpecularIntensity, 
+                     GLuint uniformShininess, 
+                     PointLight * pLights, 
+                     unsigned int pLightCount, 
+                     SpotLight * sLights, 
+                     unsigned int sLightCount); //, glm::vec3 light_pos);
 
+    GLuint uniformPointLightCount;
+    struct {
+        GLuint uniformColor; 
+        GLuint uniformAmbientIntensity; 
+        GLuint uniformDiffuseIntensity; 
 
+        GLuint uniformPosition;
+        GLuint uniformConstant; 
+        GLuint uniformLinear; 
+        GLuint uniformExponent; 
+    } uniformPointLight[MAX_POINT_LIGHTS];
+
+    struct {
+        GLuint uniformColor; 
+        GLuint uniformAmbientIntensity; 
+        GLuint uniformDiffuseIntensity; 
+        GLuint uniformDirection; 
+    } uniformDirectionalLight;
+
+    GLuint uniformSpotLightCount;
+
+    struct {
+        GLuint uniformColor; 
+        GLuint uniformAmbientIntensity; 
+        GLuint uniformDiffuseIntensity; 
+
+        GLuint uniformPosition;
+        GLuint uniformConstant; 
+        GLuint uniformLinear; 
+        GLuint uniformExponent;
+        
+        GLuint uniformDirection; 
+        GLuint uniformEdge; 
+    } uniformSpotLight[MAX_SPOT_LIGHTS];
 
 
 private:
