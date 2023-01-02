@@ -32,9 +32,9 @@ void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime)
     if (direction == RIGHT)
         this->Position += normalize(this->Right) * velocity;
     if (direction == UP)
-        this->Position += this->Up * velocity;
+        this->Position += normalize(this->Up * glm::vec3(0.0, 1.0, 0.0)) * velocity;
     if (direction == DOWN)
-        this->Position -= this->Up * velocity;
+        this->Position -= normalize(this->Up * glm::vec3(0.0, 1.0, 0.0)) * velocity;
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch=true){
