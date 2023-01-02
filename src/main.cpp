@@ -11,6 +11,9 @@
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtc/matrix_inverse.hpp>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "camera.h"
 #include "shader.h"
@@ -51,7 +54,7 @@ float getRandom(float from=-4, float to=4) {
 
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
-
+	Assimp::Importer importer;
 	shinyMaterial = Material(1.0f, 32); 
     dullMaterial = Material(0.3f, 4); 
 
