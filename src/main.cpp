@@ -15,7 +15,7 @@
 #include "camera.h"
 #include "shader.h"
 #include "object.h"
-#include "physics.h"
+//#include "physics.h"
 // #include "debug.h"
 
 #include "display.h"
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
 
 	// glm::mat4 view = camera.getViewMatrix();
 	// // printf("camera value: %f", camera.ZOOM); 
-	// glm::mat4 perspective = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
+	// glm::mat4 projection = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 
 
 
@@ -124,18 +124,20 @@ int main(int argc, char* argv[]){
 		// BULLET3
 		world.animate();
 
-		process.processInput(mainWindow.getWindow(), camera);
+		process.processInput(mainWindow.getWindow(), camera, world, shader);
+
 		glm::mat4 view = camera.getViewMatrix();
-		glm::mat4 perspective = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 100.0);
+		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 100.0);
 		glfwPollEvents();
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, perspective, light_pos);
-		groundShader.DrawObjects(view, perspective, light_pos);
+		//2. Use the shader Class to send the relevant uniform*glm::vec4(object->position, 1.0)
+		std::cout << shader.objectList.size() << std::endl;
+		shader.DrawObjects(view, projection, light_pos);
+		groundShader.DrawObjects(view, projection, light_pos);
 		
 		fps(now);
 		mainWindow.swapBuffers(); 

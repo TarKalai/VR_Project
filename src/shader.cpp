@@ -124,17 +124,17 @@ GLuint Shader::compileProgram(GLuint vertexShader, GLuint fragmentShader)
         return programID;
     }
 
-void Shader::DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_pos) {
+void Shader::DrawObjects(glm::mat4 view, glm::mat4 projection, glm::vec3 light_pos) {
     use();
     setMatrix4("V", view);
-    setMatrix4("P", perspective);
+    setMatrix4("P", projection);
     setVector3f("u_light_pos", light_pos);
     int i = 0;
     for(Object* object : objectList) {
         i += 1;
         setMatrix4("M", object->model);
 		setMatrix4("itM", glm::inverseTranspose(object->model));
-        //std::cout << "OBJ " << glm::to_string(perspective*view*glm::vec4(object->position, 1.0)) << std::endl;
+        //std::cout << "OBJ " << glm::to_string(projection*view*object->model) << std::endl;
         object->draw();
     }
 }

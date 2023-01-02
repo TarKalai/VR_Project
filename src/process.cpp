@@ -3,9 +3,14 @@
 #include "string.h"
 #include "display.h"
 
+#include <glm/glm.hpp>
+#include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
+
+bool mutex = false;
+
 Process::Process(){}
 
-void Process::processInput(GLFWwindow* window, Camera &camera) {
+void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader) {
 
 	// Use the cameras class to change the parameters of the camera
 	//3. Use the cameras class to change the parameters of the camera
@@ -24,12 +29,13 @@ void Process::processInput(GLFWwindow* window, Camera &camera) {
 		camera.processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera.processKeyboardMovement(DOWN, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-		PutDominos(window, camera);
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+		if (mutex)
+			mutex = false;
+		else
+			PutDominos(window, camera, world, shader);
+	}
 	HandleMouse(window, camera); 
-
-
-	
 }
 
 void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){
@@ -72,18 +78,65 @@ void Process::HandleMouse(GLFWwindow* window, Camera &camera){
 
 }
 
-void Process::PutDominos(GLFWwindow* window, Camera &camera){
+void Process::PutDominos(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader){
 
 	double xpos, ypos;
-	float xoffset, yoffset;
-	
+	int width, height;
 	glfwGetCursorPos(window, &xpos, &ypos); 
-	
-	xoffset = xpos + camera.initRunX;
-	yoffset = ypos + camera.initRunY; 
+	glfwGetWindowSize(window, &width, &height);
+	xpos = (2*xpos-width)/width;
+	ypos = (height-2*ypos)/height;
 
-	std::cout << "X " << xoffset << " = " << xpos << " + " << camera.initRunX << std::endl;
-	std::cout << "Y " << yoffset << " = " << ypos << " + " << camera.initRunY << std::endl;
+	float near = 0.01;
+	float far = 100.;
+	glm::mat4 view = camera.getViewMatrix();
+	glm::mat4 projection = camera.getProjectionMatrix(window, near, far);
+
+	glm::vec4 farScreen = glm::vec4(xpos*far, ypos*far, far-0.015, far);
+	glm::vec4 farModel = glm::inverse(projection*view)*farScreen;
+	glm::vec4 farCoord = glm::vec4(farModel/farModel.w);
+	std::cout << glm::to_string(farCoord) << std::endl;
+
+	
+	if (farCoord.y < 0) { // Look towards ground (not sky)
+
+		glm::vec4 nearScreen = glm::vec4(xpos*near, ypos*near, near-0.015, near);
+		glm::vec4 nearModel = glm::inverse(projection*view)*nearScreen;
+		glm::vec4 nearCoord = glm::vec4(nearModel/nearModel.w);
+		std::cout << glm::to_string(nearCoord) << std::endl;
+
+		double y = 1; // size domino
+		double ratio = 1 - (nearCoord.y-y)/(nearCoord.y-farCoord.y);
+		double x = ratio*nearCoord.x + (1-ratio)*farCoord.x;
+		double z = ratio*nearCoord.z + (1-ratio)*farCoord.z;
+		
+		char cubeGeometry[] = "../../objects/cube.obj";
+		Object* cube = new Object(cubeGeometry, glm::vec3(x, y, z), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
+
+		world.addCube(cube);
+		shader.addObject(cube);
+	}
+	//*/
+
+	/*
+	glm::mat4 view = camera.getViewMatrix();
+	glm::mat4 projection = camera.getProjectionMatrix(window, 0.01, 100.0);
+	glm::vec4 model = glm::mat4(0,0,0,0,0,0,0,0,0,0,0,0, -0., 1, -0,1) * glm::vec4(0.,0.,0., 1.0);
+	std::cout << glm::to_string(model) << std::endl;
+
+	glm::vec4 tmp = projection*view*model;
+	std::cout << glm::to_string(tmp) << std::endl;
+	glm::vec2 coord = tmp / tmp.w;
+	std::cout << glm::to_string(coord) << std::endl;
+	*/
+
+	/*
+	glm::mat4 inversePrjMat = glm::inverse( projection );
+	float depth = 1.;
+	glm::vec4 viewPosH = inversePrjMat * glm::vec4(xpos, ypos, 2.0*depth - 1.0, 1.0);
+	glm::vec4 viewPos = viewPosH / viewPosH.w;
+	std::cout << glm::to_string(viewPos) << std::endl;
+	//*/
 
 }
 

@@ -40,7 +40,7 @@ public:
 
     void addObject(Object* obj);
 
-    void DrawObjects(glm::mat4 view, glm::mat4 perspective, glm::vec3 light_pos);
+    void DrawObjects(glm::mat4 view, glm::mat4 projection, glm::vec3 light_pos);
 
 
 

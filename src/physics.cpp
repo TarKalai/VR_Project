@@ -26,7 +26,6 @@ void PhysicalWorld::initializeEngine(){
     dynamicsWorld->setGravity(btVector3(0, GRAVITY, 0));
 }
 
-
 void PhysicalWorld::createGround(Object *obj, float width, float depth){
     btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(0.), btScalar(depth)));
 
