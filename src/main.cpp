@@ -110,7 +110,7 @@ int main(int argc, char* argv[]){
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 
 	mainWindow.Initialise(); 
 
@@ -125,16 +125,17 @@ int main(int argc, char* argv[]){
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
-	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
-	// world.addSphere(&sphere1);  
-	// shader.addObject(&sphere1);
+	/* Example how to create objects 
+	Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.));
+	world.addSphere(&sphere1);  
+	shader.addObject(&sphere1);
 
 	Object sphere;
 	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(sphereGeometry, pos, rot, scale, world.glObjects.size());
+		Object* sphere = new Object(sphereGeometry, pos, rot, scale);
 		world.addSphere(sphere);  
 		shader.addObject(sphere);
 	}
@@ -143,18 +144,10 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
-		Object* cube = new Object(cubeGeometry, pos, rot, scale, world.glObjects.size());	
+		Object* cube = new Object(cubeGeometry, pos, rot, scale);	
 		world.addCube(cube);  
 		shader.addObject(cube);
 	}
-
-	/*
-	Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
-	world.addSphere(&sphere);  
-	shader.addObject(&sphere);
-	Object cube = Object(cubeGeometry, glm::vec3(-4, 4, -4), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
-	world.addCube(&cube);
-	shader.addObject(&cube);
 	*/
 
 	//2. Choose a position for the light
@@ -200,7 +193,7 @@ int main(int argc, char* argv[]){
 		process.processInput(mainWindow.getWindow(), camera, world, shader);
 
 		glm::mat4 view = camera.getViewMatrix();
-		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 100.0);
+		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 1000.0);
 		glfwPollEvents();
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);

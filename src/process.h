@@ -19,9 +19,13 @@ public:
     void processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader); 
     void HandleMouse(GLFWwindow* window, Camera &camera); 
     void processMouseScroll(float yoffset, Camera &camera); 
-    void PutDominos(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader);
+    void SaveCursorPath(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader);
+    void PutDominoes(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader);
     ~Process(); 
 private: 
     bool fullscreen = false;
-    bool was_pressed = false;
+    bool resizescreen = false;
+    int pressed = 0;
+    bool shoot = false;
+    std::vector<glm::vec3> cursor_path;
 }; 

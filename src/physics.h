@@ -3,6 +3,7 @@
 
 // bullet3 (physical engine)
 #include <btBulletDynamicsCommon.h>
+#include <map>
 #include "object.h"
 
 
@@ -16,17 +17,17 @@ public:
     btSequentialImpulseConstraintSolver* solver;
 
     btAlignedObjectArray<btCollisionShape*> collisionShapes;
-    std::vector<Object*> glObjects;
-
-    float size_x = 0.175, size_y = 1.0, size_z = 0.5;
+    std::map<int, Object*> glObjects;
 
     // constructor
     PhysicalWorld(Object *obj);
 
     void initializeEngine();
     void createGround(Object *obj, float width=50., float depth=50.);
+    void push(glm::vec3 position, glm::vec3 direction, int power);
     void addSphere(Object *obj);
     void addCube(Object *obj);
+    void addDomino(Object *obj);
     void addObject(Object *objbt, btCollisionShape* colShape);
 
     void animate();

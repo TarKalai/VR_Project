@@ -9,33 +9,21 @@
 Process::Process(){}
 
 
-/*
-static int oldState = GL_RELEASE; 
-int newState = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT); 
-if (newState == GL_RELEASE && oldState == GL_PRESS) { 
-	// whatever 
-} 
-oldState = newState;
-
-*/
 void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader) {
 
 	// Use the cameras class to change the parameters of the camera
 	//3. Use the cameras class to change the parameters of the camera
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-	if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
-		if (fullscreen && !was_pressed) {
+	if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) 
+		resizescreen = true;
+	else if (resizescreen) {
+		resizescreen = false;
+		if (fullscreen)
 			glfwSetWindowSize(window, 700, 700);
-			fullscreen = !fullscreen;
-		}
-		else if (!was_pressed) {
+		else 
 			glfwSetWindowSize(window, 1920, 1080);
-			fullscreen = !fullscreen;
-		}
-		was_pressed = true;
-	} else {
-		was_pressed = false;
+		fullscreen = !fullscreen;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
@@ -51,33 +39,36 @@ void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &wo
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera.processKeyboardMovement(DOWN, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
-		PutDominos(window, camera, world, shader);
+		SaveCursorPath(window, camera, world, shader);
+	else if (cursor_path.size() > 0) {
+		PutDominoes(window, camera, world, shader);
+	}
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)  {
+		shoot = true;
+		pressed += 1;
+		std::cout << "-";
+	} else if (shoot) {
+		shoot = false;
+		world.push(camera.Position, camera.Front, pressed);
+		pressed = 0;
+	}
 	HandleMouse(window, camera); 
 }
 
 void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){
-	
-	int height, width;
-	glfwGetWindowSize(window, &width, &height);
-	camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
-	camera.initRunY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
-	printf("size width %d, height %d\n", width, height);
-	
-	/*
-	// TODO Tarik, this separation is really needed ?
-	if (cursor_disabled){
+	if (cursor_disabled) {
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);
 		camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
 		camera.initRunY = height/2 + camera.Pitch*(1/camera.MouseSensitivity);
 		printf("size width %d, height %d\n", width, height);
-	}else{
+	}
+	else {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos); 
 		camera.initRunX = xpos - camera.Yaw*(1/camera.MouseSensitivity);
 		camera.initRunY = ypos + camera.Pitch*(1/camera.MouseSensitivity);
 	}
-	*/
 }
 
 
@@ -98,7 +89,55 @@ void Process::HandleMouse(GLFWwindow* window, Camera &camera){
 
 }
 
-void Process::PutDominos(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader){
+void Process::SaveCursorPath(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader){
+	
+	double size = 1;
+	glm::vec3 dir = camera.Front;
+	glm::vec3 pos = camera.Position;
+
+	if (dir.y < 0) {
+		double ratio = (size - pos.y)/dir.y;
+		glm::vec3 destination = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
+		cursor_path.push_back(destination);
+	}
+}
+
+void Process::PutDominoes(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader){
+	float heightDomino = 1.*2;
+	float widthDomino = 0.175*2;
+	float espacement = 0.5*heightDomino + widthDomino; // distance between 2 domino
+
+	char cubeGeometry[] = "../../objects/domino.obj";
+	float dist;
+	float ratio;
+	glm::vec3 next;
+	glm::vec3 dir;
+	glm::vec3 last = cursor_path[0];
+
+	int i = 1;
+    while (i < cursor_path.size()-1) {
+		dist = glm::distance(last, cursor_path[i]);
+		if (dist < espacement) { // if next domino too close, check the next one
+        	i++;
+		}
+		else if (dist > espacement) { 
+			ratio = espacement/dist;
+			next = glm::vec3(1-ratio)*last + glm::vec3(ratio)*cursor_path[i]; // To get dominoes at constant interval
+			dir = next-last;
+
+			Object* cube = new Object(cubeGeometry, glm::vec3(last), glm::vec3(0., -glm::atan(dir.z/dir.x), 0.), glm::vec3(1.));	
+			world.addDomino(cube);
+			shader.addObject(cube);
+
+			last = next;
+		}
+    }
+	cursor_path.clear();
+}
+
+
+/* Putting domino at cursor position (keep if we need to do something similar in the futur)
+void Process::SaveCursorPath(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader){
 
 	double xpos, ypos;
 	int width, height;
@@ -134,11 +173,11 @@ void Process::PutDominos(GLFWwindow* window, Camera &camera, PhysicalWorld &worl
 		double z = ratio*nearCoord.z + (1-ratio)*farCoord.z;
 		
 		char cubeGeometry[] = "../../objects/cube.obj";
-		Object* cube = new Object(cubeGeometry, glm::vec3(x, y, z), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
+		Object* cube = new Object(cubeGeometry, glm::vec3(x, y, z), glm::vec3(0., 0, 0), glm::vec3(1.));	
 
 		world.addCube(cube);
 		shader.addObject(cube);
 	}
-}
+}*/
 
 Process::~Process(){}

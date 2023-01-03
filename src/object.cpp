@@ -5,6 +5,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+int Object::objectCounter = 1;
+
 Object::Object() {}
 
 Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier){
@@ -12,7 +14,10 @@ Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3
     position = obj_pos;
     rotation = obj_rot;
     scale = obj_scale;
-    id = identifier;
+    if (identifier==-999) {
+        id = objectCounter;
+        objectCounter++;  
+    }  else {id = identifier;}
 
     // Read the file defined by the path argument 
     // open the .obj file into a text editor and see how the data are organized

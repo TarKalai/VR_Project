@@ -23,11 +23,13 @@ struct Vertex {
 class Object
 {
 public:
+	static int objectCounter;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
 	// VAO object, VBO shader
 	int id;
+	bool deleteAfterCollision;
 	GLuint VAO, VBO;
 
 	bool has_texture;
@@ -45,7 +47,7 @@ public:
 
 	Object();
 	
-	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier);
+	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier=-999);
 	
 	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath);
 

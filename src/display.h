@@ -31,12 +31,8 @@ public:
 
 
 private: 
-
     GLFWwindow *mainWindow; 
     GLint width, height; 
     GLint bufferWidth, bufferHeight; 
     bool cursor_disabled;
-    
-
-
 };
