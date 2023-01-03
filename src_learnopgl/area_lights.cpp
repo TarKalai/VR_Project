@@ -74,11 +74,11 @@ struct VertexAL {
 };
 
 const GLfloat psize = 10.0f;
-VertexAL planeVertices[4] = {
+VertexAL planeVertices[6] = {
 	{ {-psize, 0.0f, -psize}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f} },
 	{ {-psize, 0.0f,  psize}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f} },
-	// { { psize, 0.0f,  psize}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f} },
-	// { {-psize, 0.0f, -psize}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f} },
+	{ { psize, 0.0f,  psize}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f} },
+	{ {-psize, 0.0f, -psize}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f} },
 	{ { psize, 0.0f,  psize}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f} },
 	{ { psize, 0.0f, -psize}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f} }
 };
@@ -144,7 +144,6 @@ void configureMockupData()
     glEnableVertexAttribArray(2);
     glBindVertexArray(0);
 
-    glBindVertexArray(0);
 }
 
 void renderPlane()
@@ -222,7 +221,7 @@ void incrementLightIntensity(float step)
 {
 	static float intensity = 4.0f;
 	intensity += step;
-	intensity = glm::clamp(intensity, 0.0f, 10.0f);
+	intensity = glm::clamp(intensity, 0.0f, 100.0f);
 	//std::cout << "intensity: " << intensity << '\n';
 	ltcShaderPtr->use();
 	ltcShaderPtr->setFloat("areaLight.intensity", intensity);
@@ -270,7 +269,7 @@ int main()
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetKeyCallback(window, key_callback);
 
-    // tell GLFW to capture our mouse
+    // tell GLFW to capture our mousearea_lights.cpp
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
@@ -311,7 +310,7 @@ int main()
 	shaderLTC.setInt("material.diffuse", 2);
 	incrementRoughness(0.0f);
 	incrementLightIntensity(0.0f);
-	switchTwoSided(false);
+	switchTwoSided(true);
 	glUseProgram(0);
 
 	shaderLightPlane.use();
@@ -348,7 +347,7 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		shaderLTC.setMat4("view", view);
 		glm::mat4 projection = glm::perspective(
-			glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		shaderLTC.setMat4("projection", projection);
 		shaderLTC.setVec3("viewPosition", camera.Position);
 		shaderLTC.setVec3("areaLightTranslate", areaLightTranslate);

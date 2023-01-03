@@ -1,14 +1,14 @@
 #version 330 core
 
-out vec4 fragColor;
+out vec4 fragColor; // color
 
-in vec3 worldPosition;
-in vec3 worldNormal;
-in vec2 texcoord;
+in vec3 worldPosition; // FragPos
+in vec3 worldNormal; // Normal
+in vec2 texcoord; //TexCoord
 
 struct Light
 {
-    float intensity;
+    float intensity; // diffuse and ambient
     vec3 color;
     vec3 points[4];
     bool twoSided;
@@ -23,7 +23,7 @@ struct Material
 };
 uniform Material material;
 
-uniform vec3 viewPosition;
+uniform vec3 viewPosition; // eyePosition
 uniform sampler2D LTC1; // for inverse M
 uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
 
