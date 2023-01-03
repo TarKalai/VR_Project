@@ -8,9 +8,9 @@
 // GLAD, GLFW, STB-IMAGE
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stb_image.h>
+// #include <stb_image.h>
 #define STB_IMAGE_IMPLEMENTATION
-
+#include <stb_image.h>
 // GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,7 +20,7 @@
 // #include <learnopengl/filesystem.h>
 #include "shader.h"
 #include "camera.h"
-#include "model.h"
+// #include "model.h"
 
 // STANDARD
 #include <iostream>
@@ -43,7 +43,7 @@ void renderCube();
 // SETTINGS AND GLOBALS
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-const glm::vec3 LIGHT_COLOR = Color::BurlyWood; // CHANGE AREA LIGHT COLOR HERE!
+const glm::vec3 LIGHT_COLOR = Color::Blue; // CHANGE AREA LIGHT COLOR HERE!
 bool keys[1024]; // activated keys
 glm::vec3 areaLightTranslate;
 Shader* ltcShaderPtr;

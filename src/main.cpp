@@ -37,13 +37,18 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 Material shinyMaterial; 
 Material dullMaterial; 
 
-char fileVert[128] = "../../src/Shaders/vertSrc.txt";
-char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
-char groundVertex[128] = "../../src/Shaders/vertGround.txt";
-char groundFrag[128] = "../../src/Shaders/fragGround.txt";
+char fileVert[128] = "../../src/Shaders/vertSrc.vs";
+char fileFrag[128] = "../../src/Shaders/fragSrc.fs";
+char groundVertex[128] = "../../src/Shaders/vertGround.vs";
+char groundFrag[128] = "../../src/Shaders/fragGround.fs";
+
+char areaLightVertex[128] = "../../src/Shaders/area_light.vs";
+char areaLightFrag[128] = "../../src/Shaders/area_light.fs";
+
+char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
+char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
+
 char groundImage[128] = "../../image/woodFloor.png";
-
-
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
 
@@ -65,8 +70,8 @@ int main(int argc, char* argv[]){
 	unsigned int pointLightCount =0; 
     
     pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-                                0.3f, 1.0f,
-                                4.0f,4.0f, 4.0f,
+                                0.4f, 1.0f,
+                                10.0f,4.0f, 10.0f,
                                 0.3f, 0.2f, 0.1f);
     pointLightCount++; 
     
@@ -104,7 +109,7 @@ int main(int argc, char* argv[]){
 
     spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
                                 0.0f, 2.0f,
-                                4.0f, 10.0f, 4.0f,
+                                0.0f, 10.0f, 0.0f,
                                 0.0f, -1.0f, 0.0f, // point to teh left (very far)
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
@@ -113,16 +118,18 @@ int main(int argc, char* argv[]){
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 
 	mainWindow.Initialise(); 
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
+	Shader lightShader(NULL, lightPlaneVertex,lightPlaneFrag, false, false);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
 	char groundGeometry[] = "../../objects/floor.obj";
+	char planeGeometry[] = "../../objects/plane.obj";
 
 	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(1.), 0);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
@@ -131,6 +138,7 @@ int main(int argc, char* argv[]){
 	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
 	// world.addSphere(&sphere1);  
 	// shader.addObject(&sphere1);
+	std::vector<Object*> lightObjects;
 
 	Object sphere;
 	for (int i=0; i<10; i++) {
@@ -151,6 +159,9 @@ int main(int argc, char* argv[]){
 		shader.addObject(cube);
 	}
 
+	Object plane = Object(planeGeometry, glm::vec3(5., 5., 5.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.), 0);
+	lightObjects.push_back(&plane);
+	lightShader.addObject(&plane);
 	/*
 	Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
 	world.addSphere(&sphere);  
@@ -212,7 +223,7 @@ int main(int argc, char* argv[]){
 		//2. Use the shader Class to send the relevant uniform
 		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		
+		lightShader.DrawLightObjects(view, projection);
 		
 		fps(now);
 		mainWindow.swapBuffers(); 

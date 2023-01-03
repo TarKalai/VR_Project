@@ -1,5 +1,5 @@
 #include "shader.h"
-
+#include "colors.hpp" // contains many color pre computed in vectors.
 #include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
 
 Shader::Shader(char *imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
@@ -252,6 +252,21 @@ void Shader::DrawObjects(glm::mat4 view,
     lowerLight.y -= 0.3f;
 	sLights[0].SetFlash(lowerLight, front_cam);
 
+    int i = 0;
+    for(Object* object : objectList) {
+        i += 1;
+        setMatrix4("model", object->model);
+		// setMatrix4("itM", glm::inverseTranspose(object->model));
+        object->draw();
+    }
+}
+
+void Shader::DrawLightObjects(glm::mat4 view, 
+                              glm::mat4 projection){
+    use();
+    setMatrix4("view", view); //V
+    setMatrix4("projection", projection); //P
+    setVector3f("lightColor", glm::vec3(0.0, 0.0, 1.0));
     int i = 0;
     for(Object* object : objectList) {
         i += 1;

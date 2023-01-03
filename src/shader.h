@@ -51,6 +51,8 @@ public:
 
     void SetSpotLights(SpotLight * sLight, unsigned int lightCount); 
 
+    void setColor(const GLchar* name, glm::vec3& color);
+
     void addObject(Object* obj);
 
     void DrawObjects(glm::mat4 view, 
@@ -63,6 +65,9 @@ public:
                      unsigned int pLightCount, 
                      SpotLight * sLights, 
                      unsigned int sLightCount); //, glm::vec3 light_pos);
+    
+    void DrawLightObjects(glm::mat4 view, 
+                          glm::mat4 projection);
 
     GLuint uniformPointLightCount;
     struct {
