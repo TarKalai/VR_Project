@@ -56,7 +56,7 @@ void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &wo
 }
 
 void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){
-	if (cursor_disabled) {
+	if (cursor_disabled){
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);
 		camera.initRunX = width/2 - camera.Yaw*(1/camera.MouseSensitivity);
