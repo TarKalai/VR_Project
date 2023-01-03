@@ -159,6 +159,7 @@ int main(int argc, char* argv[]){
 		shader.addObject(cube);
 	}
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	Object plane = Object(planeGeometry, glm::vec3(5., 5., 5.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.), 0);
 	lightObjects.push_back(&plane);
 	lightShader.addObject(&plane);
