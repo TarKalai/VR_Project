@@ -252,11 +252,11 @@ void Shader::DrawObjects(glm::mat4 view,
     lowerLight.y -= 0.3f;
 	sLights[0].SetFlash(lowerLight, front_cam);
 
-    int i = 0;
     for(Object* object : objectList) {
-        i += 1;
-        setMatrix4("model", object->model);
-		// setMatrix4("itM", glm::inverseTranspose(object->model));
-        object->draw();
+        if (object->visible) {
+            setMatrix4("model", object->model);
+            // setMatrix4("itM", glm::inverseTranspose(object->model));
+            object->draw();
+        }
     }
 }

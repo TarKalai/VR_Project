@@ -3,7 +3,6 @@
 #include "glm/ext.hpp" 
 #include "glm/gtx/string_cast.hpp"
 
-float GRAVITY = -10.f;
 PhysicalWorld::PhysicalWorld(Object *obj)
 {
     initializeEngine();
@@ -23,19 +22,19 @@ void PhysicalWorld::initializeEngine(){
     ///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
     solver = new btSequentialImpulseConstraintSolver;
     dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    dynamicsWorld->setGravity(btVector3(0, GRAVITY, 0));
+    dynamicsWorld->setGravity(btVector3(0, -100, 0));
 }
 
 void PhysicalWorld::createGround(Object *obj, float width, float depth){
 
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(1.), btScalar(depth)));
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(0.), btScalar(depth)));
 
     collisionShapes.push_back(groundShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0, -1, 0));
+    groundTransform.setOrigin(btVector3(0,0,0));
 
     btScalar mass(0.);
 
@@ -51,59 +50,35 @@ void PhysicalWorld::createGround(Object *obj, float width, float depth){
     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
     btRigidBody* body = new btRigidBody(rbInfo);
 
-    body->setUserIndex(0); // >0 used for classical collisionable object with openGL display (e.g. dominos)
+    body->setUserIndex(obj->id);
+    //setLifeTime(body, -1000);
     //add the body to the dynamics world
     dynamicsWorld -> addRigidBody(body);
 }
 
-void PhysicalWorld::push(glm::vec3 position, glm::vec3 direction, int power) {
-    btCollisionShape* colShape = new btSphereShape(btScalar(0.1));
-    collisionShapes.push_back(colShape);
-    /// Create Dynamic Objects
-    btTransform startTransform;
-    startTransform.setIdentity();
-    btScalar mass(1.f);
-    //rigidbody is dynamic if and only if mass is non zero, otherwise static
-    bool isDynamic = (mass != 0.f);
-    btVector3 localInertia(0,0,0);
-    if (isDynamic)
-        colShape->calculateLocalInertia(mass, localInertia);
-
-    startTransform.setOrigin(btVector3(position.x, position.y, position.z)); // Initial Position
-    //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-    btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-    btRigidBody* body = new btRigidBody(rbInfo);
-    
-    body->setGravity(btVector3(0, 0, 0));
-    body->setLinearVelocity(btVector3(power*direction.x, power*direction.y, power*direction.z)); // set initial velocity 
-    body->setUserIndex(-1); // -1 used for object to delete after collision (e.g. push)
-    dynamicsWorld->addRigidBody(body);
-}
-
-void PhysicalWorld::addSphere(Object *obj){
+void PhysicalWorld::addSphere(Object *obj, glm::vec3 velocity, int lifetime){
     //create a dynamic rigidbody
     if (obj->scale.x!=obj->scale.y || obj->scale.y!=obj->scale.z) { // Check if it's a sphere
         std::cout << "The sphere has not spherical dimensions !" << std::endl;
         exit(-1);
     }
     btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale.x));
-    addObject(obj, colShape);
+    addObject(obj, colShape, velocity, lifetime);
 }
 
-void PhysicalWorld::addCube(Object *obj){
+void PhysicalWorld::addCube(Object *obj, glm::vec3 velocity, int lifetime){
     //create a dynamic rigidbody
     btCollisionShape* colShape = new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
-    addObject(obj, colShape);
+    addObject(obj, colShape, velocity, lifetime);
 }
 
-void PhysicalWorld::addDomino(Object *obj){
+void PhysicalWorld::addDomino(Object *obj, glm::vec3 velocity, int lifetime){
     //create a dynamic rigidbody
     btCollisionShape* colShape = new btBoxShape(btVector3(0.175*obj->scale.x, 1.*obj->scale.y, 0.5*obj->scale.z));
-    addObject(obj, colShape, true);
+    addObject(obj, colShape, velocity, lifetime);
 }
 
-void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, bool is_domino){
+void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime){
     //btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale));
     collisionShapes.push_back(colShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
@@ -112,7 +87,7 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, bool is_d
     btTransform startTransform;
     startTransform.setIdentity();
 
-    btScalar mass(1.f);
+    btScalar mass(1.);
 
     //rigidbody is dynamic if and only if mass is non zero, otherwise static
     bool isDynamic = (mass != 0.f);
@@ -137,13 +112,13 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, bool is_d
     //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
     btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-    btRigidBody* body = new btRigidBody(rbInfo);
-    body->setUserIndex(obj->id); // >0 used for classical collisionable object with openGL display (e.g. dominos)
-    dynamicsWorld->addRigidBody(body);
+    //rbInfo.m_initialLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
 
-    if (is_domino) {
-        body->setGravity(btVector3(0, -100, 0));
-    }
+    btRigidBody* body = new btRigidBody(rbInfo);
+    setLifeTime(body, lifetime);
+    body->setUserIndex(obj->id); // >0 used for classical collisionable object with openGL display (e.g. dominos)
+    body->setLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
+    dynamicsWorld->addRigidBody(body);
 }
 
 void PhysicalWorld::animate()
@@ -155,6 +130,7 @@ void PhysicalWorld::animate()
     {
         btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
         btRigidBody* body = btRigidBody::upcast(obj);
+
         btTransform trans;
         if (body && body->getMotionState())
         {   
@@ -164,18 +140,20 @@ void PhysicalWorld::animate()
         {
             // If collision
             trans = obj->getWorldTransform();
-            if (body->getUserIndex() == -1) {
-                dynamicsWorld->removeRigidBody(body);
-                delete body;
-            }
         }
 
-        if (body->getUserIndex() > 0) {
-            Object* glObj = glObjects.at(body->getUserIndex());
-            btScalar roll, pitch, yaw;
-            trans.getRotation().getEulerZYX(yaw,pitch,roll);
-            glm::vec3 translation = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
-            glObj->setPosRot(translation, glm::vec3(roll, pitch, yaw));
+        Object* glObj = glObjects.at(body->getUserIndex());
+        btScalar roll, pitch, yaw;
+        trans.getRotation().getEulerZYX(yaw,pitch,roll);
+        glm::vec3 translation = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+        glObj->setPosRot(translation, glm::vec3(roll, pitch, yaw));
+
+        setLifeTime(body, getLifeTime(body)-1);
+        if (getLifeTime(body) == 0) {
+                Object* glObj = glObjects.at(body->getUserIndex());
+                glObj->visible = false;
+                dynamicsWorld->removeRigidBody(body);
+                delete body;
         }
     }
 }

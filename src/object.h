@@ -24,6 +24,7 @@ class Object
 {
 public:
 	static int objectCounter;
+	bool visible;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
@@ -47,7 +48,7 @@ public:
 
 	Object();
 	
-	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, int identifier=-999);
+	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true);
 	
 	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath);
 

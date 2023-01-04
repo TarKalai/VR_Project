@@ -121,11 +121,11 @@ int main(int argc, char* argv[]){
 	char cubeGeometry[] = "../../objects/cube.obj";
 	char groundGeometry[] = "../../objects/floor.obj";
 
-	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(1.), 0);
+	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(1.));
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
-	///* Example how to create objects 
+	/* Example how to create objects 
 	Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.));
 	world.addSphere(&sphere1);  
 	shader.addObject(&sphere1);
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]){
 		world.addCube(cube);  
 		shader.addObject(cube);
 	}
-	//*/
+	*/
 
 	//2. Choose a position for the light
 	// const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
@@ -187,9 +187,6 @@ int main(int argc, char* argv[]){
 	process.initMousePosition(mainWindow.getWindow(), camera, mainWindow.getCursorDisabled());
 
 	while (!mainWindow.getShouldClose()){
-		// BULLET3
-		world.animate();
-
 		process.processInput(mainWindow.getWindow(), camera, world, shader);
 
 		glm::mat4 view = camera.getViewMatrix();
@@ -199,10 +196,12 @@ int main(int argc, char* argv[]){
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// BULLET3
+		world.animate();
 		//2. Use the shader Class to send the relevant uniform
 		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		
+
 		
 		fps(now);
 		mainWindow.swapBuffers(); 
