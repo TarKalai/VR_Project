@@ -125,13 +125,13 @@ int main(int argc, char* argv[]){
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
-	/* Example how to create objects 
+	///* Example how to create objects 
 	Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.));
 	world.addSphere(&sphere1);  
 	shader.addObject(&sphere1);
 
 	Object sphere;
-	for (int i=0; i<10; i++) {
+	for (int i=0; i<100; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]){
 		world.addCube(cube);  
 		shader.addObject(cube);
 	}
-	*/
+	//*/
 
 	//2. Choose a position for the light
 	// const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);

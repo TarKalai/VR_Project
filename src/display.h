@@ -2,18 +2,21 @@
 // #define DISPLAY_H
 #pragma once
 #include <stdio.h>
+#include <vector>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-
+struct Resolution {
+    int width;
+    int height;
+};
 
 class Display{
 public: 
 
     Display();
     Display(bool cursor); 
-    Display(GLint windowWidth, GLint windowHeight, bool cursor); 
 
     int Initialise(); 
 

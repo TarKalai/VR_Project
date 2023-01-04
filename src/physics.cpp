@@ -2,8 +2,8 @@
 #include <math.h>
 #include "glm/ext.hpp" 
 #include "glm/gtx/string_cast.hpp"
-// #define GRAVITY -9.81f;
-const float GRAVITY = -3.81f;
+
+float GRAVITY = -10.f;
 PhysicalWorld::PhysicalWorld(Object *obj)
 {
     initializeEngine();
@@ -28,14 +28,14 @@ void PhysicalWorld::initializeEngine(){
 
 void PhysicalWorld::createGround(Object *obj, float width, float depth){
 
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(0.), btScalar(depth)));
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(1.), btScalar(depth)));
 
     collisionShapes.push_back(groundShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0, 0, 0));
+    groundTransform.setOrigin(btVector3(0, -1, 0));
 
     btScalar mass(0.);
 
@@ -74,7 +74,8 @@ void PhysicalWorld::push(glm::vec3 position, glm::vec3 direction, int power) {
     btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
     btRigidBody* body = new btRigidBody(rbInfo);
-
+    
+    body->setGravity(btVector3(0, 0, 0));
     body->setLinearVelocity(btVector3(power*direction.x, power*direction.y, power*direction.z)); // set initial velocity 
     body->setUserIndex(-1); // -1 used for object to delete after collision (e.g. push)
     dynamicsWorld->addRigidBody(body);
@@ -99,10 +100,10 @@ void PhysicalWorld::addCube(Object *obj){
 void PhysicalWorld::addDomino(Object *obj){
     //create a dynamic rigidbody
     btCollisionShape* colShape = new btBoxShape(btVector3(0.175*obj->scale.x, 1.*obj->scale.y, 0.5*obj->scale.z));
-    addObject(obj, colShape);
+    addObject(obj, colShape, true);
 }
 
-void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape){
+void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, bool is_domino){
     //btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale));
     collisionShapes.push_back(colShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
@@ -139,12 +140,16 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape){
     btRigidBody* body = new btRigidBody(rbInfo);
     body->setUserIndex(obj->id); // >0 used for classical collisionable object with openGL display (e.g. dominos)
     dynamicsWorld->addRigidBody(body);
+
+    if (is_domino) {
+        body->setGravity(btVector3(0, -100, 0));
+    }
 }
 
 void PhysicalWorld::animate()
 {
     ///-----stepsimulation_start-----
-    dynamicsWorld->stepSimulation(1.f / 60.f, 1);
+    dynamicsWorld->stepSimulation(speedAnimation/150, 1);
     //print positions of all objects
     for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--) // go through all the objects
     {

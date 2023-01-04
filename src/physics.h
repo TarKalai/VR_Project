@@ -9,7 +9,9 @@
 
 class PhysicalWorld
 {
+    
 public:
+    float speedAnimation = 1.;
     btDiscreteDynamicsWorld* dynamicsWorld;
     btDefaultCollisionConfiguration* collisionConfiguration;
     btCollisionDispatcher* dispatcher;
@@ -28,7 +30,7 @@ public:
     void addSphere(Object *obj);
     void addCube(Object *obj);
     void addDomino(Object *obj);
-    void addObject(Object *objbt, btCollisionShape* colShape);
+    void addObject(Object *objbt, btCollisionShape* colShape, bool is_domino=false);
 
     void animate();
     void clear();

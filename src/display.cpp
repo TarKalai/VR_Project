@@ -7,29 +7,23 @@ float fov = 45;
 
 Display::Display(){
     cursor_disabled = false;
-    width=700; 
-    height=700; 
 }
 
 Display::Display(bool cursor){
     cursor_disabled = cursor;
-    width=700; 
-    height=700; 
-}
-
-Display::Display(GLint windowWidth, GLint windowHeight, bool cursor){
-    cursor_disabled = cursor;
-    width = windowWidth; 
-    height = windowHeight;
 }
 
 int Display::Initialise(){
     // Initialise Glfw
+    int width = 1920/2;
+    int height = 1080/2;
+    glfwTerminate();
     if(!glfwInit()){
         printf("The inititialisation of glfw failed.");
         glfwTerminate(); 
         return 1; 
     }
+    
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -42,8 +36,10 @@ int Display::Initialise(){
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     #endif
 
-	//mainWindow = glfwCreateWindow(width, height, "Project", glfwGetPrimaryMonitor(), NULL); # Fullscreen
+	//mainWindow = glfwCreateWindow(width, height, "Project", glfwGetPrimaryMonitor(), NULL); // Fullscreen
 	mainWindow = glfwCreateWindow(width, height, "Project", NULL, NULL);
+	glfwSetWindowMonitor(mainWindow, 0,  0, 0, width, height, GLFW_DONT_CARE);
+
 
     if(!mainWindow){
         printf("The window was not created.");

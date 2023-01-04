@@ -6,25 +6,60 @@
 #include <glm/glm.hpp>
 #include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
 
-Process::Process(){}
+Process::Process() {}
 
 
 void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader) {
 
-	// Use the cameras class to change the parameters of the camera
-	//3. Use the cameras class to change the parameters of the camera
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
 	if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) 
 		resizescreen = true;
 	else if (resizescreen) {
 		resizescreen = false;
-		if (fullscreen)
-			glfwSetWindowSize(window, 700, 700);
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+		if (fullscreen) 
+			glfwSetWindowMonitor(window, 0, 0, 0, width, height, GLFW_DONT_CARE);
 		else 
-			glfwSetWindowSize(window, 1920, 1080);
+			glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, GLFW_DONT_CARE);
 		fullscreen = !fullscreen;
 	}
+	if (glfwGetKey(window, GLFW_KEY_F10) == GLFW_PRESS && !fullscreen) {
+		if (!decreaseResolution) {
+			screenSize = std::max(3, (screenSize-1));
+			glfwSetWindowMonitor(window, 0,  0, 0, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
+		}
+		decreaseResolution = true;
+	} else { decreaseResolution = false; }
+	if (glfwGetKey(window, GLFW_KEY_F12) == GLFW_PRESS && !fullscreen) {
+		if (!increaseResolution) {
+			screenSize = std::min(screenSize+1, 20);
+			glfwSetWindowMonitor(window, 0, 0, 0, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
+		}
+		increaseResolution = true;
+	} else { increaseResolution = false; }
+
+	if (glfwGetKey(window, GLFW_KEY_KP_ENTER) == GLFW_PRESS) {
+		pausePressed = true;
+		pause = !pause;
+	} else if (pausePressed) { 
+		pausePressed = false;
+		if (pause)
+			world.speedAnimation = 0.; 
+		else
+			world.speedAnimation = 1.;
+	}
+	
+	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) 
+		world.speedAnimation = 0.5;
+	else if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS) 
+		world.speedAnimation = 10.;
+	else if (!pause)
+		world.speedAnimation = 1.;
+
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		camera.processKeyboardMovement(LEFT, 0.1);
@@ -52,7 +87,7 @@ void Process::processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &wo
 		world.push(camera.Position, camera.Front, pressed);
 		pressed = 0;
 	}
-	HandleMouse(window, camera); 
+	HandleMouse(window, camera);
 }
 
 void Process::initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled){

@@ -23,9 +23,14 @@ public:
     void PutDominoes(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader);
     ~Process(); 
 private: 
+    int screenSize = 5;
     bool fullscreen = false;
     bool resizescreen = false;
     int pressed = 0;
     bool shoot = false;
+    bool pause = false;
+    bool pausePressed = false;
+    bool decreaseResolution = false;
+    bool increaseResolution = false;
     std::vector<glm::vec3> cursor_path;
 }; 
