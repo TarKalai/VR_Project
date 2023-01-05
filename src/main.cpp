@@ -26,6 +26,7 @@
 #include "pointLight.h"
 #include "spotLight.h"
 
+
 Display mainWindow; 
 
 DirectionalLight mainLight;

@@ -3,6 +3,11 @@
 #include "process.h"
 #include "camera.h"
 
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 float fov = 45; 
 
 Display::Display(){
@@ -46,6 +51,19 @@ int Display::Initialise(){
         glfwTerminate(); 
         return 1; 
     }
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+    // Setup Dear ImGui style
+    ImGui::StyleColorsLight();
+    //ImGui::StyleColorsLight();
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     glfwMakeContextCurrent(mainWindow);  // Everything that will be done will bejoined to this window
 

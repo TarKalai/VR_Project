@@ -1,6 +1,6 @@
 #Template for INFOH502
 #Heavily inspired from https://github.com/Polytonic/Glitter/blob/master/CMakeLists.txt
-
+include(FetchContent)
 
 #project setup
 project(infoh502-cpp)
@@ -39,6 +39,50 @@ option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(3rdParty/glfw)
 add_subdirectory(3rdParty/bullet3)
 
+#for IMGUI
+
+# add_library(imgui
+#     # Main Imgui files
+#     3rdParty/imgui/imgui.cpp 3rdParty/imgui/imgui_draw.cpp
+#     3rdParty/imgui/imgui_tables.cpp 3rdParty/imgui/imgui_widgets.cpp
+#     # SDL2+OpenGL-specific files
+#     3rdParty/imgui/backends/imgui_impl_sdl.cpp
+#     3rdParty/imgui/backends/imgui_impl_opengl3.cpp)
+
+# imgui PUBLIC
+# ${imgui_SOURCE_DIR}
+# ${imgui_SOURCE_DIR}/backends
+# ${glfw_SOURCE_DIR}/include
+
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui
+    GIT_TAG        v1.88
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
+)
+
+FetchContent_GetProperties(imgui)
+if(NOT imgui_POPULATED)
+    message("Fetching imgui")
+    FetchContent_Populate(imgui)
+
+    add_library(imgui
+        ${imgui_SOURCE_DIR}/imgui.cpp
+        ${imgui_SOURCE_DIR}/imgui_demo.cpp
+        ${imgui_SOURCE_DIR}/imgui_draw.cpp
+        ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+        ${imgui_SOURCE_DIR}/imgui_tables.cpp
+        ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+        ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp)
+
+    target_include_directories(imgui PUBLIC
+        ${imgui_SOURCE_DIR}
+        ${imgui_SOURCE_DIR}/backends
+        ${glfw_SOURCE_DIR}/include)
+
+    target_link_libraries(imgui PRIVATE glfw)
+endif ()
 
 
 include_directories(3rdParty/glad/include/
