@@ -71,7 +71,7 @@ vec4 CalcLightByDirection(Light light, vec3 direction) // in the point light cal
     if(diffuseFactor>0.0f)
     {
         vec3 fragToEye = normalize(eyePosition - FragPos); // we just want the direction where the fragment is from the eye
-        vec3 reflectedVertex = reflect(direction, normalize(Normal)); // we want ot know where the light ray is reflected around the normal. The first argument is what we want ot reflect and the scd is what we are reflecting it around. 
+        vec3 reflectedVertex = normalize(reflect(direction, normalize(Normal))); // we want ot know where the light ray is reflected around the normal. The first argument is what we want ot reflect and the scd is what we are reflecting it around. 
         // we are reflecting the light direction across the normal pointing out of the object. 
         // if fragToEye is the same as reflectedVertex then we will see bright light because specular is most intance at that point. 
 

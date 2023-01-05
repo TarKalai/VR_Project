@@ -1,0 +1,12 @@
+#version 330 core
+
+precision mediump float; 
+in vec3 position;
+uniform mat4 M;
+out vec4 v_color;
+
+void main()
+{
+    gl_Position = M*vec4(position, 2);
+    v_color = vec4(1.,1.,1., 1.0);
+}

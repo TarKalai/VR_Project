@@ -30,7 +30,6 @@ public:
 	glm::vec3 scale;
 	// VAO object, VBO shader
 	int id;
-	bool deleteAfterCollision;
 	GLuint VAO, VBO;
 
 	bool has_texture;

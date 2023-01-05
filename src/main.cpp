@@ -14,6 +14,7 @@
 
 #include "camera.h"
 #include "shader.h"
+#include "shader2D.h"
 #include "object.h"
 
 //#include "physics.h"
@@ -116,6 +117,7 @@ int main(int argc, char* argv[]){
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
+	Shader2D shader2D(true);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
@@ -201,8 +203,7 @@ int main(int argc, char* argv[]){
 		//2. Use the shader Class to send the relevant uniform
 		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-
-		
+		shader2D.drawObject();
 		fps(now);
 		mainWindow.swapBuffers(); 
 	}

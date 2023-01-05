@@ -5,6 +5,7 @@ project("SRC")
 set(SOURCES_MAIN "main.cpp" 
 "physics.cpp" "physics.h" 
 "shader.cpp" "shader.h"
+"shader2D.cpp" "shader2D.h"
 "object.cpp" "object.h"
 "camera.cpp" "camera.h"
 "display.cpp" "display.h"
