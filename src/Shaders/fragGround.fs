@@ -31,7 +31,6 @@ struct PointLight
     float constant;
     float linear; 
     float exponent; 
-
 };
 
 struct SpotLight
@@ -266,7 +265,7 @@ vec3 PowVec3(vec3 v, float p)
     return vec3(pow(v.x, p), pow(v.y, p), pow(v.z, p));
 }
 
-const float gamma = 2.2;
+const float gamma = 1.0;
 vec3 ToLinear(vec3 v) { return PowVec3(v, gamma); }
 vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 
@@ -274,17 +273,17 @@ vec4 CalcAreaLights(){
     // gamma correction
     if (areaLightCount>0){
         vec3 mDiffuse = texture(material.diffuse, TexCoord).xyz;// * vec3(0.7f, 0.8f, 0.96f);
-        vec3 mSpecular = ToLinear(vec3(0.23f, 0.23f, 0.23f)); // mDiffuse
+        vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // mDiffuse
 
-        vec3 result = vec3(0.0f);
+        vec3 result = vec3(0.0);
 
         vec3 N = normalize(Normal);
         vec3 V = normalize(eyePosition - FragPos);
         vec3 P = FragPos;
-        float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
+        float dotNV = clamp(dot(N, V), 0.0, 1.0);
 
         // use roughness and sqrt(1-cos_theta) to sample M_texture
-        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV));
+        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0 - dotNV));
         uv = uv*LUT_SCALE + LUT_BIAS;
 
         // get 4 parameters for inverse_M
@@ -294,9 +293,9 @@ vec4 CalcAreaLights(){
         vec4 t2 = texture(LTC2, uv);
 
         mat3 Minv = mat3(
-            vec3(t1.x, 0, t1.y),
-            vec3(  0,  1,    0),
-            vec3(t1.z, 0, t1.w)
+            vec3(t1.x, 0.0, t1.y),
+            vec3(  0.0,  1.0,    0.0),
+            vec3(t1.z, 0.0, t1.w)
         );
 
         // // translate light source for testing
@@ -318,12 +317,13 @@ vec4 CalcAreaLights(){
 
             result += areaLights[i].base.color * areaLights[i].base.diffuseIntensity * (specular + mDiffuse * diffuse);
         }
-        
+        // return vec4(1.0);
 
         // fragColor = vec4(ToSRGB(result), 1.0f);
+        // return vec4(result, 1.0)
         return vec4(ToSRGB(result), 1.0f);
     }else {
-        return vec4(0.0);
+        return vec4(1.0);
     }
 }
 

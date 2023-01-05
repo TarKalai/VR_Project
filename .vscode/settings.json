@@ -77,7 +77,9 @@
         "typeindex": "cpp",
         "valarray": "cpp",
         "*.ipp": "cpp",
-        "__split_buffer": "cpp"
+        "__split_buffer": "cpp",
+        "__nullptr": "cpp",
+        "__node_handle": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -244,6 +244,17 @@ void Object::draw(){
 
 }
 
+std::vector<glm::vec3> Object::getVertexPosition(){
+    return vt_positions;
+}
+
+glm::vec3 Object::getPosition(){
+    return position;
+}
+
+glm::vec3 Object::getRotation(){
+    return rotation;
+}
 void Object::print(){
 	std::cout << "object id="<< id << " (" << round(position.x) << ", " << round(position.z) << ", " << round(position.z) << ")" << std::endl;
 }

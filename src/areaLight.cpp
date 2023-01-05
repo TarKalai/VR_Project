@@ -6,17 +6,24 @@ AreaLight::AreaLight() : Light()
     constant = 1.0f; 
     linear = 0.0f; 
     exponent = 0.0f; 
+    rotation = glm::vec3(0.0);
+    twoSided = true;
+    
 }
 
 AreaLight::AreaLight(GLfloat red, GLfloat green, GLfloat blue, 
         GLfloat aIntensity, GLfloat dIntensity,
-        GLfloat xPos, GLfloat yPos, GLfloat zPos, 
-        GLfloat con, GLfloat lin, GLfloat exp) : Light(red, green, blue, aIntensity, dIntensity)
+        glm::vec3 Position, 
+        GLfloat con, GLfloat lin, GLfloat exp,
+        glm::vec3 Rotation, bool TwoSided, std::vector<glm::vec3> VertexPosition) : Light(red, green, blue, aIntensity, dIntensity)
 {
-    position = glm::vec3(xPos, yPos, zPos); 
+    position = Position; 
     constant = con; 
     linear = lin; 
     exponent = exp; 
+    rotation = Rotation;
+    twoSided = TwoSided;
+    vertexPosition = VertexPosition;
 }
 
 void AreaLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation, 
@@ -34,5 +41,16 @@ void AreaLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLoc
 
 }
 
+std::vector<glm::vec3> AreaLight::getVertexPosition(){
+    return vertexPosition;
+}
+
+glm::vec3 AreaLight::getPosition(){
+    return position;
+}
+
+glm::vec3 AreaLight::getRotation(){
+    return rotation;
+}
 
 AreaLight::~AreaLight(){}

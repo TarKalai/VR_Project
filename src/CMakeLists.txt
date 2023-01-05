@@ -16,7 +16,8 @@ set(SOURCES_MAIN "main.cpp"
 "spotLight.cpp" "spotLight.h"
 "commonValues.h"
 "debug.h" "colors.hpp"
-"areaLight.cpp" "areaLight.h") 
+"areaLight.cpp" "areaLight.h"
+"ltc_matrix.hpp") 
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}
 #Specify that you want to generate an executable with a certain name using a set of sources

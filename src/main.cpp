@@ -28,6 +28,20 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "areaLight.h"
+#include "ltc_matrix.hpp"
+
+
+// FUNCTION PROTOTYPES
+// void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+// void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+// void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+// void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+// void do_movement(GLfloat deltaTime);
+unsigned int loadTexture(const char *path, bool gammaCorrection);
+GLuint loadMTexture();
+GLuint loadLUTTexture();
+void renderQuad();
+void renderCube();
 
 Display mainWindow; 
 
@@ -55,11 +69,52 @@ char groundImage[128] = "../../image/woodFloor.png";
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
+struct LTC_matrices {
+	GLuint mat1;
+	GLuint mat2;
+};
 
 float getRandom(float from=-4, float to=4) {
 	int mod = (to - from)*100;
 	return float(rand()%mod + 100*from)/100;
 }
+
+GLuint loadMTexture()
+{
+	GLuint texture = 0;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
+	             0, GL_RGBA, GL_FLOAT, LTC1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texture;
+}
+
+GLuint loadLUTTexture()
+{
+	GLuint texture = 0;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
+	             0, GL_RGBA, GL_FLOAT, LTC2);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texture;
+}
+
 
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
@@ -68,7 +123,7 @@ int main(int argc, char* argv[]){
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.2f, 0.2f, 
+                                0.01f, 0.01f, 
                                 0.0f, -1.0f, 0.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
@@ -101,6 +156,8 @@ int main(int argc, char* argv[]){
 
     pointLightCount++;
 
+	pointLightCount = 0;
+
 	unsigned int spotLightCount = 0;
 
     spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
@@ -118,15 +175,7 @@ int main(int argc, char* argv[]){
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
-
-	unsigned int areaLightCount =0; 
-    
-    areaLights[0] = AreaLight(0.0f, 0.0f, 1.0f, 
-                                0.4f, 1.0f,
-                                10.0f,4.0f, 10.0f,
-                                0.3f, 0.2f, 0.1f);
-    pointLightCount++; 
-
+	spotLightCount = 1;
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
@@ -134,6 +183,12 @@ int main(int argc, char* argv[]){
 	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
 
 	mainWindow.Initialise(); 
+
+	// LUT textures
+    LTC_matrices mLTC;
+    mLTC.mat1 = loadMTexture();
+    mLTC.mat2 = loadLUTTexture();
+
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
@@ -173,9 +228,20 @@ int main(int argc, char* argv[]){
 	}
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	Object plane = Object(planeGeometry, glm::vec3(5., 5., 5.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.), 0);
+	Object plane = Object(planeGeometry, glm::vec3(0., 1.0, 0.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.), 0);
 	lightObjects.push_back(&plane);
 	lightShader.addObject(&plane);
+	// groundShader.addObject(&plane);
+
+	unsigned int areaLightCount =0; 
+
+	areaLights[0] = AreaLight(0.0f, 0.0f, 1.0f, 
+							  0.4f, 1.0f,
+							  plane.getPosition(),
+							  0.3f, 0.2f, 0.1f,
+							  plane.getRotation(), true, 
+							  plane.getVertexPosition());
+    areaLightCount++; 
 	/*
 	Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
 	world.addSphere(&sphere);  
@@ -238,7 +304,10 @@ int main(int argc, char* argv[]){
 		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
 		lightShader.DrawLightObjects(view, projection);
-		
+		// glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
+		// glActiveTexture(GL_TEXTURE1);
+		// glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
 		fps(now);
 		mainWindow.swapBuffers(); 
 	}

@@ -44,6 +44,8 @@ public:
 
     void setVector3f(const GLchar* name, const glm::vec3& value);
 
+    void setVec3(const GLchar* name, const glm::vec3 &value);
+
     void setMatrix4(const GLchar* name, const glm::mat4& matrix); 
 
     void SetDirectionalLight(DirectionalLight * dLight); 
@@ -52,7 +54,9 @@ public:
 
     void SetSpotLights(SpotLight * sLight, unsigned int lightCount); 
 
-    void SetAreaLights(AreaLight *  aLight, unsigned int lightsCount);
+    void SetAreaLights(AreaLight *  aLight, unsigned int lightCount);
+
+    glm::mat4 getModelRotPos(glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 scale);
 
     // void setColor(const GLchar* name, glm::vec3& color);
 
@@ -108,6 +112,19 @@ public:
         GLuint uniformDirection; 
         GLuint uniformEdge; 
     } uniformSpotLight[MAX_SPOT_LIGHTS];
+
+    GLuint uniformAreaLightCount;
+    struct {
+        GLuint uniformColor; 
+        GLuint uniformAmbientIntensity; 
+        GLuint uniformDiffuseIntensity; 
+
+        GLuint uniformPosition;
+        GLuint uniformConstant; 
+        GLuint uniformLinear; 
+        GLuint uniformExponent; 
+    } uniformAreaLight[MAX_AREA_LIGHTS];
+
 
 
 private:

@@ -52,7 +52,9 @@ public:
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 
 	void draw();
-
+	std::vector<glm::vec3> getVertexPosition();
+	glm::vec3 getPosition();
+	glm::vec3 getRotation();
 	void print();
 };
 #endif
