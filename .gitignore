@@ -5,6 +5,8 @@ out/
 build/
 build/src/
 bullet3/
+assimp/
+imgui/
 CMakeSettings.json
 
 # Prerequisites
