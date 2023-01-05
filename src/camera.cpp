@@ -23,9 +23,9 @@ glm::mat4 Camera::getProjectionMatrix(GLFWwindow* window, float near, float far)
 }
 
 void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime){
-    float velocity = this->MovementSpeed * deltaTime;
+    float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD)
-        this->Position += normalize(this->Front * glm::vec3(1.0, 0.0, 1.0)) * velocity;
+        Position += normalize(Front * glm::vec3(1.0, 0.0, 1.0)) * velocity;
     if (direction == BACKWARD)
         this->Position -= normalize(this->Front * glm::vec3(1.0, 0.0, 1.0)) * velocity;
     if (direction == LEFT)
@@ -39,26 +39,28 @@ void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime)
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch=true){
-    float YawRot = 0;
-    float PitchRot = 0;
+    if (!pause){
+        float YawRot = 0;
+        float PitchRot = 0;
 
-    if (xoffset)
-        YawRot += xoffset*MouseSensitivity;
-    if (yoffset)
-        PitchRot -= yoffset*MouseSensitivity;
+        if (xoffset)
+            YawRot += xoffset*MouseSensitivity;
+        if (yoffset)
+            PitchRot -= yoffset*MouseSensitivity;
 
-    this->Yaw = YawRot;
-    this->Pitch = PitchRot;
+        this->Yaw = YawRot;
+        this->Pitch = PitchRot;
 
-    // Make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrainPitch)
-    {
-        if (this->Pitch > 89.0f)
-            this->Pitch = 89.0f;
-        if (this->Pitch < -89.0f)
-            this->Pitch = -89.0f;
-    }   
-    updateCameraVectors();
+        // Make sure that when pitch is out of bounds, screen doesn't get flipped
+        if (constrainPitch)
+        {
+            if (this->Pitch > 89.0f)
+                this->Pitch = 89.0f;
+            if (this->Pitch < -89.0f)
+                this->Pitch = -89.0f;
+        }   
+        updateCameraVectors();
+    }
 }
 
 // void Camera::ProcessMouseScroll(float yoffset){

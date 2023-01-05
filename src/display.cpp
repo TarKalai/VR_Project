@@ -4,15 +4,7 @@
 #include "camera.h"
 
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-
 float fov = 45; 
-
-Display::Display(){
-    cursor_disabled = false;
-}
 
 Display::Display(bool cursor){
     cursor_disabled = cursor;
@@ -52,19 +44,6 @@ int Display::Initialise(){
         return 1; 
     }
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
-    // Setup Dear ImGui style
-    ImGui::StyleColorsLight();
-    //ImGui::StyleColorsLight();
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
     glfwMakeContextCurrent(mainWindow);  // Everything that will be done will bejoined to this window
 
     glfwSetFramebufferSizeCallback(mainWindow, framebuffer_size_callback);
@@ -81,10 +60,23 @@ int Display::Initialise(){
 	}
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE); // If the objects are behind the camera then they will not be rendered => Makes everything go faster. 
+    //glEnable(GL_CULL_FACE); // If the objects are behind the camera then they will not be rendered => Makes everything go faster. 
     // This may cause a bug with the Normals, if a bug is observed (holes in objects) disabling this line may solve it. 
 
     glViewport(0, 0, bufferWidth, bufferHeight);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+    // Setup Dear ImGui style
+    ImGui::StyleColorsLight();
+    //ImGui::StyleColorsLight();
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
 #ifndef NDEBUG
 	int flags;

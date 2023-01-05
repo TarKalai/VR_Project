@@ -6,7 +6,7 @@
 PhysicalWorld::PhysicalWorld(Object *obj)
 {
     initializeEngine();
-    createGround(obj, 100., 100.);
+    createGround(obj);
 }
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -25,16 +25,16 @@ void PhysicalWorld::initializeEngine(){
     dynamicsWorld->setGravity(btVector3(0, -100, 0));
 }
 
-void PhysicalWorld::createGround(Object *obj, float width, float depth){
+void PhysicalWorld::createGround(Object *obj){
 
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(0.), btScalar(depth)));
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(obj->scale.x), btScalar(obj->scale.y), btScalar(obj->scale.z)));
 
     collisionShapes.push_back(groundShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0,0,0));
+    groundTransform.setOrigin(btVector3(0,-obj->scale.y,0));
 
     btScalar mass(0.);
 
@@ -142,13 +142,14 @@ void PhysicalWorld::animate()
             trans = obj->getWorldTransform();
         }
 
-        Object* glObj = glObjects.at(body->getUserIndex());
-        btScalar roll, pitch, yaw;
-        trans.getRotation().getEulerZYX(yaw,pitch,roll);
-        glm::vec3 translation = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
-        glObj->setPosRot(translation, glm::vec3(roll, pitch, yaw));
-
-        setLifeTime(body, getLifeTime(body)-1);
+        if (body->getUserIndex() != 0){ // not ground
+            Object* glObj = glObjects.at(body->getUserIndex());
+            btScalar roll, pitch, yaw;
+            trans.getRotation().getEulerZYX(yaw,pitch,roll);
+            glm::vec3 translation = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+            glObj->setPosRot(translation, glm::vec3(roll, pitch, yaw));
+            setLifeTime(body, getLifeTime(body)-1); 
+        }
         if (getLifeTime(body) == 0) {
                 Object* glObj = glObjects.at(body->getUserIndex());
                 glObj->visible = false;

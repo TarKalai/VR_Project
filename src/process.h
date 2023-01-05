@@ -9,19 +9,28 @@
 
 #include "shader.h"
 #include "physics.h"
+#include "camera.h"
+#include "display.h"
 
 class Camera; 
 
 class Process{
 public: 
-    Process(); 
-    void initMousePosition(GLFWwindow* window, Camera &camera, bool cursor_disabled);
-    void processInput(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader); 
-    void HandleMouse(GLFWwindow* window, Camera &camera); 
-    void processMouseScroll(float yoffset, Camera &camera);
-    void PutDominoes(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader);
+    Display display;
+    GLFWwindow* window; 
+    Camera* camera;
+    PhysicalWorld* world;
+    Shader* shader;
+
+    Process(Display &displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg); 
+    void initMousePosition();
+    void processInput(); 
+    void HandleMouse(); 
+    void processMouseScroll(float yoffset);
+    void PutDominoes();
     ~Process(); 
 private: 
+    bool menu = false;
     int screenSize = 5;
     bool fullscreen = false;
     bool resizescreen = false;

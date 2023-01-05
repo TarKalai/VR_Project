@@ -19,7 +19,6 @@
 #include "commonValues.h"
 
 
-
 class Shader
 {
 public:

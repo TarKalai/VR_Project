@@ -11,6 +11,9 @@
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtc/matrix_inverse.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 #include "camera.h"
 #include "shader.h"
@@ -122,9 +125,8 @@ int main(int argc, char* argv[]){
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
-	char groundGeometry[] = "../../objects/floor.obj";
-
-	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(1.));
+	char groundGeometry[] = "../../objects/plane.obj";
+	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(10., 20., 10.));
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
@@ -181,16 +183,20 @@ int main(int argc, char* argv[]){
 
 	//Rendering
 	glfwSwapInterval(1);
-	Process process = Process();
+	Process process = Process(mainWindow, &camera, &world, &shader);
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
-	process.initMousePosition(mainWindow.getWindow(), camera, mainWindow.getCursorDisabled());
+	process.initMousePosition();
 
 	while (!mainWindow.getShouldClose()){
-		process.processInput(mainWindow.getWindow(), camera, world, shader);
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		process.processInput();
 
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 1000.0);
@@ -206,8 +212,19 @@ int main(int argc, char* argv[]){
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		shader2D.drawObject();
 		fps(now);
+
+		ImGui::Begin("My name is window");
+		ImGui::Text("Hello world");
+		ImGui::End();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		mainWindow.swapBuffers(); 
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	// BULLET3
 	world.clear();
