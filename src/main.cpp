@@ -27,28 +27,32 @@
 #include "material.h"
 #include "pointLight.h"
 #include "spotLight.h"
+#include "areaLight.h"
 
 Display mainWindow; 
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+AreaLight areaLights[MAX_AREA_LIGHTS];
 
 Material shinyMaterial; 
 Material dullMaterial; 
 
 char fileVert[128] = "../../src/Shaders/vertSrc.vs";
 char fileFrag[128] = "../../src/Shaders/fragSrc.fs";
+
 char groundVertex[128] = "../../src/Shaders/vertGround.vs";
 char groundFrag[128] = "../../src/Shaders/fragGround.fs";
 
-char areaLightVertex[128] = "../../src/Shaders/area_light.vs";
-char areaLightFrag[128] = "../../src/Shaders/area_light.fs";
+// char areaLightVertex[128] = "../../src/Shaders/area_light.vs";
+// char areaLightFrag[128] = "../../src/Shaders/area_light.fs";
 
 char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
 char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
 
 char groundImage[128] = "../../image/woodFloor.png";
+
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
 
@@ -115,10 +119,19 @@ int main(int argc, char* argv[]){
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
 
+	unsigned int areaLightCount =0; 
+    
+    areaLights[0] = AreaLight(0.0f, 0.0f, 1.0f, 
+                                0.4f, 1.0f,
+                                10.0f,4.0f, 10.0f,
+                                0.3f, 0.2f, 0.1f);
+    pointLightCount++; 
+
+
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
 
 	mainWindow.Initialise(); 
 
@@ -159,7 +172,7 @@ int main(int argc, char* argv[]){
 		shader.addObject(cube);
 	}
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	Object plane = Object(planeGeometry, glm::vec3(5., 5., 5.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.), 0);
 	lightObjects.push_back(&plane);
 	lightShader.addObject(&plane);
@@ -222,8 +235,8 @@ int main(int argc, char* argv[]){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
 		lightShader.DrawLightObjects(view, projection);
 		
 		fps(now);

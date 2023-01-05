@@ -352,10 +352,10 @@ int main()
 		shaderLTC.setVec3("viewPosition", camera.Position);
 		shaderLTC.setVec3("areaLightTranslate", areaLightTranslate);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
+		// glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
+		// glActiveTexture(GL_TEXTURE1);
+		// glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, concreteTexture);
 		renderPlane();

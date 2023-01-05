@@ -183,6 +183,11 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount){
 }
 
 
+void Shader::SetAreaLights(AreaLight *  aLights, unsigned int aLightsCount){
+    int a = 5;
+}
+
+
 GLuint Shader::compileShader(std::string shaderCode, GLenum shaderType)
     {
         GLuint shader = glCreateShader(shaderType);
@@ -237,7 +242,9 @@ void Shader::DrawObjects(glm::mat4 view,
                          PointLight * pLights, 
                          unsigned int pLightCount, 
                          SpotLight * sLights, 
-                         unsigned int sLightCount){
+                         unsigned int sLightCount, 
+                         AreaLight * aLights, 
+                         unsigned int aLightCount){
     use();
     setMatrix4("view", view); //V
     setMatrix4("projection", projection); //P
@@ -247,6 +254,7 @@ void Shader::DrawObjects(glm::mat4 view,
     setFloat("material.shininess",uniformShininess); 
     SetPointLights(pLights, pLightCount);
     SetSpotLights(sLights, sLightCount); 
+    SetAreaLights(aLights, aLightCount);
 
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;

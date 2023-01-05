@@ -16,6 +16,7 @@
 #include "directionalLight.h"
 #include "pointLight.h"
 #include "spotLight.h"
+#include "areaLight.h"
 #include "commonValues.h"
 
 
@@ -51,7 +52,9 @@ public:
 
     void SetSpotLights(SpotLight * sLight, unsigned int lightCount); 
 
-    void setColor(const GLchar* name, glm::vec3& color);
+    void SetAreaLights(AreaLight *  aLight, unsigned int lightsCount);
+
+    // void setColor(const GLchar* name, glm::vec3& color);
 
     void addObject(Object* obj);
 
@@ -64,7 +67,9 @@ public:
                      PointLight * pLights, 
                      unsigned int pLightCount, 
                      SpotLight * sLights, 
-                     unsigned int sLightCount); //, glm::vec3 light_pos);
+                     unsigned int sLightCount,
+                     AreaLight * aLights, 
+                     unsigned int aLightCount); //, glm::vec3 light_pos);
     
     void DrawLightObjects(glm::mat4 view, 
                           glm::mat4 projection);

@@ -10,6 +10,7 @@ out vec4 color;
 
 const int MAX_POINT_LIGHTS = 4;
 const int MAX_SPOT_LIGHTS = 3;
+const int MAX_AREA_LIGHTS = 32;
 
 struct Light
 {
@@ -55,18 +56,18 @@ struct Material{
 
 uniform int pointLightCount;
 uniform int spotLightCount; 
+uniform int areaLightCount;
 
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];  
-
-uniform AreaLight areaLight;
-uniform vec3 areaLightTranslate;
+uniform AreaLight areaLights[MAX_AREA_LIGHTS];
 
 uniform sampler2D theTexture; 
 uniform sampler2D LTC1; // for inverse M
 uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
 uniform Material material;
+uniform vec3 areaLightTranslate;
 
 uniform vec3 eyePosition; // camera position (view position)
 
@@ -175,55 +176,6 @@ vec4 CalcSpotLights()
     return totalColor; 
 }
 
-vec4 CalcAreaLights(){
-    // gamma correction
-    vec3 mDiffuse = texture(material.diffuse, TexCoord).xyz;// * vec3(0.7f, 0.8f, 0.96f);
-    vec3 mSpecular = ToLinear(vec3(0.23f, 0.23f, 0.23f)); // mDiffuse
-
-    vec3 result = vec3(0.0f);
-
-    vec3 N = normalize(Normal);
-    vec3 V = normalize(eyePosition - FragPos);
-    vec3 P = FragPos;
-    float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
-
-    // use roughness and sqrt(1-cos_theta) to sample M_texture
-    vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV));
-    uv = uv*LUT_SCALE + LUT_BIAS;
-
-    // get 4 parameters for inverse_M
-    vec4 t1 = texture(LTC1, uv);
-
-    // Get 2 parameters for Fresnel calculation
-    vec4 t2 = texture(LTC2, uv);
-
-    mat3 Minv = mat3(
-        vec3(t1.x, 0, t1.y),
-        vec3(  0,  1,    0),
-        vec3(t1.z, 0, t1.w)
-    );
-
-    // translate light source for testing
-    vec3 translatedPoints[4];
-    translatedPoints[0] = areaLight.points[0] + areaLightTranslate;
-    translatedPoints[1] = areaLight.points[1] + areaLightTranslate;
-    translatedPoints[2] = areaLight.points[2] + areaLightTranslate;
-    translatedPoints[3] = areaLight.points[3] + areaLightTranslate;
-
-    // Evaluate LTC shading
-    vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), translatedPoints, areaLight.twoSided);
-    vec3 specular = LTC_Evaluate(N, V, P, Minv, translatedPoints, areaLight.twoSided);
-
-    // GGX BRDF shadowing and Fresnel
-    // t2.x: shadowedF90 (F90 normally it should be 1.0)
-    // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
-    specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
-
-    result = areaLight.base.color * areaLight.base.diffuseIntensity * (specular + mDiffuse * diffuse);
-
-    // fragColor = vec4(ToSRGB(result), 1.0f);
-    return vec4(ToSRGB(result), 1.0f);
-}
 // Vector form without project to the plane (dot with the normal)
 // Use for proxy sphere clipping
 vec3 IntegrateEdgeVec(vec3 v1, vec3 v2)
@@ -318,6 +270,62 @@ const float gamma = 2.2;
 vec3 ToLinear(vec3 v) { return PowVec3(v, gamma); }
 vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 
+vec4 CalcAreaLights(){
+    // gamma correction
+    if (areaLightCount>0){
+        vec3 mDiffuse = texture(material.diffuse, TexCoord).xyz;// * vec3(0.7f, 0.8f, 0.96f);
+        vec3 mSpecular = ToLinear(vec3(0.23f, 0.23f, 0.23f)); // mDiffuse
+
+        vec3 result = vec3(0.0f);
+
+        vec3 N = normalize(Normal);
+        vec3 V = normalize(eyePosition - FragPos);
+        vec3 P = FragPos;
+        float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
+
+        // use roughness and sqrt(1-cos_theta) to sample M_texture
+        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV));
+        uv = uv*LUT_SCALE + LUT_BIAS;
+
+        // get 4 parameters for inverse_M
+        vec4 t1 = texture(LTC1, uv);
+
+        // Get 2 parameters for Fresnel calculation
+        vec4 t2 = texture(LTC2, uv);
+
+        mat3 Minv = mat3(
+            vec3(t1.x, 0, t1.y),
+            vec3(  0,  1,    0),
+            vec3(t1.z, 0, t1.w)
+        );
+
+        // // translate light source for testing
+        // vec3 translatedPoints[4];
+        // translatedPoints[0] = areaLight.points[0] + areaLightTranslate;
+        // translatedPoints[1] = areaLight.points[1] + areaLightTranslate;
+        // translatedPoints[2] = areaLight.points[2] + areaLightTranslate;
+        // translatedPoints[3] = areaLight.points[3] + areaLightTranslate;
+        for (int i = 0; i< areaLightCount; i++){
+            // Evaluate LTC shading
+            // vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), translatedPoints, areaLight.twoSided);
+            // vec3 specular = LTC_Evaluate(N, V, P, Minv, translatedPoints, areaLight.twoSided);
+            vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), areaLights[i].points, areaLights[i].twoSided);
+		    vec3 specular = LTC_Evaluate(N, V, P, Minv, areaLights[i].points, areaLights[i].twoSided);
+            // GGX BRDF shadowing and Fresnel
+            // t2.x: shadowedF90 (F90 normally it should be 1.0)
+            // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
+            specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
+
+            result += areaLights[i].base.color * areaLights[i].base.diffuseIntensity * (specular + mDiffuse * diffuse);
+        }
+        
+
+        // fragColor = vec4(ToSRGB(result), 1.0f);
+        return vec4(ToSRGB(result), 1.0f);
+    }else {
+        return vec4(0.0);
+    }
+}
 
 void main(){
 
