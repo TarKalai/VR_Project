@@ -3,7 +3,7 @@ out/
 .vs/
 .vscode/
 build/
-build/src/
+CMakeFiles/
 bullet3/
 assimp/
 imgui/
