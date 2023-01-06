@@ -228,10 +228,49 @@ GLuint Shader::compileProgram(GLuint vertexShader, GLuint fragmentShader)
         return programID;
     }
 
+
+void Shader::SetTexture(GLuint textureUnit){
+    uniformTexture = glGetUniformLocation(ID, "theTexture");
+    glUniform1i(uniformTexture, textureUnit);
+}
+
+void Shader::SetDirectionalShadowMap(GLuint textureUnit){
+    uniformDirectionalLightTransform = glGetUniformLocation(ID, "directionalLightTransform");
+    glUniform1i(uniformDirectionalShadowMap, textureUnit);
+}
+
+void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
+    uniformDirectionalShadowMap = glGetUniformLocation(ID, "directionalShadowMap");
+    glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
+}
+
+
+void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a pointer to the directional light we are having shadows from
+// handles the shadowMap pass 
+
+    use(); // doesn't have colors, it is the depth map. 
+
+    glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
+
+    light->GetShadowMap()->Write();
+
+    glClear(GL_DEPTH_BUFFER_BIT); // if there iis already some depth infor. in the buffer we clear it
+
+    uniformModel  =  glGetUniformLocation(ID, "model");
+
+    glm::mat4 resLight = light->CalculateLightTransform(); 
+    SetDirectionalLightTransform(&resLight);
+
+    // RenderScene(); 
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
+
+}
+
 void Shader::DrawObjects(glm::mat4 view, 
                          glm::mat4 projection, 
                          glm::vec3 position_cam, glm::vec3 front_cam, 
-                         DirectionalLight* mainLight, 
+                         DirectionalLight mainLight, 
                          GLuint uniformSpecularIntensity, 
                          GLuint uniformShininess, 
                          PointLight * pLights, 
@@ -242,20 +281,29 @@ void Shader::DrawObjects(glm::mat4 view,
     setMatrix4("view", view); //V
     setMatrix4("projection", projection); //P
     setVector3f("eyePosition", position_cam);
-    SetDirectionalLight(mainLight);
+    SetDirectionalLight(&mainLight); // chenged to &mainLight
     setFloat("material.specularIntensity", uniformSpecularIntensity); 
     setFloat("material.shininess",uniformShininess); 
     SetPointLights(pLights, pLightCount);
     SetSpotLights(sLights, sLightCount); 
 
+
+    // shadow 
+    glm::mat4 resmainLight = mainLight.CalculateLightTransform();
+    SetDirectionalLightTransform(&resmainLight); 
+
+    mainLight.GetShadowMap()->Read(GL_TEXTURE1);
+
+    SetTexture(0); // bound to texture unit 0 
+    SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
+
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;
-	sLights[0].SetFlash(lowerLight, front_cam);
+	// sLights[0].SetFlash(lowerLight, front_cam);
 
     for(Object* object : objectList) {
         if (object->visible) {
             setMatrix4("model", object->model);
-            // setMatrix4("itM", glm::inverseTranspose(object->model));
             object->draw();
         }
     }

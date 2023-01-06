@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtc/matrix_inverse.hpp>
+#include <glm/glm.hpp>
 
 #include <string>
 #include <fstream>
@@ -52,10 +53,15 @@ public:
 
     void addObject(Object* obj);
 
+    void SetTexture(GLuint textureUnit); 
+    void SetDirectionalShadowMap(GLuint textureUnit);
+    void SetDirectionalLightTransform(glm::mat4* ltransform);  
+    void DirectionalShadowMapPass(DirectionalLight* light); 
+
     void DrawObjects(glm::mat4 view, 
                      glm::mat4 projection, 
                      glm::vec3 position_cam, glm::vec3 front_cam,
-                     DirectionalLight* mainLight, 
+                     DirectionalLight mainLight, 
                      GLuint uniformSpecularIntensity, 
                      GLuint uniformShininess, 
                      PointLight * pLights, 
@@ -100,6 +106,11 @@ public:
 
 
 private:
+
+
+    GLuint uniformTexture, 
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap,
+    uniformModel;
     GLuint compileShader(std::string shaderCode, GLenum shaderType);
 
     GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader); 

@@ -45,8 +45,11 @@ char groundVertex[128] = "../../src/Shaders/vertGround.txt";
 char groundFrag[128] = "../../src/Shaders/fragGround.txt";
 char groundImage[128] = "../../image/woodFloor.png";
 
+char directionalShadowVert[128] = "directional_shadow_map.vert";
+char directionalShadowFrag[128] = "directional_shadow_map.frag"; 
 
-Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
+
+Camera camera(glm::vec3(0.0, 20.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
 
 float getRandom(float from=-4, float to=4) {
@@ -60,7 +63,8 @@ int main(int argc, char* argv[]){
 	shinyMaterial = Material(1.0f, 32); 
     dullMaterial = Material(0.3f, 4); 
 
-    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
+    mainLight = DirectionalLight(2048,2048,
+								1.0f, 1.0f, 1.0f, 
                                 0.2f, 0.2f, 
                                 0.0f, -1.0f, 0.0f); // direction of the light
 
@@ -122,6 +126,7 @@ int main(int argc, char* argv[]){
 	Shader shader(NULL, fileVert, fileFrag, false, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 	Shader2D shader2D(true);
+	Shader directionalShadowShader(NULL, directionalShadowVert, directionalShadowFrag, false, true); 
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
@@ -208,8 +213,9 @@ int main(int argc, char* argv[]){
 		// BULLET3
 		world.animate();
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		directionalShadowShader.DirectionalShadowMapPass(&mainLight); 
+		shader.DrawObjects(view, projection, camera.Position, camera.Front, mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		shader2D.drawObject();
 		fps(now);
 
