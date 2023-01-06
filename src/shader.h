@@ -61,7 +61,7 @@ public:
     void DrawObjects(glm::mat4 view, 
                      glm::mat4 projection, 
                      glm::vec3 position_cam, glm::vec3 front_cam,
-                     DirectionalLight mainLight, 
+                     DirectionalLight* mainLight, 
                      GLuint uniformSpecularIntensity, 
                      GLuint uniformShininess, 
                      PointLight * pLights, 

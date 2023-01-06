@@ -164,7 +164,7 @@ vec4 CalcDirectionalLight()
 {
     float shadowFactor = CalcDirectionalShadowFactor(directionalLight); 
 
-    return CalcLightByDirection(directionalLight.base, directionalLight.direction); 
+    return CalcLightByDirection(directionalLight.base, directionalLight.direction, shadowFactor); 
 } 
 
 vec4 CalcPointLight(PointLight pLight)
@@ -174,7 +174,7 @@ vec4 CalcPointLight(PointLight pLight)
     float distance = length(direction); 
     direction = normalize(direction);
 
-    vec4 color = CalcLightByDirection(pLight.base, direction); 
+    vec4 color = CalcLightByDirection(pLight.base, direction, 0.0f); 
     float attenuation = pLight.exponent * distance * distance + pLight.linear*distance + pLight.constant;
 
     return (color/attenuation); // get the color of the pixel 

@@ -235,12 +235,12 @@ void Shader::SetTexture(GLuint textureUnit){
 }
 
 void Shader::SetDirectionalShadowMap(GLuint textureUnit){
-    uniformDirectionalLightTransform = glGetUniformLocation(ID, "directionalLightTransform");
+    uniformDirectionalShadowMap = glGetUniformLocation(ID, "directionalShadowMap"); 
     glUniform1i(uniformDirectionalShadowMap, textureUnit);
 }
 
 void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
-    uniformDirectionalShadowMap = glGetUniformLocation(ID, "directionalShadowMap");
+    uniformDirectionalLightTransform = glGetUniformLocation(ID, "directionalLightTransform");
     glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
 }
 
@@ -270,7 +270,7 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a poi
 void Shader::DrawObjects(glm::mat4 view, 
                          glm::mat4 projection, 
                          glm::vec3 position_cam, glm::vec3 front_cam, 
-                         DirectionalLight mainLight, 
+                         DirectionalLight* mainLight, 
                          GLuint uniformSpecularIntensity, 
                          GLuint uniformShininess, 
                          PointLight * pLights, 
@@ -278,28 +278,36 @@ void Shader::DrawObjects(glm::mat4 view,
                          SpotLight * sLights, 
                          unsigned int sLightCount){
     use();
-    setMatrix4("view", view); //V
+
+
+    glViewport(0, 0, 1366, 768); 
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
+    //glClear is also clearing the depth buffer bit.
+
     setMatrix4("projection", projection); //P
-    setVector3f("eyePosition", position_cam);
-    SetDirectionalLight(&mainLight); // chenged to &mainLight
+    setMatrix4("view", view); //V
     setFloat("material.specularIntensity", uniformSpecularIntensity); 
     setFloat("material.shininess",uniformShininess); 
+    setVector3f("eyePosition", position_cam);
+    SetDirectionalLight(mainLight); // chenged to &mainLight
     SetPointLights(pLights, pLightCount);
     SetSpotLights(sLights, sLightCount); 
 
-
     // shadow 
-    glm::mat4 resmainLight = mainLight.CalculateLightTransform();
+    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
 
-    mainLight.GetShadowMap()->Read(GL_TEXTURE1);
+    mainLight->GetShadowMap()->Read(GL_TEXTURE1);
 
     SetTexture(0); // bound to texture unit 0 
     SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
 
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;
-	// sLights[0].SetFlash(lowerLight, front_cam);
+	sLights[0].SetFlash(lowerLight, front_cam);
 
     for(Object* object : objectList) {
         if (object->visible) {

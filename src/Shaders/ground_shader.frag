@@ -167,7 +167,7 @@ vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor) // in
 vec4 CalcDirectionalLight()
 {   
     float shadowFactor = CalcDirectionalShadowFactor(directionalLight); 
-    return CalcLightByDirection(directionalLight.base, directionalLight.direction); 
+    return CalcLightByDirection(directionalLight.base, directionalLight.direction, shadowFactor); 
 } 
 
 vec4 CalcPointLight(PointLight pLight)

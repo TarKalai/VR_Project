@@ -1,7 +1,7 @@
 
 #version 330
-in vec3 pos;
-in vec3 norm; // normal of the vertex we are looking at, it as a direction
+layout (location =0) in vec3 pos;
+layout (location = 2) in vec3 norm; // normal of the vertex we are looking at, it as a direction
 // we will define the normalas as an average of each vertex. 
 
 out vec4 vertexColor;
