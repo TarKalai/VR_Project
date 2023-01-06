@@ -66,11 +66,10 @@ void GUI::displaySaveLoad() {
         {
             if (ImGui::BeginMenu("Load"))
             {
+                char file[256] = "";
                 #ifdef _WIN32
-                char name[64] = "";
-                if (ImGui::InputText("##loadName", name, sizeof(name), ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    strcat(load, ".save");
-                    std::cout << "load: " << name << std::endl;
+                if (ImGui::InputText("##loadName", file, sizeof(file), ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    strcat(file, ".save");
                 }
                 #elif __linux__
                 DIR* dir = opendir("../../save");
@@ -78,10 +77,24 @@ void GUI::displaySaveLoad() {
                 dirent* entry;
                 while ((entry = readdir(dir)) != nullptr) {
                     if (entry->d_name[0] != '.') {
-                        if (ImGui::MenuItem(entry->d_name)) { /* Do stuff */ }
+                        if (ImGui::MenuItem(entry->d_name)) { strcat(file, entry->d_name); }
                     }
                 }
                 #endif
+                if (file != "") {
+                    std::ifstream in("../../save/"+std::string(file));
+                    // Check if the file was successfully opened
+                    if (in.fail()) { std::cout << "Error opening file" << std::endl;}
+                    else {
+                        // Read the contents of the file line by line
+                        std::string line;
+                        while (std::getline(in, line)) {
+                        std::cout << line << std::endl;
+                        }
+                        // Close the file
+                        in.close();
+                    }
+                }
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Save"))
@@ -90,25 +103,19 @@ void GUI::displaySaveLoad() {
                 if (ImGui::InputText("##saveName", name, sizeof(name), ImGuiInputTextFlags_EnterReturnsTrue)) {
                     strcat(name, ".save");
                     std::cout << "Save: " << name << std::endl;
+                    // Open a file for writing
+                    std::ofstream out("../../save/"+std::string(name));
+                    // Write to the file
+                    out << "Hello, World!" << std::endl;
+                    out << "bis Hello, World!" << std::endl;
+                    // Close the file
+                    out.close();
                 }
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
         }
         ImGui::End();
-        /*
-        ImGui::Begin("Save Load", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground);
-        if (ImGui::Button("Save", ImVec2(75,25))) {
-            ImGui::SameLine;
-            char name[255];
-            ImGui::InputText("saveName", name, sizeof(name));
-            std::cout << "Save" << name << std::endl;
-        }
-        if (ImGui::Button("Load", ImVec2(75, 25))) {
-            std::cout << "LOAD" << std::endl;
-        }
-        ImGui::End();
-        */
     }
 }
 

@@ -2,12 +2,13 @@
 #include "process.h"
 #include "display.h"
 
-#include <filesystem> // Windows
 #include <dirent.h> // Linux
 #include <iostream>
 #include <unistd.h>
 #include <cstdio>
 #include <cstring>
+#include <fstream>
+#include <string>
 
 class GUI {
 public:
