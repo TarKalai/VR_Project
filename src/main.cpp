@@ -39,12 +39,12 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 Material shinyMaterial; 
 Material dullMaterial; 
 
-char fileVert[128] = "../../src/Shaders/vertSrc.txt";
-char fileFrag[128] = "../../src/Shaders/fragSrc.txt";
+// char fileVert[128] = "../../src/Shaders/vertGround.txt";
+// char fileFrag[128] = "../../src/Shaders/fragGround.txt";
 char groundVertex[128] = "../../src/Shaders/vertGround.txt";
 char groundFrag[128] = "../../src/Shaders/fragGround.txt";
 char groundImage[128] = "../../image/woodFloor.png";
-
+char defaultImage[128] = "../../image/plain.png"; // if the object has no texture
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -55,14 +55,19 @@ float getRandom(float from=-4, float to=4) {
 }
 
 int main(int argc, char* argv[]){
+
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+
+	mainWindow.Initialise(); 
+
 	std::cout << "Project is running... " << std::endl;
 
-	shinyMaterial = Material(1.0f, 32); 
+	shinyMaterial = Material(1.0f, 32.0f); 
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
                                 0.2f, 0.2f, 
-                                0.0f, -1.0f, 0.0f); // direction of the light
+                                -1.0f, -1.0f, 0.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
     
@@ -115,36 +120,20 @@ int main(int argc, char* argv[]){
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+	
 
-	mainWindow.Initialise(); 
-
-	Shader shader(NULL, fileVert, fileFrag, false, true);
+	// Shader shader(NULL, fileVert, fileFrag, true, true);
+	Shader shader(defaultImage, groundVertex, groundFrag, true, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 	Shader2D shader2D(true);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
-	char groundGeometry[] = "../../objects/plane.obj";
-	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(10., 20., 10.));
+	char groundGeometry[] = "../../objects/ground.obj";
+	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(50., 20., 50.));
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
-	/* Example how to create objects 
-	Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.));
-	world.addSphere(&sphere1);  
-	shader.addObject(&sphere1);
-
-	Object sphere;
-	for (int i=0; i<100; i++) {
-		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
-		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(sphereGeometry, pos, rot, scale);
-		world.addSphere(sphere);  
-		shader.addObject(sphere);
-	}
-	Object cube;
 	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
@@ -153,6 +142,27 @@ int main(int argc, char* argv[]){
 		world.addCube(cube);  
 		shader.addObject(cube);
 	}
+
+	// for (int i=0; i<100; i++) {
+	// 	glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
+	// 	glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
+	// 	Object* sphere = new Object(sphereGeometry, pos, rot, scale);
+	// 	world.addSphere(sphere);  
+	// 	shader.addObject(sphere);
+	// }
+
+	/* Example how to create objects 
+	Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.));
+	world.addSphere(&sphere1);  
+	shader.addObject(&sphere1);
+
+	Object sphere;
+
+
+	Object cube;
+	
+	
 	*/
 
 	//2. Choose a position for the light
@@ -208,22 +218,22 @@ int main(int argc, char* argv[]){
 		// BULLET3
 		world.animate();
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, shinyMaterial);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, shinyMaterial);
 		shader2D.drawObject();
 		fps(now);
 
-		ImGui::Begin("My name is window");
-		ImGui::Text("Hello world");
-		bool check;
-		ImGui::Checkbox("CHECK", &check);
-		std::cout << "check:" << check << std::endl;
-		float slider;
-		ImGui::SliderFloat("SLIDER", &slider, 0., 1.);
-		std::cout << "slider:" << slider << std::endl;
+		// ImGui::Begin("My name is window");
+		// ImGui::Text("Hello world");
+		// bool check;
+		// ImGui::Checkbox("CHECK", &check);
+		// std::cout << "check:" << check << std::endl;
+		// float slider;
+		// ImGui::SliderFloat("SLIDER", &slider, 0., 1.);
+		// std::cout << "slider:" << slider << std::endl;
 		//float testcolor[3] = {1.,1.,0.};
 		//ImGui::ColorEdit3("COLOR", testcolor);
-		ImGui::End();
+		// ImGui::End();
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

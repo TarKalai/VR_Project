@@ -17,6 +17,7 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "commonValues.h"
+#include "material.h"
 
 
 class Shader
@@ -61,7 +62,8 @@ public:
                      PointLight * pLights, 
                      unsigned int pLightCount, 
                      SpotLight * sLights, 
-                     unsigned int sLightCount); //, glm::vec3 light_pos);
+                     unsigned int sLightCount, 
+                     Material material); //, glm::vec3 light_pos);
 
     GLuint uniformPointLightCount;
     struct {

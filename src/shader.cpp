@@ -237,7 +237,8 @@ void Shader::DrawObjects(glm::mat4 view,
                          PointLight * pLights, 
                          unsigned int pLightCount, 
                          SpotLight * sLights, 
-                         unsigned int sLightCount){
+                         unsigned int sLightCount, 
+                         Material material){
     use();
     setMatrix4("view", view); //V
     setMatrix4("projection", projection); //P
@@ -255,6 +256,7 @@ void Shader::DrawObjects(glm::mat4 view,
     for(Object* object : objectList) {
         if (object->visible) {
             setMatrix4("model", object->model);
+            material.UseMaterial(glGetUniformLocation(ID, "material.specularIntensity"), glGetUniformLocation(ID, "material.shininess")); 
             // setMatrix4("itM", glm::inverseTranspose(object->model));
             object->draw();
         }
