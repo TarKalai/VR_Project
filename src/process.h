@@ -32,7 +32,7 @@ public:
 private: 
     bool menuPressed = false;
     double oldCursorX = 0, oldCursorY = 0;
-    float Yaw=0;float Pitch=0;
+    int oldWindowX = 0, oldWindowY = 0;
     int screenSize = 5;
     bool fullscreen = false;
     bool resizescreen = false;

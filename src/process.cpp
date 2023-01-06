@@ -47,23 +47,30 @@ void Process::processInput() {
 		resizescreen = false;
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
-		if (fullscreen) 
-			glfwSetWindowMonitor(window, 0, 0, 0, width, height, GLFW_DONT_CARE);
-		else 
+		if (fullscreen) {
+			glfwSetWindowMonitor(window, 0, oldWindowX, oldWindowY, width, height, GLFW_DONT_CARE);
+		}
+		else {
+			glfwGetWindowPos(window, &oldWindowX, &oldWindowY);
 			glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, GLFW_DONT_CARE);
+		}
 		fullscreen = !fullscreen;
 	}
 	if (glfwGetKey(window, GLFW_KEY_F10) == GLFW_PRESS && !fullscreen) {
 		if (!decreaseResolution) {
 			screenSize = std::max(3, (screenSize-1));
-			glfwSetWindowMonitor(window, 0,  0, 0, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
+			int xpos, ypos;
+			glfwGetWindowPos(window, &xpos, &ypos);
+			glfwSetWindowMonitor(window, 0,  xpos, ypos, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
 		}
 		decreaseResolution = true;
 	} else { decreaseResolution = false; }
 	if (glfwGetKey(window, GLFW_KEY_F12) == GLFW_PRESS && !fullscreen) {
 		if (!increaseResolution) {
 			screenSize = std::min(screenSize+1, 20);
-			glfwSetWindowMonitor(window, 0, 0, 0, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
+			int xpos, ypos;
+			glfwGetWindowPos(window, &xpos, &ypos);
+			glfwSetWindowMonitor(window, 0, xpos, ypos, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
 		}
 		increaseResolution = true;
 	} else { increaseResolution = false; }
