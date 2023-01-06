@@ -10,7 +10,7 @@ out vec4 color;
 
 const int MAX_POINT_LIGHTS = 4;
 const int MAX_SPOT_LIGHTS = 3;
-const int MAX_AREA_LIGHTS = 32;
+const int MAX_AREA_LIGHTS = 100;
 
 struct Light
 {
@@ -304,7 +304,7 @@ vec4 CalcAreaLights(){
         // translatedPoints[1] = areaLight.points[1] + areaLightTranslate;
         // translatedPoints[2] = areaLight.points[2] + areaLightTranslate;
         // translatedPoints[3] = areaLight.points[3] + areaLightTranslate;
-        for (int i = 0; i< areaLightCount; i++){
+        for (int i = 0; i < areaLightCount; i++){
             // Evaluate LTC shading
             // vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), translatedPoints, areaLight.twoSided);
             // vec3 specular = LTC_Evaluate(N, V, P, Minv, translatedPoints, areaLight.twoSided);
@@ -315,12 +315,12 @@ vec4 CalcAreaLights(){
             // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
             specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
 
-            result += areaLights[i].base.color * areaLights[i].base.diffuseIntensity * (specular + mDiffuse * diffuse);
+            result += areaLights[i].base.color * areaLights[i].base.diffuseIntensity * (specular + mDiffuse * diffuse); // (specular + mDiffuse * diffuse)
         }
         // return vec4(1.0);
 
         // fragColor = vec4(ToSRGB(result), 1.0f);
-        // return vec4(result, 1.0)
+        // return vec4(clamp(result, 0.0, 1.0), 1.0);
         return vec4(ToSRGB(result), 1.0f);
     }else {
         return vec4(1.0);

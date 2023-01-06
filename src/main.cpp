@@ -123,7 +123,7 @@ int main(int argc, char* argv[]){
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.01f, 0.01f, 
+                                0.02f, 0.02f, 
                                 0.0f, -1.0f, 0.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
@@ -175,12 +175,12 @@ int main(int argc, char* argv[]){
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
-	spotLightCount = 1;
+	spotLightCount = 0;
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 
 	mainWindow.Initialise(); 
 
@@ -228,20 +228,37 @@ int main(int argc, char* argv[]){
 	}
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	Object plane = Object(planeGeometry, glm::vec3(0., 1.0, 0.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.), 0);
-	lightObjects.push_back(&plane);
-	lightShader.addObject(&plane);
+	// Object plane = Object(planeGeometry, glm::vec3(10.0, 2.0, 10.0), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.), 0);
+	// lightObjects.push_back(&plane);
+	// lightShader.addObject(&plane);
 	// groundShader.addObject(&plane);
 
 	unsigned int areaLightCount =0; 
 
-	areaLights[0] = AreaLight(0.0f, 0.0f, 1.0f, 
+	
+
+
+
+	Object plane;
+
+	for (int i=0; i<100; i++) {
+		glm::vec3 pos = glm::vec3(getRandom(-100.0, 100.0), 2.+i*0.01, getRandom(-100.0, 100.0));
+		glm::vec3 rot = glm::vec3(getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
+		glm::vec3 scale = glm::vec3(1.0);
+
+		Object* plane = new Object(planeGeometry, pos, rot, scale, lightObjects.size());
+		lightObjects.push_back(plane);
+		lightShader.addObject(plane);
+
+		areaLights[i] = AreaLight(getRandom(0.0, 1.0), getRandom(0.0, 1.0), getRandom(0.0, 1.0), 
 							  0.4f, 1.0f,
-							  plane.getPosition(),
-							  0.3f, 0.2f, 0.1f,
-							  plane.getRotation(), true, 
-							  plane.getVertexPosition());
-    areaLightCount++; 
+							  plane->getPosition(),
+							  0.3f, 0.2f, 0.1f, // not used
+							  plane->getRotation(), true, 
+							  plane->getVertexPosition());
+    	areaLightCount++; 
+
+	}
 	/*
 	Object sphere = Object(sphereGeometry, glm::vec3(0., 1., 0.), glm::vec3(0., 0, 0), glm::vec3(1.), world.glObjects.size());	
 	world.addSphere(&sphere);  
@@ -299,15 +316,16 @@ int main(int argc, char* argv[]){
 		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		
 		//2. Use the shader Class to send the relevant uniform
 		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
-		lightShader.DrawLightObjects(view, projection);
 		// glActiveTexture(GL_TEXTURE0);
 		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
 		// glActiveTexture(GL_TEXTURE1);
 		// glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
+		lightShader.DrawLightObjects(view, projection, areaLights, areaLightCount);
+		
 		fps(now);
 		mainWindow.swapBuffers(); 
 	}

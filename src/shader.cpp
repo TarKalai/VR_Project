@@ -211,7 +211,7 @@ void Shader::SetAreaLights(AreaLight *  aLights, unsigned int lightCount){
     setInteger("areaLightCount", lightCount);
     setInteger("LTC1", 0);
     setInteger("LTC2", 1);
-	setInteger("material.diffuse", 2);
+	setInteger("material.diffuse", 0);
 
     for (int i = 0; i < lightCount; i++){
 
@@ -228,7 +228,7 @@ void Shader::SetAreaLights(AreaLight *  aLights, unsigned int lightCount){
 		glm::vec3 p3 = glm::vec3(model * glm::vec4(vecpos[2], 1.0f));
         std::string str_points = "areaLights[" + std::to_string(i) + "].points";
 		std::string str_color = "areaLights[" + std::to_string(i) + "].base.color";
-		std::string str_intensity = "areaLights[" + std::to_string(i) + "]base.diffuseIntensity";
+		std::string str_intensity = "areaLights[" + std::to_string(i) + "].base.diffuseIntensity";
 		std::string str_twoSided = "areaLights[" + std::to_string(i) + "].twoSided";
 
         setVec3((str_points + "[0]").c_str(), p0);
@@ -313,7 +313,7 @@ void Shader::DrawObjects(glm::mat4 view,
 
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;
-	sLights[0].SetFlash(lowerLight, front_cam);
+	// sLights[0].SetFlash(lowerLight, front_cam);
 
     int i = 0;
     for(Object* object : objectList) {
@@ -325,16 +325,18 @@ void Shader::DrawObjects(glm::mat4 view,
 }
 
 void Shader::DrawLightObjects(glm::mat4 view, 
-                              glm::mat4 projection){
+                              glm::mat4 projection, 
+                              AreaLight * aLights, 
+                              unsigned int aLightCount){
     use();
     setMatrix4("view", view); //V
     setMatrix4("projection", projection); //P
-    setVector3f("lightColor", glm::vec3(1.0, 0.0, 0.0));
     int i = 0;
     for(Object* object : objectList) {
-        i += 1;
         setMatrix4("model", object->model);
+        setVector3f("lightColor", aLights[i].getColor());
 		// setMatrix4("itM", glm::inverseTranspose(object->model));
         object->draw();
+        i += 1;
     }
 }
