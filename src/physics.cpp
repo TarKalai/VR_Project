@@ -22,7 +22,7 @@ void PhysicalWorld::initializeEngine(){
     ///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
     solver = new btSequentialImpulseConstraintSolver;
     dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    dynamicsWorld->setGravity(btVector3(0, -100, 0));
+    dynamicsWorld->setGravity(btVector3(0, -10, 0));
 }
 
 void PhysicalWorld::createGround(Object *obj){
@@ -124,7 +124,7 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
 void PhysicalWorld::animate()
 {
     ///-----stepsimulation_start-----
-    dynamicsWorld->stepSimulation(speedAnimation/150, 1);
+    dynamicsWorld->stepSimulation(speedAnimation/60, 1, speedAnimation/60); 
     //print positions of all objects
     for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--) // go through all the objects
     {

@@ -117,7 +117,7 @@ void Process::AnimationSpeed() {
 	else if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) 
 		world->speedAnimation = 1.;
 	else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) 
-		world->speedAnimation = 10.;
+		world->speedAnimation = 4.;
 }
 
 void Process::PlacingDomino() {

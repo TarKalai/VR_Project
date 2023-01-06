@@ -170,7 +170,7 @@ int main(int argc, char* argv[]){
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
 	process.initMousePosition();
-	GUI gui(&mainWindow, &world);
+	GUI gui(&process, &mainWindow, &world);
 	while (!mainWindow.getShouldClose()){
 
 		process.processInput();
@@ -186,7 +186,9 @@ int main(int argc, char* argv[]){
 		//2. Use the shader Class to send the relevant uniform
 		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		shader2D.drawObject();
+		if (!camera.pause) {
+			shader2D.drawObject();
+		}
 
 		/*
 		ImGui::Begin("My name is window", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
@@ -207,8 +209,7 @@ int main(int argc, char* argv[]){
 		mainWindow.swapBuffers(); 
 	}
 
-	//delete gui;
-
+	gui.clear();
 	// BULLET3
 	world.clear();
 

@@ -2,19 +2,29 @@
 #include "process.h"
 #include "display.h"
 
+#include <filesystem> // Windows
+#include <dirent.h> // Linux
+#include <iostream>
+#include <unistd.h>
+#include <cstdio>
+#include <cstring>
+
 class GUI {
 public:
-    GUI(Display* displayArg, PhysicalWorld* worldArg);
+    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg);
     void update();
-    ~GUI(); 
+    void clear();
 
 private:
+    Process* process;
     Display* display;
     PhysicalWorld* world;
     double prev = 0;
 	int deltaFrame = 0;
     float fps = 0;
 
+    void menuTitle();
+    void shortcutList();
     float* getFPS();
     void displayFPS();
     void displaySaveLoad();
