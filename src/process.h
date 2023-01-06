@@ -43,4 +43,15 @@ private:
     bool decreaseResolution = false;
     bool increaseResolution = false;
     std::vector<glm::vec3> cursor_path;
+
+    void HandleMenuMode();
+	void HandleWindow();
+	void QuitScreen();
+	void DecreaseScreen();
+	void IncreaseScreen();
+	void FullScreen();
+	void AnimationSpeed();
+	void PlacingDomino();
+	void Pushing();
+	void Deplacement();
 }; 

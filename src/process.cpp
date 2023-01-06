@@ -18,13 +18,18 @@ Process::Process(Display &displayArg, Camera* cameraArg, PhysicalWorld* worldArg
 
 
 void Process::processInput() {
-
-	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-		double X, Y;
-		glfwGetCursorPos(window, &X, &Y);
-		std::cout << X << " " << Y <<std::endl;
+	HandleMenuMode();
+	HandleWindow();
+	AnimationSpeed();
+	PlacingDomino();
+	Pushing();
+	Deplacement();
+	if (!camera->pause) {
+		HandleMouse();
 	}
+}
 
+void Process::HandleMenuMode() {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		menuPressed  = true;
 	}
@@ -38,9 +43,46 @@ void Process::processInput() {
 			camera->deactivateMouse(display);
 		}
 	}
+}
+
+void Process::HandleWindow() {
+	QuitScreen();
+	DecreaseScreen();
+	IncreaseScreen();
+	FullScreen();
+}
+
+void Process::QuitScreen() {
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-	
+}
+
+
+void Process::DecreaseScreen() {
+	if (glfwGetKey(window, GLFW_KEY_F10) == GLFW_PRESS && !fullscreen) {
+		if (!decreaseResolution) {
+			screenSize = std::max(3, (screenSize-1));
+			int xpos, ypos;
+			glfwGetWindowPos(window, &xpos, &ypos);
+			glfwSetWindowMonitor(window, 0,  xpos, ypos, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
+		}
+		decreaseResolution = true;
+	} else { decreaseResolution = false; }
+}
+
+void Process::IncreaseScreen() {
+	if (glfwGetKey(window, GLFW_KEY_F12) == GLFW_PRESS && !fullscreen) {
+		if (!increaseResolution) {
+			screenSize = std::min(screenSize+1, 20);
+			int xpos, ypos;
+			glfwGetWindowPos(window, &xpos, &ypos);
+			glfwSetWindowMonitor(window, 0, xpos, ypos, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
+		}
+		increaseResolution = true;
+	} else { increaseResolution = false; }
+}
+
+void Process::FullScreen() {
 	if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) 
 		resizescreen = true;
 	else if (resizescreen) {
@@ -59,25 +101,9 @@ void Process::processInput() {
 		}
 		fullscreen = !fullscreen;
 	}
-	if (glfwGetKey(window, GLFW_KEY_F10) == GLFW_PRESS && !fullscreen) {
-		if (!decreaseResolution) {
-			screenSize = std::max(3, (screenSize-1));
-			int xpos, ypos;
-			glfwGetWindowPos(window, &xpos, &ypos);
-			glfwSetWindowMonitor(window, 0,  xpos, ypos, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
-		}
-		decreaseResolution = true;
-	} else { decreaseResolution = false; }
-	if (glfwGetKey(window, GLFW_KEY_F12) == GLFW_PRESS && !fullscreen) {
-		if (!increaseResolution) {
-			screenSize = std::min(screenSize+1, 20);
-			int xpos, ypos;
-			glfwGetWindowPos(window, &xpos, &ypos);
-			glfwSetWindowMonitor(window, 0, xpos, ypos, screenSize*1920/10, screenSize*1080/10, GLFW_DONT_CARE);
-		}
-		increaseResolution = true;
-	} else { increaseResolution = false; }
-	
+}
+
+void Process::AnimationSpeed() {
 	// Animation speed
 	if (glfwGetKey(window, GLFW_KEY_KP_0) == GLFW_PRESS) 
 		world->speedAnimation = 0;
@@ -87,8 +113,30 @@ void Process::processInput() {
 		world->speedAnimation = 1.;
 	else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) 
 		world->speedAnimation = 10.;
+}
 
+void Process::PlacingDomino() {
+	// Putting Domino
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
+		PutDominoes();
+	else
+		firstDomino = true;
+}
 
+void Process::Pushing() { 
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)  {
+		shoot = true;
+		pressed += 1;
+	} else if (shoot) {
+		shoot = false;
+		Object* sphere = new Object("../../objects/sphere.obj", camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
+		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
+		shader->addObject(sphere);
+		pressed = 0;
+	}
+}
+
+void Process::Deplacement() {
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		camera->processKeyboardMovement(LEFT, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -101,24 +149,6 @@ void Process::processInput() {
 		camera->processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera->processKeyboardMovement(DOWN, 0.1);
-	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
-		PutDominoes();
-	else
-		firstDomino = true;
-
-	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)  {
-		shoot = true;
-		pressed += 1;
-	} else if (shoot) {
-		shoot = false;
-		Object* sphere = new Object("../../objects/sphere.obj", camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
-		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
-		shader->addObject(sphere);
-		pressed = 0;
-	}
-	if (!camera->pause) {
-		HandleMouse();
-	}
 }
 
 void Process::initMousePosition(){
