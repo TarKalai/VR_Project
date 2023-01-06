@@ -13,6 +13,7 @@ bool ShadowMap::Init(GLuint width, GLuint height){
     shadowHeight = height; 
 
     // generate FBO => it can be considered as a screen (with glSwap, we are swapping between the different buffers)
+
     glGenFramebuffers(1, &FBO);
     
     glGenTextures(1, &shadowMap);

@@ -23,6 +23,8 @@ public:
 
     ~ShadowMap(); 
 
+    
+    
 private: 
 
     GLuint FBO, shadowMap;  // Id of texture

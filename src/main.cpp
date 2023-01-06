@@ -60,10 +60,25 @@ float getRandom(float from=-4, float to=4) {
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+
+	mainWindow.Initialise(); 
+
+
+	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
+    uniformSpecularIntensity=0, uniformShininess=0; 
+
+	Shader shader(NULL, fileVert, fileFrag, false, true);
+	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
+	Shader2D shader2D(true);
+	Shader directionalShadowShader(NULL, directionalShadowVert, directionalShadowFrag, false, true); 
+
+
+	
 	shinyMaterial = Material(1.0f, 32); 
     dullMaterial = Material(0.3f, 4); 
 
-    mainLight = DirectionalLight(2048,2048,
+	mainLight = DirectionalLight(2048,2048,
 								1.0f, 1.0f, 1.0f, 
                                 0.2f, 0.2f, 
                                 0.0f, -1.0f, 0.0f); // direction of the light
@@ -115,18 +130,6 @@ int main(int argc, char* argv[]){
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
-
-	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
-    uniformSpecularIntensity=0, uniformShininess=0; 
-
-	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
-
-	mainWindow.Initialise(); 
-
-	Shader shader(NULL, fileVert, fileFrag, false, true);
-	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
-	Shader2D shader2D(true);
-	Shader directionalShadowShader(NULL, directionalShadowVert, directionalShadowFrag, false, true); 
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
