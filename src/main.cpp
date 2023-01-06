@@ -215,6 +215,14 @@ int main(int argc, char* argv[]){
 
 		ImGui::Begin("My name is window");
 		ImGui::Text("Hello world");
+		bool check;
+		ImGui::Checkbox("CHECK", &check);
+		std::cout << "check:" << check << std::endl;
+		float slider;
+		ImGui::SliderFloat("SLIDER", &slider, 0., 1.);
+		std::cout << "slider:" << slider << std::endl;
+		//float testcolor[3] = {1.,1.,0.};
+		//ImGui::ColorEdit3("COLOR", testcolor);
 		ImGui::End();
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
