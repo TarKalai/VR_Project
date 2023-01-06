@@ -151,8 +151,8 @@ void Display::displayFPS() {
     ImGui::SetNextWindowPos(ImVec2(getWidth()-size.x, getHeight()-size.y));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
     ImGui::Begin("fps", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
-    //ImGui::SetCursorPos(ImVec2(0,0));
-    ImGui::InputFloat("fps", getFPS(), NULL, NULL, "%.1f", ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_CharsNoBlank);
+    ImGui::SetCursorPos(ImVec2(0,0));
+    ImGui::InputFloat("fps", getFPS(), 0, 0, "%.1f", ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_CharsNoBlank);
     ImGui::End();
 }
 
