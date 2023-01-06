@@ -29,7 +29,6 @@
 #include "pointLight.h"
 #include "spotLight.h"
 
-
 Display mainWindow; 
 
 DirectionalLight mainLight;
@@ -114,10 +113,9 @@ int main(int argc, char* argv[]){
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
-
+ 
 	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
-
-	mainWindow.Initialise(); 
+	mainWindow.Initialise();
 
 	Shader shader(NULL, fileVert, fileFrag, false, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
@@ -126,8 +124,8 @@ int main(int argc, char* argv[]){
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
 	char groundGeometry[] = "../../objects/plane.obj";
-	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(10., 20., 10.));
-    PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
+	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(50., 20., 50.));
+	PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
 	/* Example how to create objects 
@@ -158,32 +156,13 @@ int main(int argc, char* argv[]){
 	//2. Choose a position for the light
 	// const glm::vec3 light_pos = glm::vec3(0.5, 2.5, -0.7);
 
-
-	double prev = 0;
-	int deltaFrame = 0;
-	//fps function
-	auto fps = [&](double now) {
-		double deltaTime = now - prev;
-		deltaFrame++;
-		if (deltaTime > 0.5) {
-			prev = now;
-			const double fpsCount = (double)deltaFrame / deltaTime;
-			deltaFrame = 0;
-			std::cout << "\r FPS: " << fpsCount;
-		}
-	};
-
-
-
 	// glm::mat4 view = camera.getViewMatrix();
 	// // printf("camera value: %f", camera.ZOOM); 
 	// glm::mat4 projection = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 
-
-
 	//Rendering
 	glfwSwapInterval(1);
-	Process process = Process(mainWindow, &camera, &world, &shader);
+	Process process = Process(&mainWindow, &camera, &world, &shader);
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
@@ -201,7 +180,6 @@ int main(int argc, char* argv[]){
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 1000.0);
 		glfwPollEvents();
-		double now = glfwGetTime();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -211,9 +189,9 @@ int main(int argc, char* argv[]){
 		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
 		shader2D.drawObject();
-		fps(now);
 
-		ImGui::Begin("My name is window");
+		/*
+		ImGui::Begin("My name is window", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
 		ImGui::Text("Hello world");
 		bool check;
 		ImGui::Checkbox("CHECK", &check);
@@ -224,9 +202,9 @@ int main(int argc, char* argv[]){
 		//float testcolor[3] = {1.,1.,0.};
 		//ImGui::ColorEdit3("COLOR", testcolor);
 		ImGui::End();
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		*/
 
+		mainWindow.updateGUI();
 		mainWindow.swapBuffers(); 
 	}
 

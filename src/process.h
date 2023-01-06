@@ -16,13 +16,13 @@ class Camera;
 
 class Process{
 public: 
-    Display display;
+    Display* display;
     GLFWwindow* window; 
     Camera* camera;
     PhysicalWorld* world;
     Shader* shader;
 
-    Process(Display &displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg); 
+    Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg); 
     void initMousePosition();
     void processInput(); 
     void HandleMouse(); 
@@ -31,6 +31,7 @@ public:
     ~Process(); 
 private: 
     bool menuPressed = false;
+    bool oldSpeedAnimation;
     double oldCursorX = 0, oldCursorY = 0;
     int oldWindowX = 0, oldWindowY = 0;
     int screenSize = 5;

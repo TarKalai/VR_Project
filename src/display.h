@@ -24,8 +24,11 @@ struct Point {
 class Display{
 public: 
     bool cursor_disabled;
+    double prev = 0;
+	int deltaFrame = 0;
+    float fps = 0;
 
-    Display() {cursor_disabled = false;}
+    Display() {};
     Display(bool cursor); 
 
     int Initialise(); 
@@ -42,6 +45,15 @@ public:
     bool getCursorDisabled(){return cursor_disabled;}
 
     Point getCenter();
+    int getWidth();
+    int getHeight();
+
+    void updateGUI();
+    float* getFPS();
+    void displayFPS();
+    void displaySaveLoad();
+    void displaySpeedAnimation();
+
     ~Display(); 
 
 

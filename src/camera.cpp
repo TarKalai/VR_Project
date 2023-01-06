@@ -38,16 +38,14 @@ void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime)
         this->Position -= normalize(this->Up * glm::vec3(0.0, 1.0, 0.0)) * velocity;
 }
 
-void Camera::deactivateMouse(Display &display) {
-    display.cursor_disabled = false;
-    glfwSetInputMode(display.getWindow(), GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+void Camera::deactivateMouse(Display* display) {
+    glfwSetInputMode(display->getWindow(), GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
     MouseSensitivity = 0;
     pause = true;
 }
 
-void Camera::reactivateMouse(Display &display) {
-    display.cursor_disabled = true;
-    glfwSetInputMode(display.getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+void Camera::reactivateMouse(Display* display) {
+    glfwSetInputMode(display->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     MouseSensitivity = SENSITIVITY;
     pause = false;
 }

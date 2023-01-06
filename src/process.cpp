@@ -8,9 +8,9 @@
 
 #include <unistd.h> // for sleep (debug)
 
-Process::Process(Display &displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg) {
+Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg) {
 	display = displayArg;
-	window = display.getWindow();
+	window = display->getWindow();
 	camera = cameraArg;
 	world = worldArg;
 	shader = shaderArg;
@@ -36,10 +36,15 @@ void Process::HandleMenuMode() {
 	else if (menuPressed) {
 		menuPressed = false;
 		if (camera->pause) {
+			display->cursor_disabled = true;
 			camera->reactivateMouse(display);
 			glfwSetCursorPos(window, oldCursorX, oldCursorY);
+			world->speedAnimation = oldSpeedAnimation;
 		} else {
+			oldSpeedAnimation = world->speedAnimation;
+			world->speedAnimation = 0;
 			glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
+    		display->cursor_disabled = false;
 			camera->deactivateMouse(display);
 		}
 	}
@@ -152,7 +157,7 @@ void Process::Deplacement() {
 }
 
 void Process::initMousePosition(){
-	if (display.getCursorDisabled()){
+	if (display->getCursorDisabled()){
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);
 		camera->initRunX = width/2 - camera->Yaw*(1/camera->MouseSensitivity);
