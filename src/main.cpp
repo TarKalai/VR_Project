@@ -23,6 +23,7 @@
 //#include "physics.h"
 
 #include "display.h"
+#include "gui.h"
 #include "process.h"
 #include "directionalLight.h"
 #include "material.h"
@@ -169,11 +170,8 @@ int main(int argc, char* argv[]){
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
 	process.initMousePosition();
-
+	GUI gui(&mainWindow, &world);
 	while (!mainWindow.getShouldClose()){
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
 
 		process.processInput();
 
@@ -204,13 +202,12 @@ int main(int argc, char* argv[]){
 		ImGui::End();
 		*/
 
-		mainWindow.updateGUI();
+
+		gui.update();
 		mainWindow.swapBuffers(); 
 	}
 
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+	//delete gui;
 
 	// BULLET3
 	world.clear();
