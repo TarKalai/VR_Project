@@ -49,10 +49,13 @@ void Process::processInput() {
 		glfwGetWindowSize(window, &width, &height);
 		if (fullscreen) {
 			glfwSetWindowMonitor(window, 0, oldWindowX, oldWindowY, width, height, GLFW_DONT_CARE);
+			glfwSetCursorPos(window, oldCursorX, oldCursorY);
 		}
 		else {
 			glfwGetWindowPos(window, &oldWindowX, &oldWindowY);
 			glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, GLFW_DONT_CARE);
+			initMousePosition();
+			glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
 		}
 		fullscreen = !fullscreen;
 	}
