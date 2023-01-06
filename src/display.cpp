@@ -105,6 +105,15 @@ void Display::scroll_callback(GLFWwindow* window, double xoffset, double yoffset
         fov = 45.0f;
 }
 
+Point Display::getCenter() {
+    int width, height;
+	int xpos, ypos;
+	glfwGetWindowPos(mainWindow, &xpos, &ypos);
+	glfwGetWindowSize(mainWindow, &width, &height);
+
+    return Point{xpos+width/2, ypos+height/2};
+}
+
 Display::~Display(){
     glfwDestroyWindow(mainWindow);
     glfwTerminate(); 

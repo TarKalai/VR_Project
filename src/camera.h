@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 
+#include "display.h"
+
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
     FORWARD,
@@ -74,6 +76,10 @@ public:
     void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
 
     void ProcessMouseScroll(float yoffset);
+    
+    void deactivateMouse(Display &display);
+    void reactivateMouse(Display &display);
+
         
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void static ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset);

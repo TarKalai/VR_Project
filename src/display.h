@@ -16,8 +16,14 @@ struct Resolution {
     int height;
 };
 
+struct Point {
+    int x;
+    int y;
+};
+
 class Display{
 public: 
+    bool cursor_disabled;
 
     Display() {cursor_disabled = false;}
     Display(bool cursor); 
@@ -31,9 +37,11 @@ public:
     bool getShouldClose(){return glfwWindowShouldClose(mainWindow); }
     void swapBuffers(){glfwSwapBuffers(mainWindow);}
 
+    
     GLFWwindow* getWindow(){return mainWindow;}
     bool getCursorDisabled(){return cursor_disabled;}
 
+    Point getCenter();
     ~Display(); 
 
 
@@ -41,5 +49,4 @@ private:
     GLFWwindow *mainWindow; 
     GLint width, height; 
     GLint bufferWidth, bufferHeight; 
-    bool cursor_disabled;
 };

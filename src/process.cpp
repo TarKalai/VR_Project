@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
 
+#include <unistd.h> // for sleep (debug)
+
 Process::Process(Display &displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg) {
 	display = displayArg;
 	window = display.getWindow();
@@ -17,8 +19,24 @@ Process::Process(Display &displayArg, Camera* cameraArg, PhysicalWorld* worldArg
 
 void Process::processInput() {
 
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+		double X, Y;
+		glfwGetCursorPos(window, &X, &Y);
+		std::cout << X << " " << Y <<std::endl;
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		//camera->pause = true;
+		menuPressed  = true;
+	}
+	else if (menuPressed) {
+		menuPressed = false;
+		if (camera->pause) {
+			camera->reactivateMouse(display);
+			glfwSetCursorPos(window, oldCursorX, oldCursorY);
+		} else {
+			glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
+			camera->deactivateMouse(display);
+		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -88,7 +106,9 @@ void Process::processInput() {
 		shader->addObject(sphere);
 		pressed = 0;
 	}
-	HandleMouse();
+	if (!camera->pause) {
+		HandleMouse();
+	}
 }
 
 void Process::initMousePosition(){
