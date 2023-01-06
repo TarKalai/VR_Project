@@ -67,11 +67,10 @@ void GUI::displaySaveLoad() {
             if (ImGui::BeginMenu("Load"))
             {
                 #ifdef _WIN32
-                for (const auto& entry : std::filesystem::directory_iterator("../save")) {
-                    std::cout << entry.path().filename() << std::endl;
-                    if (entry.path().filename()[0] != '.') {
-                        if (ImGui::MenuItem(entry.path().filename())) { /* Do stuff */ }
-                    }
+                char name[64] = "";
+                if (ImGui::InputText("##loadName", name, sizeof(name), ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    strcat(load, ".save");
+                    std::cout << "load: " << name << std::endl;
                 }
                 #elif __linux__
                 DIR* dir = opendir("../../save");
