@@ -2,6 +2,7 @@
 out/
 .vs/
 .vscode/
+.vscode/settings.json
 build/
 CMakeFiles/
 bullet3/

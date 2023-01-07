@@ -25,7 +25,7 @@ class Display{
 public: 
     bool cursor_disabled;
 
-    Display() {cursor_disabled = false;}
+    Display() {};
     Display(bool cursor); 
 
     int Initialise(); 
@@ -42,6 +42,9 @@ public:
     bool getCursorDisabled(){return cursor_disabled;}
 
     Point getCenter();
+    int getWidth();
+    int getHeight();
+
     ~Display(); 
 
 

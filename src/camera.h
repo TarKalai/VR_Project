@@ -77,8 +77,8 @@ public:
 
     void ProcessMouseScroll(float yoffset);
     
-    void deactivateMouse(Display &display);
-    void reactivateMouse(Display &display);
+    void deactivateMouse(Display* display);
+    void reactivateMouse(Display* display);
 
         
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis

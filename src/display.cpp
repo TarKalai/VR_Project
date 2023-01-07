@@ -3,7 +3,6 @@
 #include "process.h"
 #include "camera.h"
 
-
 float fov = 45; 
 
 Display::Display(bool cursor){
@@ -112,6 +111,18 @@ Point Display::getCenter() {
 	glfwGetWindowSize(mainWindow, &width, &height);
 
     return Point{xpos+width/2, ypos+height/2};
+}
+
+int Display::getWidth() {
+    int width, height;
+	glfwGetWindowSize(mainWindow, &width, &height);
+    return width;
+}
+
+int Display::getHeight() {
+    int width, height;
+	glfwGetWindowSize(mainWindow, &width, &height);
+    return height;
 }
 
 Display::~Display(){
