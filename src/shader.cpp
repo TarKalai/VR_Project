@@ -261,9 +261,18 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a poi
     glm::mat4 resLight = light->CalculateLightTransform(); 
     SetDirectionalLightTransform(&resLight);
 
-    // RenderScene(); 
+    for(Object* object : objectList) {
+        glm::mat4 model(1.0f); 
+        model = glm::translate(model, glm::vec3(0.0, 0.0, -2.5));
+        if (object->visible) {
+            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+            object->draw();
+        }
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
+
+
 
 }
 
@@ -280,11 +289,11 @@ void Shader::DrawObjects(glm::mat4 view,
     use();
 
 
-    glViewport(0, 0, 1366, 768); 
+    glViewport(0, 0, 1920/2, 1080/2); 
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
     //glClear is also clearing the depth buffer bit.
 
     setMatrix4("projection", projection); //P
@@ -307,7 +316,7 @@ void Shader::DrawObjects(glm::mat4 view,
 
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;
-	sLights[0].SetFlash(lowerLight, front_cam);
+	// sLights[0].SetFlash(lowerLight, front_cam);
 
     for(Object* object : objectList) {
         if (object->visible) {

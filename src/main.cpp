@@ -70,28 +70,31 @@ int main(int argc, char* argv[]){
 	Shader shader(NULL, fileVert, fileFrag, false, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 	Shader2D shader2D(true);
-	Shader directionalShadowShader(NULL, directionalShadowVert, directionalShadowFrag, false, true); 
+	Shader directionalShadowShader(NULL, directionalShadowVert, directionalShadowFrag, true, false); 
 
 	Camera camera(glm::vec3(0.0, 20.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
 	char groundGeometry[] = "../../objects/plane.obj";
-	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(100., 20., 100.));
+	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(10., 20., 10.));
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
+	directionalShadowShader.addObject(&ground_obj); 
 
-	Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.));
+	Object sphere1 = Object(sphereGeometry, glm::vec3(0.0, 5.0, 0.0), glm::vec3(0.), glm::vec3(1.));
 	world.addSphere(&sphere1);  
 	shader.addObject(&sphere1);
+	directionalShadowShader.addObject(&sphere1); 
+
 
 	shinyMaterial = Material(1.0f, 32); 
     dullMaterial = Material(0.3f, 4); 
 
 	mainLight = DirectionalLight(2048,2048,
 								1.0f, 1.0f, 1.0f, 
-                                0.2f, 0.2f, 
-                                0.0f, -1.0f, 0.0f); // direction of the light
+                                0.1f, 0.3f,
+                                0.0f, -5.0f, -5.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
     
@@ -122,6 +125,7 @@ int main(int argc, char* argv[]){
                                 0.3f, 0.2f, 0.1f);
 
     pointLightCount++;
+	pointLightCount = 0;
 
 	unsigned int spotLightCount = 0;
 
@@ -140,6 +144,7 @@ int main(int argc, char* argv[]){
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
+    spotLightCount=0; 
 
 	
 	/* Example how to create objects 
@@ -213,16 +218,22 @@ int main(int argc, char* argv[]){
 
 		glfwPollEvents();
 		double now = glfwGetTime();
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		// glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// BULLET3
 		world.animate();
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
-		shader2D.drawObject();
+
 		directionalShadowShader.DirectionalShadowMapPass(&mainLight); 
+
+		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		
+		shader2D.drawObject();
+
+
 
 		fps(now);
 
