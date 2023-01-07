@@ -34,6 +34,7 @@ public:
 
 	bool has_texture;
 	GLuint u_texture;
+	GLuint s_texture; 
 	GLuint texture;
 
 	std::vector<glm::vec3> vt_positions;
@@ -49,11 +50,11 @@ public:
 	
 	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true);
 	
-	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath);
+	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath, bool shadow);
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 
-	void draw();
+	void draw(bool shadow=false);
 
 	void print();
 };

@@ -5,6 +5,13 @@
 Shader::Shader(char *imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
 	{   
         texturePath = imagePath;
+
+        if (imagePath == NULL)
+
+        {
+            texturePath = "../../image/plain.png";
+        }
+
         shaderTexture = texture;
         shaderNormal = normal;
         // 1. retrieve the vertex/fragment source code from filePath
@@ -72,8 +79,8 @@ void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix)
     {
     glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
-void Shader::addObject(Object *obj) {
-    obj->MakeObject(ID, shaderTexture, shaderNormal, texturePath);
+void Shader::addObject(Object *obj, bool shadow) {
+    obj->MakeObject(ID, shaderTexture, shaderNormal, texturePath, shadow);
     objectList.push_back(obj);
 }
 
@@ -248,9 +255,10 @@ void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
 void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a pointer to the directional light we are having shadows from
 // handles the shadowMap pass 
 
+
     use(); // doesn't have colors, it is the depth map. 
 
-    glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
+    glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
 
     light->GetShadowMap()->Write();
 
@@ -259,19 +267,25 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a poi
     uniformModel  =  glGetUniformLocation(ID, "model");
 
     glm::mat4 resLight = light->CalculateLightTransform(); 
-    SetDirectionalLightTransform(&resLight);
 
+    
+    
     for(Object* object : objectList) {
-        glm::mat4 model(1.0f); 
-        model = glm::translate(model, glm::vec3(0.0, 0.0, -2.5));
         if (object->visible) {
+            glm::mat4 model(1.0f); //identity matrix
             glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            object->draw();
+            SetDirectionalLightTransform(&resLight);
+            // setMatrix4("model", object->model);
+            // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+            // setMatrix4("model", model);
+            object->draw(true);
         }
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
+    // glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
+    
 
 
 }
@@ -288,22 +302,24 @@ void Shader::DrawObjects(glm::mat4 view,
                          unsigned int sLightCount){
     use();
 
-
-    glViewport(0, 0, 1920/2, 1080/2); 
-
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    // glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
     //glClear is also clearing the depth buffer bit.
 
-    setMatrix4("projection", projection); //P
-    setMatrix4("view", view); //V
+    
     setFloat("material.specularIntensity", uniformSpecularIntensity); 
     setFloat("material.shininess",uniformShininess); 
-    setVector3f("eyePosition", position_cam);
     SetDirectionalLight(mainLight); // chenged to &mainLight
     SetPointLights(pLights, pLightCount);
     SetSpotLights(sLights, sLightCount); 
+
+    glViewport(0, 0, 1920/2, 1080/2); 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    setMatrix4("projection", projection); //P
+    setMatrix4("view", view); //V
+    setVector3f("eyePosition", position_cam);
 
     // shadow 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();

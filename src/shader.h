@@ -51,7 +51,7 @@ public:
 
     void SetSpotLights(SpotLight * sLight, unsigned int lightCount); 
 
-    void addObject(Object* obj);
+    void addObject(Object* obj, bool shadow=false);
 
     void SetTexture(GLuint textureUnit); 
     void SetDirectionalShadowMap(GLuint textureUnit);

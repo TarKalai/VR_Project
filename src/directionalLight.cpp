@@ -3,7 +3,7 @@
 DirectionalLight::DirectionalLight() : Light() // before it goes into the function code, it will call Light() where we set some parameters
 {
     direction = glm::vec3(0.0f, -1.0f, 0.0f); 
-    lightProj = glm::ortho(-5.0f, 5.0f,-5.0f, 5.0f, 0.1f, 20.0f);  // creates a camera with no perspective
+    lightProj = glm::ortho(-5.0f, 5.0f,-5.0f, 5.0f, 0.1f, 100.0f);  // creates a camera with no perspective
     // args: range left, range right, range bootom, range top, near plane, far plane
 }
 

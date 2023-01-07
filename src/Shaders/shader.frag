@@ -52,9 +52,8 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS]; 
 
 uniform sampler2D directionalShadowMap; 
+uniform sampler2D theTexture; 
 
-
-// uniform sampler2D theTexture; 
 uniform Material material; 
 
 uniform vec3 eyePosition; // camera position

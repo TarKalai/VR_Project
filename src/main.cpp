@@ -48,6 +48,7 @@ char fileFrag[128] = "../../src/Shaders/shader.frag";
 char groundVertex[128] = "../../src/Shaders/ground_shader.vert";
 char groundFrag[128] = "../../src/Shaders/ground_shader.frag";
 char groundImage[128] = "../../image/woodFloor.png";
+char defaultImage[128] = "../../image/plain.png";
 
 char directionalShadowVert[128] = "../../src/Shaders/directional_shadow_map.vert";
 char directionalShadowFrag[128] = "../../src/Shaders/directional_shadow_map.frag"; 
@@ -67,10 +68,10 @@ int main(int argc, char* argv[]){
 
 	mainWindow.Initialise(); 
 
-	Shader shader(NULL, fileVert, fileFrag, false, true);
+	Shader shader(defaultImage, groundVertex, groundFrag, true, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 	Shader2D shader2D(true);
-	Shader directionalShadowShader(NULL, directionalShadowVert, directionalShadowFrag, true, false); 
+	Shader directionalShadowShader(defaultImage, directionalShadowVert, directionalShadowFrag, false, false); 
 
 	Camera camera(glm::vec3(0.0, 20.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -80,12 +81,12 @@ int main(int argc, char* argv[]){
 	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(10., 20., 10.));
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
-	directionalShadowShader.addObject(&ground_obj); 
+	directionalShadowShader.addObject(&ground_obj, true); 
 
 	Object sphere1 = Object(sphereGeometry, glm::vec3(0.0, 5.0, 0.0), glm::vec3(0.), glm::vec3(1.));
 	world.addSphere(&sphere1);  
 	shader.addObject(&sphere1);
-	directionalShadowShader.addObject(&sphere1); 
+	directionalShadowShader.addObject(&sphere1, true); 
 
 
 	shinyMaterial = Material(1.0f, 32); 
@@ -210,7 +211,8 @@ int main(int argc, char* argv[]){
 		ImGui::NewFrame();
 
 		process.processInput();
-
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 100.0);
 		// glm::mat4 projection = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),(GLfloat)mainWindow.getBufferWidth()/ mainWindow.getBufferHeight(), 0.1f, 100.0f);
@@ -218,8 +220,7 @@ int main(int argc, char* argv[]){
 
 		glfwPollEvents();
 		double now = glfwGetTime();
-		// glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 
 		// BULLET3
 		world.animate();
