@@ -68,7 +68,7 @@ char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
 char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
 
 char groundImage[128] = "../../image/woodFloor.png";
-char defaultImage[128] = "../../image/plain.png"; // if the object has no texture
+char defaultImage[128] = "../../image/concreteTexture.png"; // if the object has no texture
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]){
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.2f, 0.2f, 
+                                0.05f, 0.05f, 
                                 -1.0f, -1.0f, 0.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
@@ -215,7 +215,7 @@ int main(int argc, char* argv[]){
 	std::vector<Object*> lightObjects;
 
 	Object sphere;
-	for (int i=0; i<100; i++) {
+	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
@@ -237,7 +237,7 @@ int main(int argc, char* argv[]){
 
 	Object plane;
 
-	for (int i=0; i<10; i++) {
+	for (int i=0; i<100; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(-50.0, 50.0), 1., getRandom(-50.0, 50.0));
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0),0,0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1.0);
