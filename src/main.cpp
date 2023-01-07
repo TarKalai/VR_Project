@@ -41,8 +41,8 @@ Material dullMaterial;
 
 // char fileVert[128] = "../../src/Shaders/vertGround.txt";
 // char fileFrag[128] = "../../src/Shaders/fragGround.txt";
-char groundVertex[128] = "../../src/Shaders/vertGround.txt";
-char groundFrag[128] = "../../src/Shaders/fragGround.txt";
+char groundVertex[128] = "../../src/Shaders/vertGround.vs";
+char groundFrag[128] = "../../src/Shaders/fragGround.fs";
 char groundImage[128] = "../../image/woodFloor.png";
 char defaultImage[128] = "../../image/plain.png"; // if the object has no texture
 
