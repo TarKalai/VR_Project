@@ -1,9 +1,10 @@
 #include "gui.h"
 
-GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg) {
+GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg) {
     process = processArg;
     display = displayArg;
     world = worldArg;
+    shader = shaderArg;
 }
 
 void GUI::update() {
@@ -86,13 +87,25 @@ void GUI::displaySaveLoad() {
                     // Check if the file was successfully opened
                     if (in.fail()) { std::cout << "Error opening file" << std::endl;}
                     else {
-                        // Read the contents of the file line by line
                         std::string line;
                         while (std::getline(in, line)) {
-                            std::cout << line << std::endl;
+                            std::istringstream iss(line); // Like a "split"
+                            std::string indice;
+                            iss >> indice; // Go the next elem of the split (reach elem 1 by 1 separated by " ")
+                            //std::cout << "indice : " << indice << std::endl;
+                            if (indice == "d") {
+                                int idx;
+                                float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, texture;
+                                iss >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> texture;
+                                //vt_positions.push_back(glm::vec3(x, y, z));
+                                glm::vec3 pos = glm::vec3(posX, posY, posZ);
+                                glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
+                                glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
+                                Object* domino = new Object("../../objects/domino.obj", pos, rot, scale);	
+                                world->addDomino(domino);  
+                                shader->addObject(domino);
+                            }
                         }
-                        // Close the file
-                        in.close();
                     }
                 }
                 ImGui::EndMenu();

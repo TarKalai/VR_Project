@@ -9,10 +9,11 @@
 #include <cstring>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 class GUI {
 public:
-    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg);
+    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg);
     void update();
     void clear();
 
@@ -20,6 +21,7 @@ private:
     Process* process;
     Display* display;
     PhysicalWorld* world;
+    Shader* shader;
     double prev = 0;
 	int deltaFrame = 0;
     float fps = 0;

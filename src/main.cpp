@@ -170,7 +170,7 @@ int main(int argc, char* argv[]){
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
 	process.initMousePosition();
-	GUI gui(&process, &mainWindow, &world);
+	GUI gui(&process, &mainWindow, &world, &shader);
 	while (!mainWindow.getShouldClose()){
 
 		process.processInput();
