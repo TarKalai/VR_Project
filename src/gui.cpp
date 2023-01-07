@@ -89,7 +89,7 @@ void GUI::displaySaveLoad() {
                         // Read the contents of the file line by line
                         std::string line;
                         while (std::getline(in, line)) {
-                        std::cout << line << std::endl;
+                            std::cout << line << std::endl;
                         }
                         // Close the file
                         in.close();
@@ -106,8 +106,15 @@ void GUI::displaySaveLoad() {
                     // Open a file for writing
                     std::ofstream out("../../save/"+std::string(name));
                     // Write to the file
-                    out << "Hello, World!" << std::endl;
-                    out << "bis Hello, World!" << std::endl;
+                    for (auto& [idx, object] : world->glObjects) {
+                        if (idx != 0) {
+                            out << "d " << idx << " ";
+                            out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
+                            out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
+                            out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
+                            out << "textureToDo" << std::endl;
+                        }
+                    }  
                     // Close the file
                     out.close();
                 }
