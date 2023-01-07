@@ -1,6 +1,8 @@
 #include "shader.h"
-
+#include "colors.hpp" // contains many color pre computed in vectors.
 #include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
+#include <vector>
+#include <string>
 
 Shader::Shader(char *imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
 	{   
@@ -67,6 +69,10 @@ void Shader::setVector3f(const GLchar* name, const glm::vec3& value)
     {
     glUniform3f(glGetUniformLocation(ID, name), value.x, value.y, value.z);
     }
+
+void Shader::setVec3(const GLchar* name, const glm::vec3 &value){ 
+    glUniform3fv(glGetUniformLocation(ID, name), 1, &value[0]); 
+}
     
 void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix) 
     {
@@ -182,6 +188,60 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount){
     }
 }
 
+glm::mat4 Shader::getModelRotPos(glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 scale){
+    glm::vec3 position = obj_pos;
+    glm::vec3 rotation = obj_rot;
+    float x1 = (cos(rotation.y)*cos(rotation.z)) * scale.x; 
+    float x2 = (sin(rotation.x)*sin(rotation.y)*cos(rotation.z) - cos(rotation.x)*sin(rotation.z)) * scale.y;
+    float x3 = (cos(rotation.x)*sin(rotation.y)*cos(rotation.z) + sin(rotation.x)*sin(rotation.z)) * scale.z;
+    float y1 = (cos(rotation.y)*sin(rotation.z)) * scale.x;
+    float y2 = (sin(rotation.x)*sin(rotation.y)*sin(rotation.z) + cos(rotation.x)*cos(rotation.z)) * scale.y;
+    float y3 = (cos(rotation.x)*sin(rotation.y)*sin(rotation.z) - sin(rotation.x)*cos(rotation.z)) * scale.z;
+    float z1 = (-sin(rotation.y)) * scale.x;
+    float z2 = (sin(rotation.x)*cos(rotation.y)) * scale.y;
+    float z3 = (cos(rotation.x)*cos(rotation.y)) * scale.z;
+    glm::mat4 model = glm::mat4(x1,y1,z1,0,x2,y2,z2,0,x3,y3,z3,0,position.x,position.y,position.z,1);
+    return model;
+}
+
+
+void Shader::SetAreaLights(AreaLight *  aLights, unsigned int lightCount){
+    if(lightCount > MAX_AREA_LIGHTS) lightCount = MAX_AREA_LIGHTS; 
+    
+    setInteger("areaLightCount", lightCount);
+    setInteger("LTC1", 0);
+    setInteger("LTC2", 1);
+	setInteger("material.diffuse", 0);
+
+    for (int i = 0; i < lightCount; i++){
+
+        // char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
+        std::vector<glm::vec3> vecpos = aLights[i].getVertexPosition();
+        // printf("here is the values of the vec pos 0 %f %f %f\n", vecpos[0].x, vecpos[0].y, vecpos[0].z);
+        // glm::mat4 model(1.0f);
+        // model = glm::translate(model, aLights[i].getPosition());
+		// model =  glm::rotate(model, glm::radians(-90.0) , glm::vec3(1.0, 0.0, 0.0));
+        glm::mat4 model = getModelRotPos(aLights[i].getPosition(), aLights[i].getRotation(), glm::vec3(1.0));
+        glm::vec3 p0 = glm::vec3(model * glm::vec4(vecpos[3], 1.0f));
+		glm::vec3 p1 = glm::vec3(model * glm::vec4(vecpos[1], 1.0f));
+		glm::vec3 p2 = glm::vec3(model * glm::vec4(vecpos[0], 1.0f));
+		glm::vec3 p3 = glm::vec3(model * glm::vec4(vecpos[2], 1.0f));
+        std::string str_points = "areaLights[" + std::to_string(i) + "].points";
+		std::string str_color = "areaLights[" + std::to_string(i) + "].base.color";
+		std::string str_intensity = "areaLights[" + std::to_string(i) + "].base.diffuseIntensity";
+		std::string str_twoSided = "areaLights[" + std::to_string(i) + "].twoSided";
+
+        setVec3((str_points + "[0]").c_str(), p0);
+		setVec3((str_points + "[1]").c_str(), p1);
+		setVec3((str_points + "[2]").c_str(), p2);
+		setVec3((str_points + "[3]").c_str(), p3);
+		setVec3(str_color.c_str(), aLights[i].getColor());
+		setFloat(str_intensity.c_str(), 10.0f);
+		setInteger(str_twoSided.c_str(), 1);
+
+    }
+}
+
 
 GLuint Shader::compileShader(std::string shaderCode, GLenum shaderType)
     {
@@ -237,7 +297,9 @@ void Shader::DrawObjects(glm::mat4 view,
                          PointLight * pLights, 
                          unsigned int pLightCount, 
                          SpotLight * sLights, 
-                         unsigned int sLightCount){
+                         unsigned int sLightCount, 
+                         AreaLight * aLights, 
+                         unsigned int aLightCount){
     use();
     setMatrix4("view", view); //V
     setMatrix4("projection", projection); //P
@@ -247,10 +309,11 @@ void Shader::DrawObjects(glm::mat4 view,
     setFloat("material.shininess",uniformShininess); 
     SetPointLights(pLights, pLightCount);
     SetSpotLights(sLights, sLightCount); 
+    SetAreaLights(aLights, aLightCount);
 
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;
-	sLights[0].SetFlash(lowerLight, front_cam);
+	// sLights[0].SetFlash(lowerLight, front_cam);
 
     for(Object* object : objectList) {
         if (object->visible) {
@@ -258,5 +321,22 @@ void Shader::DrawObjects(glm::mat4 view,
             // setMatrix4("itM", glm::inverseTranspose(object->model));
             object->draw();
         }
+    }
+}
+
+void Shader::DrawLightObjects(glm::mat4 view, 
+                              glm::mat4 projection, 
+                              AreaLight * aLights, 
+                              unsigned int aLightCount){
+    use();
+    setMatrix4("view", view); //V
+    setMatrix4("projection", projection); //P
+    int i = 0;
+    for(Object* object : objectList) {
+        setMatrix4("model", object->model);
+        setVector3f("lightColor", aLights[i].getColor());
+		// setMatrix4("itM", glm::inverseTranspose(object->model));
+        object->draw();
+        i += 1;
     }
 }

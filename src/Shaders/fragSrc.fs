@@ -60,7 +60,7 @@ vec4 CalcLightByDirection(Light light, vec3 direction) // in the point light cal
 {
     vec4 ambientColor = vec4(light.color, 1.0f)*light.ambientIntensity; // convert the color into vec4
 
-    float diffuseFactor = max(-dot(normalize(Normal), normalize(direction)), 0.0f); // 0 if it is neg. 
+    float diffuseFactor = max(dot(normalize(Normal), -normalize(direction)), 0.0f); // 0 if it is neg. 
     // By taking the norm we have length of 1 for the magnitude of the vectors, so the result of 
     // dot product is: dot(A, B) = |A||B|cos(angle) where |A| = 1 = |B|, we effectivly get the angle. 
 
