@@ -18,6 +18,7 @@
 #include "spotLight.h"
 #include "areaLight.h"
 #include "commonValues.h"
+#include "material.h"
 
 
 class Shader
@@ -72,7 +73,8 @@ public:
                      SpotLight * sLights, 
                      unsigned int sLightCount,
                      AreaLight * aLights, 
-                     unsigned int aLightCount); //, glm::vec3 light_pos);
+                     unsigned int aLightCount,
+                     Material material); //, glm::vec3 light_pos);
     
     void DrawLightObjects(glm::mat4 view, 
                           glm::mat4 projection,

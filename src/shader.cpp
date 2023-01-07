@@ -236,7 +236,7 @@ void Shader::SetAreaLights(AreaLight *  aLights, unsigned int lightCount){
 		setVec3((str_points + "[2]").c_str(), p2);
 		setVec3((str_points + "[3]").c_str(), p3);
 		setVec3(str_color.c_str(), aLights[i].getColor());
-		setFloat(str_intensity.c_str(), 10.0f);
+		setFloat(str_intensity.c_str(), 2.0f); // value for domino : 2.f && value for ground : 10.f
 		setInteger(str_twoSided.c_str(), 1);
 
     }
@@ -299,7 +299,8 @@ void Shader::DrawObjects(glm::mat4 view,
                          SpotLight * sLights, 
                          unsigned int sLightCount, 
                          AreaLight * aLights, 
-                         unsigned int aLightCount){
+                         unsigned int aLightCount,
+                         Material material) {
     use();
     setMatrix4("view", view); //V
     setMatrix4("projection", projection); //P
@@ -313,11 +314,12 @@ void Shader::DrawObjects(glm::mat4 view,
 
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;
-	// sLights[0].SetFlash(lowerLight, front_cam);
+	sLights[0].SetFlash(lowerLight, front_cam);
 
     for(Object* object : objectList) {
         if (object->visible) {
             setMatrix4("model", object->model);
+            material.UseMaterial(glGetUniformLocation(ID, "material.specularIntensity"), glGetUniformLocation(ID, "material.shininess")); 
             // setMatrix4("itM", glm::inverseTranspose(object->model));
             object->draw();
         }

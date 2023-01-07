@@ -68,6 +68,7 @@ char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
 char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
 
 char groundImage[128] = "../../image/woodFloor.png";
+char defaultImage[128] = "../../image/plain.png"; // if the object has no texture
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -119,14 +120,18 @@ GLuint loadLUTTexture()
 
 
 int main(int argc, char* argv[]){
+
+	//mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+	//mainWindow.Initialise(); 
+
 	std::cout << "Project is running... " << std::endl;
-	// Assimp::Importer importer;
-	shinyMaterial = Material(1.0f, 32); 
+
+	shinyMaterial = Material(1.f, 32.0f); 
     dullMaterial = Material(0.3f, 4); 
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.02f, 0.02f, 
-                                0.0f, -1.0f, 0.0f); // direction of the light
+                                0.2f, 0.2f, 
+                                -1.0f, -1.0f, 0.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
     
@@ -158,8 +163,6 @@ int main(int argc, char* argv[]){
 
     pointLightCount++;
 
-	pointLightCount = 0;
-
 	unsigned int spotLightCount = 0;
 
     spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
@@ -177,7 +180,6 @@ int main(int argc, char* argv[]){
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
-	spotLightCount = 0;
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
@@ -190,8 +192,10 @@ int main(int argc, char* argv[]){
     mLTC.mat1 = loadMTexture();
     mLTC.mat2 = loadLUTTexture();
 
+	
 
-	Shader shader(NULL, fileVert, fileFrag, false, true);
+	// Shader shader(NULL, fileVert, fileFrag, true, true);
+	Shader shader(defaultImage, groundVertex, groundFrag, true, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 	Shader lightShader(NULL, lightPlaneVertex,lightPlaneFrag, false, false);
 	Shader2D shader2D(true);
@@ -234,8 +238,8 @@ int main(int argc, char* argv[]){
 	Object plane;
 
 	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(getRandom(-100.0, 100.0), 2.+i*0.01, getRandom(-100.0, 100.0));
-		glm::vec3 rot = glm::vec3(getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
+		glm::vec3 pos = glm::vec3(getRandom(-50.0, 50.0), 1., getRandom(-50.0, 50.0));
+		glm::vec3 rot = glm::vec3(glm::radians(-90.0),0,0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1.0);
 
 		Object* plane = new Object(planeGeometry, pos, rot, scale, lightObjects.size());
@@ -275,8 +279,8 @@ int main(int argc, char* argv[]){
 		world.animate();
 		
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);
+		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount, shinyMaterial);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount, shinyMaterial);
 		// glActiveTexture(GL_TEXTURE0);
 		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
 		// glActiveTexture(GL_TEXTURE1);
