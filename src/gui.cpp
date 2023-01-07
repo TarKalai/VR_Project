@@ -157,7 +157,7 @@ void GUI::displaySpeedAnimation() {
 void GUI::shortcutList() {
     if (!display->cursor_disabled) {
         int screenHeight = display->getHeight();
-        Point size = Point({600, (int) 0.7*screenHeight});
+        Point size = Point({600, (float) 0.7*screenHeight});
         ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
         ImGui::SetNextWindowPos(ImVec2(display->getWidth()/2-size.x/2, display->getHeight()/2-size.y/2.5));
         ImGui::Begin("Shortcuts List", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
