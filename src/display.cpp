@@ -14,7 +14,7 @@ int Display::Initialise(){
     // Initialise Glfw
     int width = 1920/2;
     int height = 1080/2;
-    glfwTerminate();
+    // glfwTerminate();
     if(!glfwInit()){
         printf("The inititialisation of glfw failed.");
         glfwTerminate(); 
@@ -46,14 +46,15 @@ int Display::Initialise(){
 
     glfwMakeContextCurrent(mainWindow);  // Everything that will be done will bejoined to this window
 
+    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+
     glfwSetFramebufferSizeCallback(mainWindow, framebuffer_size_callback);
     // glfwSetScrollCallback(mainWindow, scroll_callback);
-    
+
+
     if (cursor_disabled)
 	    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// GLFW_CURSOR_DISABLED so that the cursor does not appear on the screen. 
-
-
-    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+    
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
 		printf("Failed to initialize GLAD");

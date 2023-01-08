@@ -22,6 +22,11 @@ bool ShadowMap::Init(GLuint width, GLuint height){
     //arg3: depth value based on the far plane => if far plane is 100, and the pixel is at 50 then this will be set at 0.5 because it is halfway
     // last arg: we don't need to precise because shadowMap is binded to the FBO and the FBO will output the image to the texture (we keep updating it)
     // this is why we don't pass anything to it because we don't actually have anything to pass to it.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+    // With GL_LINEAR it will blend the pixels together (the other type: GL_NEAREST we will have a more pixalated look)
+    // we are using GL_NEAREST for the shadow 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+    // GL_TEXTURE_MAG_FILTER: when we are closer to the image. 
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);//Can't have GL_REPEAT with shadows, otherwise OVERSAMPLING: the shadows will be repeated  
     // GL_CLAMP_TO_BORDER: beyond the edge of the texture there is a single color that expands on infinitely
@@ -29,12 +34,7 @@ bool ShadowMap::Init(GLuint width, GLuint height){
     // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     // The S and T axis corresponds to the u,v coordinates. (x and y)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
-    // With GL_LINEAR it will blend the pixels together (the other type: GL_NEAREST we will have a more pixalated look)
-    // we are using GL_NEAREST for the shadow 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
-    // GL_TEXTURE_MAG_FILTER: when we are closer to the image. 
-
+    
     float bColor[] = {1.0f, 1.0f, 1.0f, 1.0f}; // alll values are set to 1 so it is as far away from the lightpos as possible 
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bColor);// we are setting the border color
     

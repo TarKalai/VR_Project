@@ -16,6 +16,7 @@ set(SOURCES_MAIN "main.cpp"
 "directionalLight.cpp" "directionalLight.h"
 "spotLight.cpp" "spotLight.h"
 "shadowMap.cpp" "shadowMap.h"
+"texture.cpp" "texture.h"
 "commonValues.h"
 "debug.h" ) 
 

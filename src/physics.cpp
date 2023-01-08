@@ -6,7 +6,8 @@
 PhysicalWorld::PhysicalWorld(Object *obj)
 {
     initializeEngine();
-    createGround(obj);
+    // createGround(obj);
+    createGround(obj, 100., 100.);
 }
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -25,16 +26,18 @@ void PhysicalWorld::initializeEngine(){
     dynamicsWorld->setGravity(btVector3(0, -100, 0));
 }
 
-void PhysicalWorld::createGround(Object *obj){
+void PhysicalWorld::createGround(Object *obj, float width, float depth){
 
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(obj->scale.x), btScalar(obj->scale.y), btScalar(obj->scale.z)));
+    // btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(obj->scale.x), btScalar(obj->scale.y), btScalar(obj->scale.z)));
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(width), btScalar(0.), btScalar(depth))); 
 
     collisionShapes.push_back(groundShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0,-obj->scale.y,0));
+    // groundTransform.setOrigin(btVector3(0,-obj->scale.y,0));
+    groundTransform.setOrigin(btVector3(0, 0, 0));
 
     btScalar mass(0.);
 

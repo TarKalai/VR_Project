@@ -113,12 +113,13 @@ Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3
     numVertices = vertices.size();
 
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    // glGenVertexArrays(1, &VAO);
+    // glGenBuffers(1, &VBO);
 
-    //define VBO and VAO as active buffer and active vertex array
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // //define VBO and VAO as active buffer and active vertex array
+    // glBindVertexArray(VAO);
+    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
 }
 
 void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath, bool shadow){ 
@@ -149,10 +150,16 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
-    //define VBO and VAO as active buffer and active vertex array
+    // define VBO and VAO as active buffer and active vertex array
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * numVertices, data, GL_STATIC_DRAW);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * numVertices, data, GL_STATIC_DRAW);
+
+    // glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0); //
+    // glEnableVertexAttribArray(0); //
+// glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0])*8, (void*)(sizeof(vertices[0])*3));
 
     {
         auto att_pos = glGetAttribLocation(shaderID, "pos"); //position
@@ -161,6 +168,7 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
     }
     
     if (shader_texture) {
+
         glGenTextures(1, &texture);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -190,7 +198,15 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
             glEnableVertexAttribArray(att_tex);
             glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
             u_texture = glGetUniformLocation(shaderID, "theTexture");
-            s_texture = glGetUniformLocation(shaderID, "directionalShadowMap"); 
+            // s_texture = glGetUniformLocation(shaderID, "directionalShadowMap"); 
+        }
+        else{
+
+            // auto att_tex = glGetAttribLocation(shaderID, "directionalLightTransform");
+            // glEnableVertexAttribArray(att_tex);
+            // glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            // // u_texture = glGetUniformLocation(shaderID, "directionalLightTransform");
+
         }
     }
 
@@ -231,21 +247,31 @@ void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
 void Object::draw(bool shadow){
 
     //bind your vertex arrays and call glDrawArrays
-    glBindVertexArray(this->VAO);
-    if (has_texture && !shadow){
+    glBindVertexArray(VAO);
+    if(!shadow){
         glUniform1i(u_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-    }
-    else{
-        // glUniform1i(s_texture, 0);
-        // glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, texture);
-        glActiveTexture(GL_TEXTURE0); // GL_TEXTURE0: texture unit => when the texture is run in the fragment shader, there will be a sampler that will have access to the data for the texture and it accesses it throught the texture unit. 
+        glActiveTexture(GL_TEXTURE0); 
         glBindTexture(GL_TEXTURE_2D, texture);
     }
-    glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    glDrawArrays(GL_TRIANGLES,0, numVertices); 
     glBindVertexArray(0);
+
+
+    // glBindVertexArray(this->VAO);
+    // if (has_texture && !shadow){
+    //     glUniform1i(u_texture, 0);
+    //     glActiveTexture(GL_TEXTURE0);
+	// 	glBindTexture(GL_TEXTURE_2D, texture);
+    // }
+    // else{
+    //     // glUniform1i(s_texture, 0);
+    //     // glActiveTexture(GL_TEXTURE0);
+	// 	// glBindTexture(GL_TEXTURE_2D, texture);
+    //     glActiveTexture(GL_TEXTURE0); // GL_TEXTURE0: texture unit => when the texture is run in the fragment shader, there will be a sampler that will have access to the data for the texture and it accesses it throught the texture unit. 
+    //     glBindTexture(GL_TEXTURE_2D, texture);
+    // }
+    // glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    // glBindVertexArray(0);
 }
 
 void Object::print(){

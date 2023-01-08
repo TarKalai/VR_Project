@@ -5,13 +5,6 @@
 Shader::Shader(char *imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
 	{   
         texturePath = imagePath;
-
-        if (imagePath == NULL)
-
-        {
-            texturePath = "../../image/plain.png";
-        }
-
         shaderTexture = texture;
         shaderNormal = normal;
         // 1. retrieve the vertex/fragment source code from filePath
@@ -189,6 +182,35 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount){
     }
 }
 
+void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_type)
+{
+    GLuint the_shader = glCreateShader(shader_type); // create empty shader and pass the id into "the_shader"
+
+    const GLchar* the_code[1];//Pointer to the 1st elem of an array
+
+    the_code[0] = shader_code;
+
+    GLint code_length[1];
+    code_length[0] = strlen(shader_code); //strlen comes from the string.h library. 
+
+    glShaderSource(the_shader, 1, the_code, code_length);
+    glCompileShader(the_shader);
+
+    GLint result = 0; 
+    GLchar eLog[1024] = { 0 };
+
+    glGetShaderiv(the_shader, GL_COMPILE_STATUS, &result);//2scd arg: what kind of info we want, 3rd arg: where do we put the info 
+
+    if(!result){
+        glGetShaderInfoLog(the_shader, sizeof(eLog), NULL, eLog); 
+        printf("Error compiling the %d shader : %s\n", shader_type, eLog);
+        return; 
+    }
+
+    glAttachShader(program, the_shader);
+
+}
+
 
 GLuint Shader::compileShader(std::string shaderCode, GLenum shaderType)
     {
@@ -232,6 +254,93 @@ GLuint Shader::compileProgram(GLuint vertexShader, GLuint fragmentShader)
             glGetProgramInfoLog(programID, 1024, NULL, infoLog);
             std::cout << "ERROR::PROGRAM_LINKING_ERROR:  " << infoLog << std::endl;
         }
+
+        glValidateProgram(programID);
+        glGetProgramiv(programID, GL_VALIDATE_STATUS, &success);//2scd arg: what kind of info we want, 3rd arg: where do we put the info 
+
+        if(!success){
+            glGetProgramInfoLog(programID, 1024, NULL, infoLog); 
+            printf("Error validating program : %s\n", infoLog);
+        }
+
+
+        uniformProjection = glGetUniformLocation(programID, "projection");  // UniformProjection will be the location of the uniformProjection
+        uniformModel = glGetUniformLocation(programID, "model");  // UniformModel will be the location of the uniformMatrix
+        uniformView = glGetUniformLocation(programID, "view");
+        uniformDirectionalLight.uniformColor = glGetUniformLocation(programID, "directionalLight.base.color"); 
+        uniformDirectionalLight.uniformAmbientIntensity = glGetUniformLocation(programID, "directionalLight.base.ambientIntensity");
+        uniformDirectionalLight.uniformDirection = glGetUniformLocation(programID, "directionalLight.direction"); 
+        uniformDirectionalLight.uniformDiffuseIntensity = glGetUniformLocation(programID, "directionalLight.base.diffuseIntensity"); 
+        uniformSpecularIntensity = glGetUniformLocation(programID, "material.specularIntensity"); 
+        uniformShininess = glGetUniformLocation(programID, "material.shininess"); 
+        uniformEyePosition = glGetUniformLocation(programID, "eyePosition"); 
+
+        uniformPointLightCount = glGetUniformLocation(programID, "pointLightCount"); 
+
+        for (size_t i = 0; i < MAX_POINT_LIGHTS; i ++){
+
+            char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
+
+            snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.color", i); // we are going to print to a buffer
+            uniformPointLight[i].uniformColor = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.ambientIntensity", i); // we are going to print to a buffer
+            uniformPointLight[i].uniformAmbientIntensity = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.diffuseIntensity", i); // we are going to print to a buffer
+            uniformPointLight[i].uniformDiffuseIntensity = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "pointLights[%d].position", i); // we are going to print to a buffer
+            uniformPointLight[i].uniformPosition = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "pointLights[%d].constant", i); // we are going to print to a buffer
+            uniformPointLight[i].uniformConstant = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "pointLights[%d].linear", i); // we are going to print to a buffer
+            uniformPointLight[i].uniformLinear = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "pointLights[%d].exponent", i); // we are going to print to a buffer
+            uniformPointLight[i].uniformExponent = glGetUniformLocation(programID, locBuff); 
+        }
+
+        uniformSpotLightCount = glGetUniformLocation(programID, "spotLightCount"); 
+
+        for (size_t i = 0; i < MAX_SPOT_LIGHTS; i ++){
+
+            char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.color", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformColor = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.ambientIntensity", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformAmbientIntensity = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.diffuseIntensity", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformDiffuseIntensity = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.position", i); // we are going to print to a buffer 
+            uniformSpotLight[i].uniformPosition = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.constant", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformConstant = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.linear", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformLinear = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.exponent", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformExponent = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].direction", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformDirection = glGetUniformLocation(programID, locBuff); 
+
+            snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge", i); // we are going to print to a buffer
+            uniformSpotLight[i].uniformEdge = glGetUniformLocation(programID, locBuff); 
+        }
+
+        uniformTexture = glGetUniformLocation(programID, "theTexture");
+        uniformDirectionalLightTransform = glGetUniformLocation(programID, "directionalLightTransform"); // it will bind for vertex a AND frag because it is the same name
+        uniformDirectionalShadowMap = glGetUniformLocation(programID, "directionalShadowMap"); 
+    // directionalLightTransform
         return programID;
     }
 
@@ -267,24 +376,21 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a poi
     uniformModel  =  glGetUniformLocation(ID, "model");
 
     glm::mat4 resLight = light->CalculateLightTransform(); 
-
+    SetDirectionalLightTransform(&resLight);
     
-    
-    for(Object* object : objectList) {
-        if (object->visible) {
-            glm::mat4 model(1.0f); //identity matrix
-            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            SetDirectionalLightTransform(&resLight);
-            // setMatrix4("model", object->model);
-            // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-            // setMatrix4("model", model);
-            object->draw(true);
-        }
-    }
-
+    // for(Object* object : objectList) {
+    //     if (object->visible) {
+    //         // glm::mat4 model(1.0f); //identity matrix
+    //         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(object->model));
+    //         // setMatrix4("model", object->model);
+    //         // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    //         // setMatrix4("model", model);
+    //         object->draw(true);
+    //     }
+    // }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
-    // glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
+
     
 
 
@@ -293,45 +399,52 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a poi
 void Shader::DrawObjects(glm::mat4 view, 
                          glm::mat4 projection, 
                          glm::vec3 position_cam, glm::vec3 front_cam, 
-                         DirectionalLight* mainLight, 
+                         DirectionalLight mainLight, 
                          GLuint uniformSpecularIntensity, 
                          GLuint uniformShininess, 
                          PointLight * pLights, 
                          unsigned int pLightCount, 
                          SpotLight * sLights, 
                          unsigned int sLightCount){
-    use();
 
+
+    use();
+    
+    // glViewport(0, 0, display.getBufferWidth(), display.getBufferHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
+
+
+    glViewport(0, 0, 1920/2, 1080/2); 
+// 
     // glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
-    //glClear is also clearing the depth buffer bit.
+    // //glClear is also clearing the depth buffer bit.
 
-    
-    setFloat("material.specularIntensity", uniformSpecularIntensity); 
-    setFloat("material.shininess",uniformShininess); 
-    SetDirectionalLight(mainLight); // chenged to &mainLight
-    SetPointLights(pLights, pLightCount);
-    SetSpotLights(sLights, sLightCount); 
-
-    glViewport(0, 0, 1920/2, 1080/2); 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
     setMatrix4("projection", projection); //P
     setMatrix4("view", view); //V
     setVector3f("eyePosition", position_cam);
 
+    SetDirectionalLight(&mainLight); // chenged to &mainLight
+    SetPointLights(pLights, pLightCount);
+    SetSpotLights(sLights, sLightCount); 
+
     // shadow 
-    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
+    glm::mat4 resmainLight = mainLight.CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
 
-    mainLight->GetShadowMap()->Read(GL_TEXTURE1);
+   mainLight.GetShadowMap()->Read(GL_TEXTURE0);
 
-    SetTexture(0); // bound to texture unit 0 
-    SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
+   SetTexture(0); // bound to texture unit 0 
+   SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
 
-    glm::vec3 lowerLight = position_cam; 
-    lowerLight.y -= 0.3f;
+    // setFloat("material.specularIntensity", uniformSpecularIntensity); 
+    // setFloat("material.shininess",uniformShininess); 
+   
+
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // glm::vec3 lowerLight = position_cam; 
+    // lowerLight.y -= 0.3f;
 	// sLights[0].SetFlash(lowerLight, front_cam);
 
     for(Object* object : objectList) {
@@ -340,4 +453,19 @@ void Shader::DrawObjects(glm::mat4 view,
             object->draw();
         }
     }
+}
+
+void Shader::ClearShader()
+{
+    if(ID != 0){
+        glDeleteProgram(ID);  // delete the program of the graphics card to make more space. 
+        ID=0; 
+    }
+
+    uniformModel = 0; 
+    uniformProjection = 0; 
+}
+
+Shader::~Shader(){
+    // ClearShader(); 
 }

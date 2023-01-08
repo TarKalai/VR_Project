@@ -25,7 +25,7 @@ public:
     PhysicalWorld(Object *obj);
 
     void initializeEngine();
-    void createGround(Object *obj);
+    void createGround(Object *obj, float width, float depth);
     void addSphere(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
     void addCube(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
     void addDomino(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);

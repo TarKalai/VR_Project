@@ -29,6 +29,7 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "shadowMap.h"
+#include "texture.h"
 
 // Shader shader; 
 Display mainWindow; 
@@ -36,6 +37,10 @@ Display mainWindow;
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+
+Texture brickTexture; 
+Texture dirtTexture; 
+Texture plainTexture;
 
 Material shinyMaterial; 
 Material dullMaterial; 
@@ -78,24 +83,45 @@ int main(int argc, char* argv[]){
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
 	char groundGeometry[] = "../../objects/plane.obj";
-	Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(10., 20., 10.));
+	// Object ground_obj = Object(groundGeometry, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(20., 20., 20.));
+	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(1.));
+	
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
-	groundShader.addObject(&ground_obj);
 	directionalShadowShader.addObject(&ground_obj, true); 
+	groundShader.addObject(&ground_obj);
 
 	Object sphere1 = Object(sphereGeometry, glm::vec3(0.0, 5.0, 0.0), glm::vec3(0.), glm::vec3(1.));
-	world.addSphere(&sphere1);  
-	shader.addObject(&sphere1);
+	world.addSphere(&sphere1); 
 	directionalShadowShader.addObject(&sphere1, true); 
+	shader.addObject(&sphere1);
 
+	// Object cube; 
+	for (int i=0; i<10; i++) {
+		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
+		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
+		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
+		Object* cube = new Object(cubeGeometry, pos, rot, scale);	
+		world.addCube(cube);  
+		directionalShadowShader.addObject(cube, true); 
+		shader.addObject(cube);
+	}
+
+	brickTexture = Texture("../../image/brick.png"); 
+    brickTexture.LoadTextureA(); 
+
+    dirtTexture = Texture("../../image/dirt.png"); 
+    dirtTexture.LoadTextureA(); 
+
+    plainTexture = Texture("../../image/plain.png");
+	plainTexture.LoadTextureA();
 
 	shinyMaterial = Material(1.0f, 32); 
     dullMaterial = Material(0.3f, 4); 
 
-	mainLight = DirectionalLight(2048,2048,
-								1.0f, 1.0f, 1.0f, 
-                                0.1f, 0.3f,
-                                0.0f, -5.0f, -5.0f); // direction of the light
+	mainLight = DirectionalLight(2048, 2048, // resolution of the shadow map !!! it is impacting the look of the shadows if we do GL_NEAREST instead of GL_LINEAR
+							1.0f, 1.0f, 1.0f, 
+							0.3f, 0.6f, 
+							0.0f, -5.0f, -5.0f); // direction of the light
 
 	unsigned int pointLightCount =0; 
     
@@ -107,7 +133,7 @@ int main(int argc, char* argv[]){
     
     pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
                                 0.4f, 1.0f,
-                                -10.0f,5.0f, 10.0f,
+                                0.0f,0.0f, 50.0f,
                                 0.3f, 0.1f, 0.1f);
 
     pointLightCount++; 
@@ -115,18 +141,18 @@ int main(int argc, char* argv[]){
     
     pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
                                 0.4f, 1.0f,
-                                -10.0f,5.0f, -10.0f,
+                                -50.0f,5.0f, -10.0f,
                                 0.3f, 0.2f, 0.1f);
 
     pointLightCount++;
 
 	pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
                                 0.4f, 1.0f,
-                                10.0f,5.0f, -10.0f,
+                                50.0f,5.0f, -100.0f,
                                 0.3f, 0.2f, 0.1f);
 
     pointLightCount++;
-	pointLightCount = 0;
+	// pointLightCount = 0;
 
 	unsigned int spotLightCount = 0;
 
@@ -145,11 +171,10 @@ int main(int argc, char* argv[]){
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
-    spotLightCount=0; 
+    // spotLightCount=0; 
 
 	
 	/* Example how to create objects 
-
 	Object sphere;
 	for (int i=0; i<100; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
@@ -160,14 +185,7 @@ int main(int argc, char* argv[]){
 		shader.addObject(sphere);
 	}
 	Object cube;
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
-		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
-		Object* cube = new Object(cubeGeometry, pos, rot, scale);	
-		world.addCube(cube);  
-		shader.addObject(cube);
-	}
+	
 	*/
 
 	//2. Choose a position for the light
@@ -196,7 +214,8 @@ int main(int argc, char* argv[]){
     // glm::mat4 projection = glm::perspective(glm::radians(45.0f),(GLfloat)mainWindow.getBufferWidth()/ mainWindow.getBufferHeight(), 0.1f, 100.0f);
 
 	//Rendering
-	glfwSwapInterval(1);
+
+	// glfwSwapInterval(1);
 	Process process = Process(mainWindow, &camera, &world, &shader);
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
@@ -206,19 +225,24 @@ int main(int argc, char* argv[]){
 	process.initMousePosition();
 
 	while (!mainWindow.getShouldClose()){
+
+		glfwPollEvents(); //
+
+		process.processInput(); //
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		process.processInput();
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// process.processInput();
+		// glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 100.0);
 		// glm::mat4 projection = camera.getProjectionMatrix(glm::radians(camera.ZOOM), mainWindow.getBufferWidth()/mainWindow.getBufferHeight(), 0.01, 100.0);
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),(GLfloat)mainWindow.getBufferWidth()/ mainWindow.getBufferHeight(), 0.1f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
 
-		glfwPollEvents();
+		// glfwPollEvents();
 		double now = glfwGetTime();
 	
 
@@ -226,15 +250,19 @@ int main(int argc, char* argv[]){
 		world.animate();
 		//2. Use the shader Class to send the relevant uniform
 
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		directionalShadowShader.DirectionalShadowMapPass(&mainLight); 
 
-		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		shader.DrawObjects(view, projection, camera.Position, camera.Front, mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+	
 		
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount);	
 		
 		shader2D.drawObject();
 
-
+	
 
 		fps(now);
 
@@ -245,6 +273,7 @@ int main(int argc, char* argv[]){
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		mainWindow.swapBuffers(); 
+
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();

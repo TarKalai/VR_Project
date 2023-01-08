@@ -18,12 +18,15 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "commonValues.h"
+#include "display.h"
 
 
 class Shader
 {
 public:
 	GLuint ID;
+
+    Display display; 
 
     std::vector<Object*> objectList;
     
@@ -53,6 +56,8 @@ public:
 
     void addObject(Object* obj, bool shadow=false);
 
+    void AddShader(GLuint program, const char* shader_code, GLenum shader_type); 
+
     void SetTexture(GLuint textureUnit); 
     void SetDirectionalShadowMap(GLuint textureUnit);
     void SetDirectionalLightTransform(glm::mat4* ltransform);  
@@ -61,7 +66,7 @@ public:
     void DrawObjects(glm::mat4 view, 
                      glm::mat4 projection, 
                      glm::vec3 position_cam, glm::vec3 front_cam,
-                     DirectionalLight* mainLight, 
+                     DirectionalLight mainLight, 
                      GLuint uniformSpecularIntensity, 
                      GLuint uniformShininess, 
                      PointLight * pLights, 
@@ -103,14 +108,18 @@ public:
         GLuint uniformDirection; 
         GLuint uniformEdge; 
     } uniformSpotLight[MAX_SPOT_LIGHTS];
+    
+    void ClearShader(); 
+
+    ~Shader(); 
 
 
 private:
 
-
-    GLuint uniformTexture, 
-    uniformDirectionalLightTransform, uniformDirectionalShadowMap,
-    uniformModel;
+    GLuint shaderID, uniformProjection, uniformModel, uniformView, uniformEyePosition, 
+    uniformSpecularIntensity, uniformShininess,
+    uniformTexture, 
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap;
     GLuint compileShader(std::string shaderCode, GLenum shaderType);
 
     GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader); 

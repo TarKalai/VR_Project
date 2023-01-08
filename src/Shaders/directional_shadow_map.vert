@@ -2,7 +2,7 @@
 
 // we want to know where things are in relation to the light
 
-in vec3 pos;  
+layout (location =0) in vec3 pos;
 // in vec3 norm;
 // in vec2 tex; 
 
