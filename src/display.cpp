@@ -58,7 +58,8 @@ int Display::Initialise(){
 		printf("Failed to initialize GLAD");
 	}
 
-    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_FRAMEBUFFER_SRGB); // Gamma Correction
+    glEnable(GL_DEPTH_TEST);    
     // glEnable(GL_CULL_FACE); // If the objects are behind the camera then they will not be rendered => Makes everything go faster. 
     // This may cause a bug with the Normals, if a bug is observed (holes in objects) disabling this line may solve it. 
 

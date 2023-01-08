@@ -331,7 +331,6 @@ void Shader::DrawLightObjects(glm::mat4 view,
     for(Object* object : objectList) {
         setMatrix4("model", object->model);
         setVector3f("lightColor", aLights[i].getColor());
-		// setMatrix4("itM", glm::inverseTranspose(object->model));
         object->draw();
         i += 1;
     }

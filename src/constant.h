@@ -7,6 +7,8 @@ namespace values
     static const int MAX_POINT_LIGHTS = 4;
     static const int MAX_SPOT_LIGHTS = 3;
     static const int MAX_AREA_LIGHTS = 100;
+
+    static const float gamma = 2.2; 
 }
 
 namespace image
