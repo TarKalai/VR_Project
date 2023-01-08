@@ -1,4 +1,3 @@
-
 #include "light_constructor.h"
 
 LightConstructor::LightConstructor(){
@@ -9,7 +8,7 @@ LightConstructor::LightConstructor(){
 
 void LightConstructor::createMainLight(){
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                 0.5f, 0.5f, 
+                                 0.2f, 0.2f, 
                                 -1.0f, -1.0f, 0.0f); 
 }
 
@@ -44,14 +43,8 @@ void LightConstructor::createPointLight(){
 }
 
 void LightConstructor::createSpotLight(){
-    // the first one is a torch
-    spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
-                                0.0f, 1.0f,
-                                0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
-                                0.0f, -1.0f, 0.0f, // points straight down
-                                0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
-                                20.0f);  // spread of the angle : 20°
-    spotLightCount++;
+    
+    createTorch();
 
     spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
                                 0.0f, 2.0f,
@@ -60,6 +53,17 @@ void LightConstructor::createSpotLight(){
                                 0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
                                 30.0f);  // spread of the angle : 20°
     spotLightCount++; 
+}
+
+void LightConstructor::createTorch(){
+    // the first one is a torch
+    spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
+                                0.0f, 1.0f,
+                                0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
+                                0.0f, -1.0f, 0.0f, // points straight down
+                                0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
+                                20.0f);  // spread of the angle : 20°
+    spotLightCount++;
 }
 
 

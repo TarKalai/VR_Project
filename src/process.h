@@ -1,16 +1,24 @@
 #pragma once
+
 #include <iostream>
 #include <stdio.h>
-// #include "camera.h"
+#include "string.h"
+
+#include <unistd.h> // for sleep (debug)
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include "glm/gtx/string_cast.hpp"
 
 #include "shader.h"
 #include "physics.h"
 #include "camera.h"
 #include "display.h"
+#include "constant.h"
+#include "constant.h"
+#include "utils.h"
+
 class Camera; 
 
 class Process{

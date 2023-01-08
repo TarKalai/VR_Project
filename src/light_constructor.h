@@ -10,8 +10,6 @@
 #include "areaLight.h"
 #include "constant.h"
 
-
-
 class LightConstructor{
 
 public: 
@@ -21,6 +19,7 @@ public:
     void createMainLight();
     void createPointLight();
     void createSpotLight();
+    void createTorch();
     
     // getters & setters
     DirectionalLight* getMainLight(){return &mainLight;}

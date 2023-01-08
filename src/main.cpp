@@ -1,3 +1,5 @@
+// #pragma once
+
 #include<iostream>
 #include<cstdlib>
 
@@ -33,6 +35,7 @@
 #include "ltc_matrix.hpp"
 #include "constant.h"
 #include "light_constructor.h"
+#include "utils.h"
 
 Display mainWindow; 
 AreaLight areaLights[values::MAX_AREA_LIGHTS];
@@ -42,10 +45,10 @@ Material dullMaterial;
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
-float getRandom(float from=-4, float to=4) {
-	int mod = (to - from)*100;
-	return float(rand()%mod + 100*from)/100;
-}
+// float getRandom(float from=-4, float to=4) {
+// 	int mod = (to - from)*100;
+// 	return float(rand()%mod + 100*from)/100;
+// }
 
 
 int main(int argc, char* argv[]){
@@ -71,18 +74,18 @@ int main(int argc, char* argv[]){
 
 
 	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
-		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
+		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
 		Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
 		world.addSphere(sphere);  
 		groundShader.addObject(sphere);
 	}
 
 	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
-		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
+		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
 		Object* cube = new Object(geometry::cube, image::concrete, pos, rot, scale);	
 		world.addCube(cube);  
 		groundShader.addObject(cube);
@@ -94,22 +97,21 @@ int main(int argc, char* argv[]){
 
 	for (int i=0; i<10; i++) {
 		// std::sin(glfwGetTime());
-		glm::vec3 pos = glm::vec3(getRandom(-50.0, 50.0), 5., getRandom(-50.0, 50.0));
-		glm::vec3 rot = glm::vec3(getRandom(glm::radians(-90.0), glm::radians(90.0)), getRandom(glm::radians(-90.0), glm::radians(90.0)), getRandom(glm::radians(-90.0), glm::radians(90.0)));//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
-		glm::vec3 scale = glm::vec3(getRandom(1.0, 3.0));
+		glm::vec3 pos = glm::vec3(Utils::getRandom(-50.0, 50.0), 5., Utils::getRandom(-50.0, 50.0));
+		glm::vec3 rot = glm::vec3(Utils::getRandom(glm::radians(-90.0), glm::radians(90.0)), Utils::getRandom(glm::radians(-90.0), glm::radians(90.0)), Utils::getRandom(glm::radians(-90.0), glm::radians(90.0)));//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
+		glm::vec3 scale = glm::vec3(Utils::getRandom(1.0, 3.0));
 
 		Object* plane = new Object(geometry::plane, image::white, pos, rot, scale);
 		lightShader.addObject(plane);
 
-		areaLights[i] = AreaLight(getRandom(0.0, 1.0), getRandom(0.0, 1.0), getRandom(0.0, 1.0), 
-							  0.4f, getRandom(.1, 1.0),
+		areaLights[i] = AreaLight(Utils::getRandom(0.0, 1.0), Utils::getRandom(0.0, 1.0), Utils::getRandom(0.0, 1.0), 
+							  0.4f, Utils::getRandom(.1, 1.0),
 							  plane->getPosition(),
 							  0.3f, 0.2f, 0.1f, // not used
 							  plane->getRotation(), true, 
 							  plane->getVertexPosition(),
 							  plane->getScale());
     	areaLightCount++; 
-
 	}
 	
 	//Rendering

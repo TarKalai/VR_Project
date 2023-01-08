@@ -1,13 +1,6 @@
 #include "process.h"
-#include "camera.h"
-#include "string.h"
-#include "display.h"
-#include "constant.h"
 
-#include <glm/glm.hpp>
-#include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
 
-#include <unistd.h> // for sleep (debug)
 
 
 
@@ -193,11 +186,6 @@ void Process::HandleMouse(){
 
 }
 
-float getRandom2(float from=-4, float to=4) {
-	int mod = (to - from)*100;
-	return float(rand()%mod + 100*from)/100;
-}
-
 void Process::PutDominoes(){
 	float heightDomino = 1.*2;
 	float widthDomino = 0.175*2;
@@ -221,7 +209,7 @@ void Process::PutDominoes(){
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
 
-				Object* domino = new Object(geometry::domino, image::white, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2), true, glm::vec3(getRandom2(0, 1), getRandom2(0, 1), getRandom2(0, 1)));	
+				Object* domino = new Object(geometry::domino, image::white, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2), true, glm::vec3(Utils::getRandom(0, 1), Utils::getRandom(0, 1), Utils::getRandom(0, 1)));	
 				world->addDomino(domino);
 				shader->addObject(domino);
 
