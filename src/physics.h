@@ -1,5 +1,4 @@
-#ifndef PYHSICS_H
-#define PHYSICS_H
+#pragma once
 
 // bullet3 (physical engine)
 #include <btBulletDynamicsCommon.h>
@@ -7,8 +6,7 @@
 #include "object.h"
 
 
-class PhysicalWorld
-{
+class PhysicalWorld{
     
 public:
     float speedAnimation = 1.;
@@ -35,5 +33,3 @@ public:
     void animate();
     void clear();
 };
-
-#endif

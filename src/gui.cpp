@@ -1,5 +1,5 @@
 #include "gui.h"
-#include "constant.h"
+
 
 GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg) {
     process = processArg;

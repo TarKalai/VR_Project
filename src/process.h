@@ -1,5 +1,8 @@
 #pragma once
 
+// #ifndef PROCESS_H
+// #define PROCESS_H
+
 #include <iostream>
 #include <stdio.h>
 #include "string.h"
@@ -63,3 +66,4 @@ private:
 	void Pushing();
 	void Deplacement();
 }; 
+// #endif

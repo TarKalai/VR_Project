@@ -22,8 +22,8 @@
 #include "shader2D.h"
 #include "object.h"
 
-// #include "physics.h"
 
+#include "physics.h"
 #include "display.h"
 #include "gui.h"
 #include "process.h"
@@ -32,10 +32,10 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "areaLight.h"
-#include "ltc_matrix.hpp"
 #include "constant.h"
 #include "light_constructor.h"
 #include "utils.h"
+#include "object_constructor.h"
 
 Display mainWindow; 
 AreaLight areaLights[values::MAX_AREA_LIGHTS];
@@ -71,25 +71,28 @@ int main(int argc, char* argv[]){
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
+	ObjectConstructor objectConstructor = ObjectConstructor(&world);
+	groundShader.addObjects(objectConstructor.getObjects());
+
+	// for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
+	// 	Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
+	// 	world.addSphere(sphere);  
+	// 	groundShader.addObject(sphere);
+	// }
+
+	// for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
+	// 	Object* cube = new Object(geometry::cube, image::concrete, pos, rot, scale);	
+	// 	world.addCube(cube);  
+	// 	groundShader.addObject(cube);
+	// }
 
 
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
-		Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
-		world.addSphere(sphere);  
-		groundShader.addObject(sphere);
-	}
-
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
-		Object* cube = new Object(geometry::cube, image::concrete, pos, rot, scale);	
-		world.addCube(cube);  
-		groundShader.addObject(cube);
-	}
 
 
 	unsigned int areaLightCount =0; 

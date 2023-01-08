@@ -1,5 +1,4 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#pragma once
 
 #include<iostream>
 #include <fstream>
@@ -64,4 +63,3 @@ public:
 	glm::vec3 getColor(){return color;}
 	void print();
 };
-#endif

@@ -2,7 +2,6 @@
 #include "debug.h"
 #include "process.h"
 #include "camera.h"
-
 float fov = 45; 
 
 Display::Display(bool cursor){

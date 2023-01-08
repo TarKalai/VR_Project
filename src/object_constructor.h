@@ -5,6 +5,9 @@
 
 #include "object.h"
 #include "constant.h"
+#include "utils.h"
+#include "physics.h"
+
 
 
 
@@ -12,7 +15,7 @@
 class ObjectConstructor{
 
 public: 
-    ObjectConstructor(); 
+    ObjectConstructor(PhysicalWorld *physicalWorld); 
     ~ObjectConstructor(); 
     
     // getters & setters

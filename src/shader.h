@@ -1,6 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
-
+#pragma once
 #include <glad/glad.h>
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtc/matrix_inverse.hpp>
@@ -61,6 +59,7 @@ public:
     // void setColor(const GLchar* name, glm::vec3& color);
 
     void addObject(Object* obj);
+    void addObjects(std::vector<Object*> objects);
 
     void DrawObjects(glm::mat4 view, 
                      glm::mat4 projection, 
@@ -134,4 +133,3 @@ private:
     GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader); 
 
 };
-#endif

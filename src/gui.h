@@ -1,6 +1,8 @@
 #pragma once
 #include "process.h"
 #include "display.h"
+#include "constant.h"
+#include "physics.h"
 
 #include <dirent.h> // Linux
 #include <iostream>

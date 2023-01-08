@@ -1,5 +1,4 @@
-#ifndef SHADER2D_H
-#define SHADER2D_H
+#pragma once
 
 
 #include <glad/glad.h>
@@ -26,5 +25,3 @@ public:
     GLuint compileShader(std::string shaderCode, GLenum shaderType);
     GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader);
 };
-
-#endif

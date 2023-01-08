@@ -82,6 +82,12 @@ void Shader::addObject(Object *obj) {
     objectList.push_back(obj);
 }
 
+void Shader::addObjects(std::vector<Object*> objects){
+    for(Object *object: objects){
+        addObject(object);
+    }
+}
+
 
 void Shader::SetDirectionalLight(DirectionalLight * dLight){
 
