@@ -45,12 +45,6 @@ Material dullMaterial;
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
-// float getRandom(float from=-4, float to=4) {
-// 	int mod = (to - from)*100;
-// 	return float(rand()%mod + 100*from)/100;
-// }
-
-
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
@@ -73,26 +67,6 @@ int main(int argc, char* argv[]){
 
 	ObjectConstructor objectConstructor = ObjectConstructor(&world);
 	groundShader.addObjects(objectConstructor.getObjects());
-
-	// for (int i=0; i<10; i++) {
-	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
-	// 	Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
-	// 	world.addSphere(sphere);  
-	// 	groundShader.addObject(sphere);
-	// }
-
-	// for (int i=0; i<10; i++) {
-	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
-	// 	Object* cube = new Object(geometry::cube, image::concrete, pos, rot, scale);	
-	// 	world.addCube(cube);  
-	// 	groundShader.addObject(cube);
-	// }
-
-
 
 
 	unsigned int areaLightCount =0; 
