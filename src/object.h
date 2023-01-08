@@ -54,7 +54,7 @@ public:
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 
-	void draw(bool shadow=false);
+	void draw(GLuint ID, bool shadow=false);
 
 	void print();
 };

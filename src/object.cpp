@@ -244,15 +244,17 @@ void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
     model = glm::mat4(x1,y1,z1,0,x2,y2,z2,0,x3,y3,z3,0,position.x,position.y,position.z,1);
 }
 
-void Object::draw(bool shadow){
+void Object::draw(GLuint ID, bool shadow){
 
     //bind your vertex arrays and call glDrawArrays
     glBindVertexArray(VAO);
-    if(!shadow){
-        glUniform1i(u_texture, 0);
-        glActiveTexture(GL_TEXTURE0); 
-        glBindTexture(GL_TEXTURE_2D, texture);
-    }
+    u_texture = glGetUniformLocation(ID, "theTexture");
+    glUniform1i(u_texture, 0);
+    glActiveTexture(GL_TEXTURE0); 
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // else{
+    //     glUniform1i(glGetUniformLocation(ID, "theTexture"), 0);
+    // }
     glDrawArrays(GL_TRIANGLES,0, numVertices); 
     glBindVertexArray(0);
 

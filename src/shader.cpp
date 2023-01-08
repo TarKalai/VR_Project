@@ -378,16 +378,16 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light){ // we have a poi
     glm::mat4 resLight = light->CalculateLightTransform(); 
     SetDirectionalLightTransform(&resLight);
     
-    // for(Object* object : objectList) {
-    //     if (object->visible) {
-    //         // glm::mat4 model(1.0f); //identity matrix
-    //         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(object->model));
-    //         // setMatrix4("model", object->model);
-    //         // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    //         // setMatrix4("model", model);
-    //         object->draw(true);
-    //     }
-    // }
+    for(Object* object : objectList) {
+        if (object->visible) {
+            // glm::mat4 model(1.0f); //identity matrix
+            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(object->model));
+            // setMatrix4("model", object->model);
+            // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+            // setMatrix4("model", model);
+            object->draw(ID, true);
+        }
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
 
@@ -441,7 +441,7 @@ void Shader::DrawObjects(glm::mat4 view,
     // setFloat("material.shininess",uniformShininess); 
    
 
-    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // glClear(GL_DEPTH_BUFFER_BIT);
     
     // glm::vec3 lowerLight = position_cam; 
     // lowerLight.y -= 0.3f;
@@ -450,7 +450,7 @@ void Shader::DrawObjects(glm::mat4 view,
     for(Object* object : objectList) {
         if (object->visible) {
             setMatrix4("model", object->model);
-            object->draw();
+            object->draw(ID);
         }
     }
 }

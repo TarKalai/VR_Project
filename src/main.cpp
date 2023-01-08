@@ -73,10 +73,10 @@ int main(int argc, char* argv[]){
 
 	mainWindow.Initialise(); 
 
+	Shader directionalShadowShader(defaultImage, directionalShadowVert, directionalShadowFrag, false, false); 
 	Shader shader(defaultImage, groundVertex, groundFrag, true, true);
 	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
 	Shader2D shader2D(true);
-	Shader directionalShadowShader(defaultImage, directionalShadowVert, directionalShadowFrag, false, false); 
 
 	Camera camera(glm::vec3(0.0, 20.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -247,7 +247,11 @@ int main(int argc, char* argv[]){
 	
 
 		// BULLET3
+		
 		world.animate();
+
+		
+
 		//2. Use the shader Class to send the relevant uniform
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
