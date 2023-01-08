@@ -34,24 +34,7 @@
 #include "constant.h"
 #include "light_constructor.h"
 
-
-// FUNCTION PROTOTYPES
-// void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-// void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-// void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-// void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-// void do_movement(GLfloat deltaTime);
-unsigned int loadTexture(const char *path, bool gammaCorrection);
-GLuint loadMTexture();
-GLuint loadLUTTexture();
-void renderQuad();
-void renderCube();
-
 Display mainWindow; 
-
-// DirectionalLight mainLight;
-// PointLight pointLights[values::MAX_POINT_LIGHTS];
-// SpotLight spotLights[values::MAX_SPOT_LIGHTS];
 AreaLight areaLights[values::MAX_AREA_LIGHTS];
 
 Material shinyMaterial; 
@@ -59,50 +42,9 @@ Material dullMaterial;
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
-struct LTC_matrices {
-	GLuint mat1;
-	GLuint mat2;
-};
-
 float getRandom(float from=-4, float to=4) {
 	int mod = (to - from)*100;
 	return float(rand()%mod + 100*from)/100;
-}
-
-GLuint loadMTexture()
-{
-	GLuint texture = 0;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
-	             0, GL_RGBA, GL_FLOAT, LTC1);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return texture;
-}
-
-GLuint loadLUTTexture()
-{
-	GLuint texture = 0;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
-	             0, GL_RGBA, GL_FLOAT, LTC2);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return texture;
 }
 
 
@@ -112,71 +54,60 @@ int main(int argc, char* argv[]){
 	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
 	mainWindow.Initialise();
 
+	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true, true);
+	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
+	Shader2D shader2D(true);
+
 	shinyMaterial = Material(1.f, 32.0f); 
     dullMaterial = Material(0.3f, 4); 
 
 	LightConstructor lightConstructor = LightConstructor();
 
-	// LUT textures
-    LTC_matrices mLTC;
-    mLTC.mat1 = loadMTexture();
-    mLTC.mat2 = loadLUTTexture();
-
-
-	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true, true);
-	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
-	Shader2D shader2D(true);
-
-	
 
 	Object ground_obj = Object(geometry::plane, image::ground, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
-	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
-	// world.addSphere(&sphere1);  
-	// shader.addObject(&sphere1);
 
-	Object sphere;
+
 	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
+		Object* sphere = new Object(geometry::sphere, image::rgb, pos, rot, scale);
 		world.addSphere(sphere);  
 		groundShader.addObject(sphere);
 	}
-	Object cube;
+
 	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
-		Object* cube = new Object(geometry::cube, image::damier, pos, rot, scale);	
+		Object* cube = new Object(geometry::cube, image::rgb, pos, rot, scale);	
 		world.addCube(cube);  
 		groundShader.addObject(cube);
 	}
 
 
-	std::vector<Object*> lightObjects;
 	unsigned int areaLightCount =0; 
 
 
 	for (int i=0; i<10; i++) {
 		// std::sin(glfwGetTime());
-		glm::vec3 pos = glm::vec3(getRandom(-50.0, 50.0), 1., getRandom(-50.0, 50.0));
-		glm::vec3 rot = glm::vec3(glm::radians(-90.0),0,0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
-		glm::vec3 scale = glm::vec3(1.0);
+		glm::vec3 pos = glm::vec3(getRandom(-50.0, 50.0), 5., getRandom(-50.0, 50.0));
+		glm::vec3 rot = glm::vec3(getRandom(glm::radians(-90.0), glm::radians(90.0)), getRandom(glm::radians(-90.0), glm::radians(90.0)), getRandom(glm::radians(-90.0), glm::radians(90.0)));//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
+		glm::vec3 scale = glm::vec3(getRandom(1.0, 10.0));
 
-		Object* plane = new Object(geometry::plane, image::basic, pos, rot, scale, lightObjects.size());
-		lightObjects.push_back(plane);
+		Object* plane = new Object(geometry::plane, image::basic, pos, rot, scale);
 		lightShader.addObject(plane);
 
 		areaLights[i] = AreaLight(getRandom(0.0, 1.0), getRandom(0.0, 1.0), getRandom(0.0, 1.0), 
-							  0.4f, 1.0f,
+							  0.4f, getRandom(1.0, 10.0),
 							  plane->getPosition(),
 							  0.3f, 0.2f, 0.1f, // not used
-							  plane->getRotation(), true, 
-							  plane->getVertexPosition());
+							  plane->getRotation(), false, 
+							  plane->getVertexPosition(),
+							  plane->getScale());
     	areaLightCount++; 
 
 	}
@@ -201,10 +132,6 @@ int main(int argc, char* argv[]){
 		world.animate();
 		
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial);
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
-		// glActiveTexture(GL_TEXTURE1);
-		// glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
 		lightShader.DrawLightObjects(view, projection, areaLights, areaLightCount);
 		
 		if (!camera.pause) {

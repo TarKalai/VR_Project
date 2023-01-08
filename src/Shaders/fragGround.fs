@@ -306,10 +306,10 @@ vec4 CalcAreaLights(){
         // translatedPoints[3] = areaLight.points[3] + areaLightTranslate;
         for (int i = 0; i < areaLightCount; i++){
             // Evaluate LTC shading
-            // vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), translatedPoints, areaLight.twoSided);
-            // vec3 specular = LTC_Evaluate(N, V, P, Minv, translatedPoints, areaLight.twoSided);
+
             vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), areaLights[i].points, areaLights[i].twoSided);
 		    vec3 specular = LTC_Evaluate(N, V, P, Minv, areaLights[i].points, areaLights[i].twoSided);
+
             // GGX BRDF shadowing and Fresnel
             // t2.x: shadowedF90 (F90 normally it should be 1.0)
             // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
@@ -317,13 +317,9 @@ vec4 CalcAreaLights(){
 
             result += areaLights[i].base.color * areaLights[i].base.diffuseIntensity * (specular + mDiffuse * diffuse); // (specular + mDiffuse * diffuse)
         }
-        // return vec4(1.0);
-
-        // fragColor = vec4(ToSRGB(result), 1.0f);
-        // return vec4(clamp(result, 0.0, 1.0), 1.0);
         return vec4(ToSRGB(result), 1.0f);
     }else {
-        return vec4(1.0);
+        return vec4(0.0);
     }
 }
 

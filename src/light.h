@@ -12,6 +12,8 @@ public:
     Light(GLfloat red, GLfloat green, GLfloat blue, 
         GLfloat aIntensity, GLfloat dIntensity); 
     glm::vec3 getColor(){return color;}
+    GLfloat getAmbientIntensity(){return ambientIntensity;}
+    GLfloat getDiffuseIntensity(){return diffuseIntensity;}
     ~Light(); 
 
 

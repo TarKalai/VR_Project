@@ -15,21 +15,21 @@ public:
         GLfloat aIntensity, GLfloat dIntensity,
         glm::vec3 Position, 
         GLfloat con, GLfloat lin, GLfloat exp, 
-        glm::vec3 Rotation, bool TwoSided, std::vector<glm::vec3> VertexPosition); 
+        glm::vec3 Rotation, bool TwoSided, std::vector<glm::vec3> VertexPosition, glm::vec3 Scale); 
     
-    void UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation, 
-                GLuint diffuseIntensityLocation, GLuint positionLocation,
-                GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation); 
 
-    std::vector<glm::vec3> getVertexPosition();
-    glm::vec3 getPosition();
-    glm::vec3 getRotation();
+    std::vector<glm::vec3>getVertexPosition(){return vertexPosition;}
+    glm::vec3 getPosition(){return position;}
+    glm::vec3 getRotation(){return rotation;}
+    glm::vec3 getScale(){return scale;}
+    bool getTwoSided(){return twoSided;}
  
     ~AreaLight(); 
 
 protected: 
     glm::vec3 position; // where the light is coming from
     glm::vec3 rotation;
+    glm::vec3 scale;
     GLfloat constant, linear, exponent; //ax² + bx + c; cosntant = c, linear = b, exponent =a; 
     bool twoSided;
     std::vector<glm::vec3> vertexPosition;

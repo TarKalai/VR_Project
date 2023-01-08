@@ -58,6 +58,7 @@ public:
 	std::vector<glm::vec3> getVertexPosition();
 	glm::vec3 getPosition();
 	glm::vec3 getRotation();
+	glm::vec3 getScale(){return scale;}
 	void print();
 };
 #endif

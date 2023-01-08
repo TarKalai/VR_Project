@@ -187,9 +187,7 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount){
     }
 }
 
-glm::mat4 Shader::getModelRotPos(glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 scale){
-    glm::vec3 position = obj_pos;
-    glm::vec3 rotation = obj_rot;
+glm::mat4 Shader::getModelRotPos(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale){
     float x1 = (cos(rotation.y)*cos(rotation.z)) * scale.x; 
     float x2 = (sin(rotation.x)*sin(rotation.y)*cos(rotation.z) - cos(rotation.x)*sin(rotation.z)) * scale.y;
     float x3 = (cos(rotation.x)*sin(rotation.y)*cos(rotation.z) + sin(rotation.x)*sin(rotation.z)) * scale.z;
@@ -220,7 +218,7 @@ void Shader::SetAreaLights(AreaLight *  aLights, unsigned int lightCount){
         // glm::mat4 model(1.0f);
         // model = glm::translate(model, aLights[i].getPosition());
 		// model =  glm::rotate(model, glm::radians(-90.0) , glm::vec3(1.0, 0.0, 0.0));
-        glm::mat4 model = getModelRotPos(aLights[i].getPosition(), aLights[i].getRotation(), glm::vec3(1.0));
+        glm::mat4 model = getModelRotPos(aLights[i].getPosition(), aLights[i].getRotation(), aLights[i].getScale());
         glm::vec3 p0 = glm::vec3(model * glm::vec4(vecpos[3], 1.0f));
 		glm::vec3 p1 = glm::vec3(model * glm::vec4(vecpos[1], 1.0f));
 		glm::vec3 p2 = glm::vec3(model * glm::vec4(vecpos[0], 1.0f));
@@ -235,8 +233,8 @@ void Shader::SetAreaLights(AreaLight *  aLights, unsigned int lightCount){
 		setVec3((str_points + "[2]").c_str(), p2);
 		setVec3((str_points + "[3]").c_str(), p3);
 		setVec3(str_color.c_str(), aLights[i].getColor());
-		setFloat(str_intensity.c_str(), 2.0f); // value for domino : 2.f && value for ground : 10.f
-		setInteger(str_twoSided.c_str(), 1);
+		setFloat(str_intensity.c_str(), aLights[i].getDiffuseIntensity()); // value for domino : 2.f && value for ground : 10.f
+		setInteger(str_twoSided.c_str(),  aLights[i].getTwoSided());
 
     }
 }

@@ -56,7 +56,7 @@ public:
 
     void SetAreaLights(AreaLight *  aLight, unsigned int lightCount);
 
-    glm::mat4 getModelRotPos(glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 scale);
+    glm::mat4 getModelRotPos(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 
     // void setColor(const GLchar* name, glm::vec3& color);
 

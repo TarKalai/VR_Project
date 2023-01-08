@@ -57,7 +57,7 @@ void Process::HandleWindow() {
 	QuitScreen();
 	DecreaseScreen();
 	IncreaseScreen();
-	FullScreen();
+	// FullScreen();
 }
 
 void Process::QuitScreen() {
