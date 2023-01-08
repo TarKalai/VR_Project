@@ -248,10 +248,18 @@ void Object::draw(GLuint ID, bool shadow){
 
     //bind your vertex arrays and call glDrawArrays
     glBindVertexArray(VAO);
+    if (!shadow){
     u_texture = glGetUniformLocation(ID, "theTexture");
     glUniform1i(u_texture, 0);
     glActiveTexture(GL_TEXTURE0); 
     glBindTexture(GL_TEXTURE_2D, texture);
+    }
+    else{
+        u_texture = glGetUniformLocation(ID, "directionalShadowMap");
+        glUniform1i(u_texture, 0);
+        // glActiveTexture(GL_TEXTURE0); 
+        // glBindTexture(GL_TEXTURE_2D, texture);
+    }
     // else{
     //     glUniform1i(glGetUniformLocation(ID, "theTexture"), 0);
     // }
