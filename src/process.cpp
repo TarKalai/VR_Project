@@ -137,9 +137,9 @@ void Process::Pushing() {
 		pressed += 1;
 	} else if (shoot) {
 		shoot = false;
-		Object* sphere = new Object("../../objects/sphere.obj", camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
+		Object* sphere = new Object(geometry::sphereGeometry, image::basic, camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
 		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
-		shader->addObject(sphere, image::basic);
+		shader->addObject(sphere);
 		pressed = 0;
 	}
 }
@@ -216,9 +216,9 @@ void Process::PutDominoes(){
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
 
-				Object* domino = new Object("../../objects/domino.obj", glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2));	
+				Object* domino = new Object(geometry::domino, image::basic, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2));	
 				world->addDomino(domino);
-				shader->addObject(domino, image::basic);
+				shader->addObject(domino);
 
 				lastDomino = nextDomino; // go to next domino
 			}

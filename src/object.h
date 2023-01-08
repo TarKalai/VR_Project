@@ -31,6 +31,7 @@ public:
 	// VAO object, VBO shader
 	int id;
 	GLuint VAO, VBO;
+	const char* texturepath;
 
 	bool has_texture;
 	GLuint u_texture;
@@ -47,9 +48,9 @@ public:
 
 	Object();
 	
-	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true);
+	Object(const char* geometryPath, const char* texturePath,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true);
 	
-	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, const char* texturePath);
+	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 

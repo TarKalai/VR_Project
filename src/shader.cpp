@@ -77,8 +77,8 @@ void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix)
     {
     glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
-void Shader::addObject(Object *obj, const char *imagePath) {
-    obj->MakeObject(ID, shaderTexture, shaderNormal, imagePath);
+void Shader::addObject(Object *obj) {
+    obj->MakeObject(ID, shaderTexture, shaderNormal);
     objectList.push_back(obj);
 }
 

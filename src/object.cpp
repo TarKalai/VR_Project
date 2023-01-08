@@ -9,7 +9,8 @@ int Object::objectCounter = 0;
 
 Object::Object() {}
 
-Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible){
+Object::Object(const char* geometryPath, const char* texturePath, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible){
+    texturepath = texturePath;
     visible = is_visible;
     position = obj_pos;
     rotation = obj_rot;
@@ -23,7 +24,7 @@ Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3
     // Then parse it to extract the data you need
     // keep track of the number of vertices you need
 
-    std::ifstream infile(path);
+    std::ifstream infile(geometryPath);
     //TODO Error management
     std::string line;
     while (std::getline(infile, line))
@@ -113,7 +114,7 @@ Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3
     numVertices = vertices.size();
 }
 
-void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, const char* texturePath){ 
+void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal){ 
     has_texture = shader_texture;
     //Create the VAO and VBO
     //Put your data into your VBO
@@ -157,7 +158,7 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
 
         stbi_set_flip_vertically_on_load(true);
         int width, height, nrComponents;
-        unsigned char *data = stbi_load(texturePath, &width, &height, &nrComponents, 0);
+        unsigned char *data = stbi_load(texturepath, &width, &height, &nrComponents, 0);
         if (data)
         {
             GLenum internalFormat;

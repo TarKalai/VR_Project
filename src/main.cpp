@@ -192,9 +192,9 @@ int main(int argc, char* argv[]){
 
 	
 
-	Object ground_obj = Object(geometry::planeGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
+	Object ground_obj = Object(geometry::planeGeometry, image::ground, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
-	groundShader.addObject(&ground_obj, image::ground);
+	groundShader.addObject(&ground_obj);
 
 	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
 	// world.addSphere(&sphere1);  
@@ -206,18 +206,18 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(geometry::sphereGeometry, pos, rot, scale);
+		Object* sphere = new Object(geometry::sphereGeometry, image::concrete, pos, rot, scale);
 		world.addSphere(sphere);  
-		groundShader.addObject(sphere, image::concrete);
+		groundShader.addObject(sphere);
 	}
 	Object cube;
 	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
-		Object* cube = new Object(geometry::cubeGeometry, pos, rot, scale);	
+		Object* cube = new Object(geometry::cubeGeometry, image::damier, pos, rot, scale);	
 		world.addCube(cube);  
-		groundShader.addObject(cube, image::damier);
+		groundShader.addObject(cube);
 	}
 
 	unsigned int areaLightCount =0; 
@@ -230,9 +230,9 @@ int main(int argc, char* argv[]){
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0),0,0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1.0);
 
-		Object* plane = new Object(geometry::planeGeometry, pos, rot, scale, lightObjects.size());
+		Object* plane = new Object(geometry::planeGeometry, image::basic, pos, rot, scale, lightObjects.size());
 		lightObjects.push_back(plane);
-		lightShader.addObject(plane, image::basic);
+		lightShader.addObject(plane);
 
 		areaLights[i] = AreaLight(getRandom(0.0, 1.0), getRandom(0.0, 1.0), getRandom(0.0, 1.0), 
 							  0.4f, 1.0f,

@@ -23,6 +23,7 @@ namespace geometry
     static constexpr char sphereGeometry[128] = "../../objects/sphere.obj";
 	static constexpr char cubeGeometry[128] = "../../objects/cube.obj";
 	static constexpr char planeGeometry[128] = "../../objects/plane.obj";
+    static constexpr char domino[128] = "../../objects/domino.obj";
 }
 
 namespace shaderfiles
@@ -31,7 +32,7 @@ namespace shaderfiles
     static constexpr char groundFrag[128] = "../../src/Shaders/fragGround.fs";
     static constexpr char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
     static constexpr char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
-}
+} 
 
 namespace color
 {

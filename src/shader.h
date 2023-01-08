@@ -60,7 +60,7 @@ public:
 
     // void setColor(const GLchar* name, glm::vec3& color);
 
-    void addObject(Object* obj, const char* imagePath);
+    void addObject(Object* obj);
 
     void DrawObjects(glm::mat4 view, 
                      glm::mat4 projection, 

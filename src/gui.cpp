@@ -102,9 +102,9 @@ void GUI::displaySaveLoad() {
                                 glm::vec3 pos = glm::vec3(posX, posY, posZ);
                                 glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
                                 glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
-                                Object* domino = new Object("../../objects/domino.obj", pos, rot, scale);	
+                                Object* domino = new Object(geometry::domino, image::basic, pos, rot, scale);	
                                 world->addDomino(domino);  
-                                shader->addObject(domino, image::basic);
+                                shader->addObject(domino);
                             }
                         }
                     }
