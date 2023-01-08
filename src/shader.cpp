@@ -1,5 +1,4 @@
 #include "shader.h"
-#include "colors.hpp" // contains many color pre computed in vectors.
 #include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
 #include <vector>
 #include <string>
@@ -97,13 +96,13 @@ void Shader::SetDirectionalLight(DirectionalLight * dLight){
 
 void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount){
 
-    if(lightCount > MAX_POINT_LIGHTS) lightCount = MAX_POINT_LIGHTS;
+    if(lightCount > values::MAX_POINT_LIGHTS) lightCount = values::MAX_POINT_LIGHTS;
 
     uniformPointLightCount = glGetUniformLocation(ID, "pointLightCount");
 
     glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
 
-    for (int i = 0; i < MAX_POINT_LIGHTS; i ++){
+    for (int i = 0; i < values::MAX_POINT_LIGHTS; i ++){
 
         char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
 
@@ -140,14 +139,14 @@ void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount){
 
 void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount){
 
-    if(lightCount > MAX_SPOT_LIGHTS) lightCount = MAX_SPOT_LIGHTS; 
+    if(lightCount > values::MAX_SPOT_LIGHTS) lightCount = values::MAX_SPOT_LIGHTS; 
 
     uniformSpotLightCount = glGetUniformLocation(ID, "spotLightCount"); 
 
     glUniform1i(uniformSpotLightCount, lightCount); // make sure it is an int ! to go through the loop
 
 
-    for (int i = 0; i < MAX_SPOT_LIGHTS; i ++){
+    for (int i = 0; i < values::MAX_SPOT_LIGHTS; i ++){
 
         char locBuff[100] = {'\0'}; //setting all values to \0 which is EOS (End Of String)
 
@@ -206,7 +205,7 @@ glm::mat4 Shader::getModelRotPos(glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3
 
 
 void Shader::SetAreaLights(AreaLight *  aLights, unsigned int lightCount){
-    if(lightCount > MAX_AREA_LIGHTS) lightCount = MAX_AREA_LIGHTS; 
+    if(lightCount > values::MAX_AREA_LIGHTS) lightCount = values::MAX_AREA_LIGHTS; 
     
     setInteger("areaLightCount", lightCount);
     setInteger("LTC1", 0);

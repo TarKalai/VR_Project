@@ -49,28 +49,16 @@ void renderCube();
 Display mainWindow; 
 
 DirectionalLight mainLight;
-PointLight pointLights[MAX_POINT_LIGHTS];
-SpotLight spotLights[MAX_SPOT_LIGHTS];
-AreaLight areaLights[MAX_AREA_LIGHTS];
+PointLight pointLights[values::MAX_POINT_LIGHTS];
+SpotLight spotLights[values::MAX_SPOT_LIGHTS];
+AreaLight areaLights[values::MAX_AREA_LIGHTS];
 
 Material shinyMaterial; 
 Material dullMaterial; 
 
-// char fileVert[128] = "../../src/Shaders/vertSrc.vs";
-// char fileFrag[128] = "../../src/Shaders/fragSrc.fs";
 
-char groundVertex[128] = "../../src/Shaders/vertGround.vs";
-char groundFrag[128] = "../../src/Shaders/fragGround.fs";
 
-// char areaLightVertex[128] = "../../src/Shaders/area_light.vs";
-// char areaLightFrag[128] = "../../src/Shaders/area_light.fs";
 
-char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
-char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
-
-// image paths
-
-// char defaultImage[128] = "../../image/plain.png"; // if the object has no texture
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -186,7 +174,7 @@ int main(int argc, char* argv[]){
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
  
-	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
 	mainWindow.Initialise();
 
 	// LUT textures
@@ -198,18 +186,15 @@ int main(int argc, char* argv[]){
 
 	// Shader shader(NULL, fileVert, fileFrag, true, true);
 	// Shader shader(defaultImage, groundVertex, groundFrag, true, true);
-	Shader groundShader(groundVertex, groundFrag, true, true);
-	Shader lightShader(lightPlaneVertex,lightPlaneFrag, false, false);
+	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true, true);
+	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
 	Shader2D shader2D(true);
 
-	char sphereGeometry[] = "../../objects/sphere.obj";
-	char cubeGeometry[] = "../../objects/cube.obj";
-	// char groundGeometry[] = "../../objects/plane.obj";
-	char planeGeometry[] = "../../objects/plane.obj";
+	
 
-	Object ground_obj = Object(planeGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
+	Object ground_obj = Object(geometry::planeGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
-	groundShader.addObject(&ground_obj, image::groundImage);
+	groundShader.addObject(&ground_obj, image::ground);
 
 	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
 	// world.addSphere(&sphere1);  
@@ -221,18 +206,18 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(sphereGeometry, pos, rot, scale);
+		Object* sphere = new Object(geometry::sphereGeometry, pos, rot, scale);
 		world.addSphere(sphere);  
-		groundShader.addObject(sphere, image::damierImage);
+		groundShader.addObject(sphere, image::concrete);
 	}
 	Object cube;
 	for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
-		Object* cube = new Object(cubeGeometry, pos, rot, scale);	
+		Object* cube = new Object(geometry::cubeGeometry, pos, rot, scale);	
 		world.addCube(cube);  
-		groundShader.addObject(cube, image::concreteImage);
+		groundShader.addObject(cube, image::damier);
 	}
 
 	unsigned int areaLightCount =0; 
@@ -245,9 +230,9 @@ int main(int argc, char* argv[]){
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0),0,0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1.0);
 
-		Object* plane = new Object(planeGeometry, pos, rot, scale, lightObjects.size());
+		Object* plane = new Object(geometry::planeGeometry, pos, rot, scale, lightObjects.size());
 		lightObjects.push_back(plane);
-		lightShader.addObject(plane, image::defaultImage);
+		lightShader.addObject(plane, image::basic);
 
 		areaLights[i] = AreaLight(getRandom(0.0, 1.0), getRandom(0.0, 1.0), getRandom(0.0, 1.0), 
 							  0.4f, 1.0f,

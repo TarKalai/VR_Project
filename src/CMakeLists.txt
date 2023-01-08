@@ -16,8 +16,7 @@ set(SOURCES_MAIN "main.cpp"
 "pointLight.cpp" "pointLight.h"
 "directionalLight.cpp" "directionalLight.h"
 "spotLight.cpp" "spotLight.h"
-"commonValues.h"
-"debug.h" "colors.hpp"
+"commonValues.h" "debug.h"
 "areaLight.cpp" "areaLight.h"
 "ltc_matrix.hpp" "constant.h") 
 

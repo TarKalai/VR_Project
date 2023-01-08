@@ -17,7 +17,7 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "areaLight.h"
-#include "commonValues.h"
+#include "constant.h"
 #include "material.h"
 
 
@@ -91,7 +91,7 @@ public:
         GLuint uniformConstant; 
         GLuint uniformLinear; 
         GLuint uniformExponent; 
-    } uniformPointLight[MAX_POINT_LIGHTS];
+    } uniformPointLight[values::MAX_POINT_LIGHTS];
 
     struct {
         GLuint uniformColor; 
@@ -114,7 +114,7 @@ public:
         
         GLuint uniformDirection; 
         GLuint uniformEdge; 
-    } uniformSpotLight[MAX_SPOT_LIGHTS];
+    } uniformSpotLight[values::MAX_SPOT_LIGHTS];
 
     GLuint uniformAreaLightCount;
     struct {
@@ -126,7 +126,7 @@ public:
         GLuint uniformConstant; 
         GLuint uniformLinear; 
         GLuint uniformExponent; 
-    } uniformAreaLight[MAX_AREA_LIGHTS];
+    } uniformAreaLight[values::MAX_AREA_LIGHTS];
 
 
 

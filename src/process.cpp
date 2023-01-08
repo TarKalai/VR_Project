@@ -47,7 +47,7 @@ void Process::HandleMenuMode() {
 			oldSpeedAnimation = world->speedAnimation;
 			world->speedAnimation = 0;
 			glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
-    		display->cursor_disabled = false;
+    		// display->cursor_disabled = false;
 			camera->deactivateMouse(display);
 		}
 	}
@@ -139,7 +139,7 @@ void Process::Pushing() {
 		shoot = false;
 		Object* sphere = new Object("../../objects/sphere.obj", camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
 		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
-		shader->addObject(sphere, image::defaultImage);
+		shader->addObject(sphere, image::basic);
 		pressed = 0;
 	}
 }
@@ -218,7 +218,7 @@ void Process::PutDominoes(){
 
 				Object* domino = new Object("../../objects/domino.obj", glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2));	
 				world->addDomino(domino);
-				shader->addObject(domino, image::defaultImage);
+				shader->addObject(domino, image::basic);
 
 				lastDomino = nextDomino; // go to next domino
 			}
