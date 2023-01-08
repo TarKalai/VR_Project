@@ -120,16 +120,12 @@ int main(int argc, char* argv[]){
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
 
-
 	// LUT textures
     LTC_matrices mLTC;
     mLTC.mat1 = loadMTexture();
     mLTC.mat2 = loadLUTTexture();
 
-	
 
-	// Shader shader(NULL, fileVert, fileFrag, true, true);
-	// Shader shader(defaultImage, groundVertex, groundFrag, true, true);
 	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true, true);
 	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
 	Shader2D shader2D(true);
@@ -191,13 +187,10 @@ int main(int argc, char* argv[]){
 	//Rendering
 	glfwSwapInterval(1);
 	Process process = Process(&mainWindow, &camera, &world, &groundShader);
-
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
-
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
-
 	process.initMousePosition();
 	GUI gui(&process, &mainWindow, &world, &groundShader);
+	
 	while (!mainWindow.getShouldClose()){
 
 		process.processInput();
