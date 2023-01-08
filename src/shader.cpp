@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 
-Shader::Shader(char *imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
+Shader::Shader(const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
 	{   
-        texturePath = imagePath;
+        // texturePath = imagePath;
         shaderTexture = texture;
         shaderNormal = normal;
         // 1. retrieve the vertex/fragment source code from filePath
@@ -78,8 +78,8 @@ void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix)
     {
     glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
-void Shader::addObject(Object *obj) {
-    obj->MakeObject(ID, shaderTexture, shaderNormal, texturePath);
+void Shader::addObject(Object *obj, const char *imagePath) {
+    obj->MakeObject(ID, shaderTexture, shaderNormal, imagePath);
     objectList.push_back(obj);
 }
 

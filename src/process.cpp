@@ -2,11 +2,14 @@
 #include "camera.h"
 #include "string.h"
 #include "display.h"
+#include "constant.h"
 
 #include <glm/glm.hpp>
 #include "glm/gtx/string_cast.hpp" // (print matrix) debug purpose
 
 #include <unistd.h> // for sleep (debug)
+
+
 
 Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg) {
 	display = displayArg;
@@ -136,7 +139,7 @@ void Process::Pushing() {
 		shoot = false;
 		Object* sphere = new Object("../../objects/sphere.obj", camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
 		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
-		shader->addObject(sphere);
+		shader->addObject(sphere, image::defaultImage);
 		pressed = 0;
 	}
 }
@@ -215,7 +218,7 @@ void Process::PutDominoes(){
 
 				Object* domino = new Object("../../objects/domino.obj", glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2));	
 				world->addDomino(domino);
-				shader->addObject(domino);
+				shader->addObject(domino, image::defaultImage);
 
 				lastDomino = nextDomino; // go to next domino
 			}

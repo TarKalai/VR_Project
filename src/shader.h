@@ -30,9 +30,9 @@ public:
     
     bool shaderTexture;
     bool shaderNormal;
-    char * texturePath;
+    // char * texturePath;
 
-    Shader(char* imagePath, const char* vertexPath, const char* fragmentPath, bool texture, bool normal); 
+    Shader( const char* vertexPath, const char* fragmentPath, bool texture, bool normal); //char* imagePath,
 
 	void use(); 
 
@@ -60,7 +60,7 @@ public:
 
     // void setColor(const GLchar* name, glm::vec3& color);
 
-    void addObject(Object* obj);
+    void addObject(Object* obj, const char* imagePath);
 
     void DrawObjects(glm::mat4 view, 
                      glm::mat4 projection, 

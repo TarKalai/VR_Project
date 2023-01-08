@@ -20,7 +20,7 @@
 #include "shader2D.h"
 #include "object.h"
 
-//#include "physics.h"
+// #include "physics.h"
 
 #include "display.h"
 #include "gui.h"
@@ -31,6 +31,7 @@
 #include "spotLight.h"
 #include "areaLight.h"
 #include "ltc_matrix.hpp"
+#include "constant.h"
 
 
 // FUNCTION PROTOTYPES
@@ -55,8 +56,8 @@ AreaLight areaLights[MAX_AREA_LIGHTS];
 Material shinyMaterial; 
 Material dullMaterial; 
 
-char fileVert[128] = "../../src/Shaders/vertSrc.vs";
-char fileFrag[128] = "../../src/Shaders/fragSrc.fs";
+// char fileVert[128] = "../../src/Shaders/vertSrc.vs";
+// char fileFrag[128] = "../../src/Shaders/fragSrc.fs";
 
 char groundVertex[128] = "../../src/Shaders/vertGround.vs";
 char groundFrag[128] = "../../src/Shaders/fragGround.fs";
@@ -67,8 +68,9 @@ char groundFrag[128] = "../../src/Shaders/fragGround.fs";
 char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
 char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
 
-char groundImage[128] = "../../image/woodFloor.png";
-char defaultImage[128] = "../../image/concreteTexture.png"; // if the object has no texture
+// image paths
+
+// char defaultImage[128] = "../../image/plain.png"; // if the object has no texture
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -195,19 +197,19 @@ int main(int argc, char* argv[]){
 	
 
 	// Shader shader(NULL, fileVert, fileFrag, true, true);
-	Shader shader(defaultImage, groundVertex, groundFrag, true, true);
-	Shader groundShader(groundImage, groundVertex, groundFrag, true, true);
-	Shader lightShader(NULL, lightPlaneVertex,lightPlaneFrag, false, false);
+	// Shader shader(defaultImage, groundVertex, groundFrag, true, true);
+	Shader groundShader(groundVertex, groundFrag, true, true);
+	Shader lightShader(lightPlaneVertex,lightPlaneFrag, false, false);
 	Shader2D shader2D(true);
 
 	char sphereGeometry[] = "../../objects/sphere.obj";
 	char cubeGeometry[] = "../../objects/cube.obj";
-	char groundGeometry[] = "../../objects/plane.obj";
+	// char groundGeometry[] = "../../objects/plane.obj";
 	char planeGeometry[] = "../../objects/plane.obj";
 
-	Object ground_obj = Object(groundGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
+	Object ground_obj = Object(planeGeometry, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
-	groundShader.addObject(&ground_obj);
+	groundShader.addObject(&ground_obj, image::groundImage);
 
 	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
 	// world.addSphere(&sphere1);  
@@ -221,7 +223,7 @@ int main(int argc, char* argv[]){
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
 		Object* sphere = new Object(sphereGeometry, pos, rot, scale);
 		world.addSphere(sphere);  
-		shader.addObject(sphere);
+		groundShader.addObject(sphere, image::damierImage);
 	}
 	Object cube;
 	for (int i=0; i<10; i++) {
@@ -230,21 +232,22 @@ int main(int argc, char* argv[]){
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
 		Object* cube = new Object(cubeGeometry, pos, rot, scale);	
 		world.addCube(cube);  
-		shader.addObject(cube);
+		groundShader.addObject(cube, image::concreteImage);
 	}
 
 	unsigned int areaLightCount =0; 
 
 	Object plane;
 
-	for (int i=0; i<100; i++) {
+	for (int i=0; i<10; i++) {
+		// std::sin(glfwGetTime());
 		glm::vec3 pos = glm::vec3(getRandom(-50.0, 50.0), 1., getRandom(-50.0, 50.0));
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0),0,0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1.0);
 
 		Object* plane = new Object(planeGeometry, pos, rot, scale, lightObjects.size());
 		lightObjects.push_back(plane);
-		lightShader.addObject(plane);
+		lightShader.addObject(plane, image::defaultImage);
 
 		areaLights[i] = AreaLight(getRandom(0.0, 1.0), getRandom(0.0, 1.0), getRandom(0.0, 1.0), 
 							  0.4f, 1.0f,
@@ -258,14 +261,14 @@ int main(int argc, char* argv[]){
 	
 	//Rendering
 	glfwSwapInterval(1);
-	Process process = Process(&mainWindow, &camera, &world, &shader);
+	Process process = Process(&mainWindow, &camera, &world, &groundShader);
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // only show the vertexes
 
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 
 	process.initMousePosition();
-	GUI gui(&process, &mainWindow, &world, &shader);
+	GUI gui(&process, &mainWindow, &world, &groundShader);
 	while (!mainWindow.getShouldClose()){
 
 		process.processInput();
@@ -279,7 +282,7 @@ int main(int argc, char* argv[]){
 		world.animate();
 		
 		//2. Use the shader Class to send the relevant uniform
-		shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount, shinyMaterial);
+		// shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount, shinyMaterial);
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount, shinyMaterial);
 		// glActiveTexture(GL_TEXTURE0);
 		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);

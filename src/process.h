@@ -11,7 +11,6 @@
 #include "physics.h"
 #include "camera.h"
 #include "display.h"
-
 class Camera; 
 
 class Process{

@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "constant.h"
 
 GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg) {
     process = processArg;
@@ -103,7 +104,7 @@ void GUI::displaySaveLoad() {
                                 glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
                                 Object* domino = new Object("../../objects/domino.obj", pos, rot, scale);	
                                 world->addDomino(domino);  
-                                shader->addObject(domino);
+                                shader->addObject(domino, image::defaultImage);
                             }
                         }
                     }

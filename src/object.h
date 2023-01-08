@@ -49,7 +49,7 @@ public:
 	
 	Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true);
 	
-	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath);
+	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, const char* texturePath);
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 

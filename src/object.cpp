@@ -113,7 +113,7 @@ Object::Object(const char* path, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3
     numVertices = vertices.size();
 }
 
-void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, char* texturePath){ 
+void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal, const char* texturePath){ 
     has_texture = shader_texture;
     //Create the VAO and VBO
     //Put your data into your VBO
