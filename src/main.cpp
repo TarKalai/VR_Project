@@ -32,6 +32,7 @@
 #include "areaLight.h"
 #include "ltc_matrix.hpp"
 #include "constant.h"
+#include "light_constructor.h"
 
 
 // FUNCTION PROTOTYPES
@@ -48,17 +49,13 @@ void renderCube();
 
 Display mainWindow; 
 
-DirectionalLight mainLight;
-PointLight pointLights[values::MAX_POINT_LIGHTS];
-SpotLight spotLights[values::MAX_SPOT_LIGHTS];
+// DirectionalLight mainLight;
+// PointLight pointLights[values::MAX_POINT_LIGHTS];
+// SpotLight spotLights[values::MAX_SPOT_LIGHTS];
 AreaLight areaLights[values::MAX_AREA_LIGHTS];
 
 Material shinyMaterial; 
 Material dullMaterial; 
-
-
-
-
 
 Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
 
@@ -110,72 +107,19 @@ GLuint loadLUTTexture()
 
 
 int main(int argc, char* argv[]){
-
-	//mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
-	//mainWindow.Initialise(); 
-
 	std::cout << "Project is running... " << std::endl;
+
+	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+	mainWindow.Initialise();
 
 	shinyMaterial = Material(1.f, 32.0f); 
     dullMaterial = Material(0.3f, 4); 
 
-    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                0.05f, 0.05f, 
-                                -1.0f, -1.0f, 0.0f); // direction of the light
-
-	unsigned int pointLightCount =0; 
-    
-    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-                                0.4f, 1.0f,
-                                10.0f,4.0f, 10.0f,
-                                0.3f, 0.2f, 0.1f);
-    pointLightCount++; 
-    
-    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
-                                0.4f, 1.0f,
-                                -10.0f,5.0f, 10.0f,
-                                0.3f, 0.1f, 0.1f);
-
-    pointLightCount++; 
-
-    
-    pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
-                                0.4f, 1.0f,
-                                -10.0f,5.0f, -10.0f,
-                                0.3f, 0.2f, 0.1f);
-
-    pointLightCount++;
-
-	pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
-                                0.4f, 1.0f,
-                                10.0f,5.0f, -10.0f,
-                                0.3f, 0.2f, 0.1f);
-
-    pointLightCount++;
-
-	unsigned int spotLightCount = 0;
-
-    spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
-                                0.0f, 1.0f,
-                                0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
-                                0.0f, -1.0f, 0.0f, // points straight down
-                                0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
-                                20.0f);  // spread of the angle : 20°
-    spotLightCount++;
-
-    spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 
-                                0.0f, 2.0f,
-                                0.0f, 10.0f, 0.0f,
-                                0.0f, -1.0f, 0.0f, // point to teh left (very far)
-                                0.1f, 0.1f, 0.1f, // we don't want th elight to die off because of distance
-                                30.0f);  // spread of the angle : 20°
-    spotLightCount++; 
+	LightConstructor lightConstructor = LightConstructor();
 
 	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
     uniformSpecularIntensity=0, uniformShininess=0; 
- 
-	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
-	mainWindow.Initialise();
+
 
 	// LUT textures
     LTC_matrices mLTC;
@@ -192,7 +136,7 @@ int main(int argc, char* argv[]){
 
 	
 
-	Object ground_obj = Object(geometry::planeGeometry, image::ground, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
+	Object ground_obj = Object(geometry::plane, image::ground, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
@@ -206,7 +150,7 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(geometry::sphereGeometry, image::concrete, pos, rot, scale);
+		Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
 		world.addSphere(sphere);  
 		groundShader.addObject(sphere);
 	}
@@ -215,7 +159,7 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
-		Object* cube = new Object(geometry::cubeGeometry, image::damier, pos, rot, scale);	
+		Object* cube = new Object(geometry::cube, image::damier, pos, rot, scale);	
 		world.addCube(cube);  
 		groundShader.addObject(cube);
 	}
@@ -230,7 +174,7 @@ int main(int argc, char* argv[]){
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0),0,0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1.0);
 
-		Object* plane = new Object(geometry::planeGeometry, image::basic, pos, rot, scale, lightObjects.size());
+		Object* plane = new Object(geometry::plane, image::basic, pos, rot, scale, lightObjects.size());
 		lightObjects.push_back(plane);
 		lightShader.addObject(plane);
 
@@ -266,9 +210,7 @@ int main(int argc, char* argv[]){
 
 		world.animate();
 		
-		//2. Use the shader Class to send the relevant uniform
-		// shader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount, shinyMaterial);
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, &mainLight, uniformSpecularIntensity, uniformShininess, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount, shinyMaterial);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), uniformSpecularIntensity, uniformShininess, lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial);
 		// glActiveTexture(GL_TEXTURE0);
 		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
 		// glActiveTexture(GL_TEXTURE1);

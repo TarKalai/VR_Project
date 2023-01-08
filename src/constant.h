@@ -20,9 +20,9 @@ namespace image
 
 namespace geometry
 {
-    static constexpr char sphereGeometry[128] = "../../objects/sphere.obj";
-	static constexpr char cubeGeometry[128] = "../../objects/cube.obj";
-	static constexpr char planeGeometry[128] = "../../objects/plane.obj";
+    static constexpr char sphere[128] = "../../objects/sphere.obj";
+	static constexpr char cube[128] = "../../objects/cube.obj";
+	static constexpr char plane[128] = "../../objects/plane.obj";
     static constexpr char domino[128] = "../../objects/domino.obj";
 }
 

@@ -137,7 +137,7 @@ void Process::Pushing() {
 		pressed += 1;
 	} else if (shoot) {
 		shoot = false;
-		Object* sphere = new Object(geometry::sphereGeometry, image::basic, camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
+		Object* sphere = new Object(geometry::sphere, image::basic, camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
 		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
 		shader->addObject(sphere);
 		pressed = 0;
