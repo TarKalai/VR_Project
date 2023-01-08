@@ -117,9 +117,6 @@ int main(int argc, char* argv[]){
 
 	LightConstructor lightConstructor = LightConstructor();
 
-	GLuint uniformProjection = 0, uniformModel=0, uniformView=0, uniformEyePosition = 0,
-    uniformSpecularIntensity=0, uniformShininess=0; 
-
 	// LUT textures
     LTC_matrices mLTC;
     mLTC.mat1 = loadMTexture();
@@ -139,7 +136,6 @@ int main(int argc, char* argv[]){
 	// Object sphere1 = Object(sphereGeometry, glm::vec3(4.0, 0.0, 4.0), glm::vec3(0.), glm::vec3(1.), 1);
 	// world.addSphere(&sphere1);  
 	// shader.addObject(&sphere1);
-	std::vector<Object*> lightObjects;
 
 	Object sphere;
 	for (int i=0; i<10; i++) {
@@ -160,9 +156,10 @@ int main(int argc, char* argv[]){
 		groundShader.addObject(cube);
 	}
 
+
+	std::vector<Object*> lightObjects;
 	unsigned int areaLightCount =0; 
 
-	Object plane;
 
 	for (int i=0; i<10; i++) {
 		// std::sin(glfwGetTime());
@@ -190,7 +187,7 @@ int main(int argc, char* argv[]){
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 	process.initMousePosition();
 	GUI gui(&process, &mainWindow, &world, &groundShader);
-	
+
 	while (!mainWindow.getShouldClose()){
 
 		process.processInput();
@@ -203,7 +200,7 @@ int main(int argc, char* argv[]){
 
 		world.animate();
 		
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), uniformSpecularIntensity, uniformShininess, lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial);
 		// glActiveTexture(GL_TEXTURE0);
 		// glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
 		// glActiveTexture(GL_TEXTURE1);
@@ -219,6 +216,7 @@ int main(int argc, char* argv[]){
 	}
 
 	gui.clear();
+
 	// BULLET3
 	world.clear();
 

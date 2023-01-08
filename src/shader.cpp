@@ -291,8 +291,6 @@ void Shader::DrawObjects(glm::mat4 view,
                          glm::mat4 projection, 
                          glm::vec3 position_cam, glm::vec3 front_cam, 
                          DirectionalLight* mainLight, 
-                         GLuint uniformSpecularIntensity, 
-                         GLuint uniformShininess, 
                          PointLight * pLights, 
                          unsigned int pLightCount, 
                          SpotLight * sLights, 
@@ -305,8 +303,6 @@ void Shader::DrawObjects(glm::mat4 view,
     setMatrix4("projection", projection); //P
     setVector3f("eyePosition", position_cam);
     SetDirectionalLight(mainLight);
-    setFloat("material.specularIntensity", uniformSpecularIntensity); 
-    setFloat("material.shininess",uniformShininess); 
     SetPointLights(pLights, pLightCount);
     SetSpotLights(sLights, sLightCount); 
     SetAreaLights(aLights, aLightCount);

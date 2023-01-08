@@ -66,8 +66,6 @@ public:
                      glm::mat4 projection, 
                      glm::vec3 position_cam, glm::vec3 front_cam,
                      DirectionalLight* mainLight, 
-                     GLuint uniformSpecularIntensity, 
-                     GLuint uniformShininess, 
                      PointLight * pLights, 
                      unsigned int pLightCount, 
                      SpotLight * sLights, 
