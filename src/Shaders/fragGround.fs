@@ -101,7 +101,7 @@ vec4 CalcLightByDirection(Light light, vec3 direction) // in the point light cal
         }
     }
 
-    return (ambientColor+diffuseColor+specularColor);
+    return (ambientColor+diffuseColor)*(1+specularColor);
 
 }
 

@@ -11,12 +11,16 @@ namespace values
 
 namespace image
 {
-    static constexpr char basic[128] = "../../image/plain.png";
+    static constexpr char white[128] = "../../image/white.png";
     static constexpr char ground[128] = "../../image/woodFloor.png";
     static constexpr char damier[128] = "../../image/damier.png";
     static constexpr char container[128] = "../../image/container.jpg";
     static constexpr char concrete[128] = "../../image/concreteTexture.png";
     static constexpr char rgb[128] = "../../image/rgb.jpeg";
+    static constexpr char red[128] = "../../image/red.png";
+    static constexpr char green[128] = "../../image/green.png";
+    static constexpr char blue[128] = "../../image/blue.png";
+    static constexpr char yellow[128] = "../../image/yellow.png";
 }
 
 namespace geometry

@@ -74,7 +74,7 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.));
-		Object* sphere = new Object(geometry::sphere, image::rgb, pos, rot, scale);
+		Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
 		world.addSphere(sphere);  
 		groundShader.addObject(sphere);
 	}
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]){
 		glm::vec3 pos = glm::vec3(getRandom(), 2.+5*i, getRandom());
 		glm::vec3 rot = glm::vec3(getRandom(0.,3.14), getRandom(0.,3.14), getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(getRandom(0.5,2.), getRandom(0.5,2.), getRandom(0.5,2.));
-		Object* cube = new Object(geometry::cube, image::rgb, pos, rot, scale);	
+		Object* cube = new Object(geometry::cube, image::concrete, pos, rot, scale);	
 		world.addCube(cube);  
 		groundShader.addObject(cube);
 	}
@@ -96,16 +96,16 @@ int main(int argc, char* argv[]){
 		// std::sin(glfwGetTime());
 		glm::vec3 pos = glm::vec3(getRandom(-50.0, 50.0), 5., getRandom(-50.0, 50.0));
 		glm::vec3 rot = glm::vec3(getRandom(glm::radians(-90.0), glm::radians(90.0)), getRandom(glm::radians(-90.0), glm::radians(90.0)), getRandom(glm::radians(-90.0), glm::radians(90.0)));//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
-		glm::vec3 scale = glm::vec3(getRandom(1.0, 10.0));
+		glm::vec3 scale = glm::vec3(getRandom(1.0, 3.0));
 
-		Object* plane = new Object(geometry::plane, image::basic, pos, rot, scale);
+		Object* plane = new Object(geometry::plane, image::white, pos, rot, scale);
 		lightShader.addObject(plane);
 
 		areaLights[i] = AreaLight(getRandom(0.0, 1.0), getRandom(0.0, 1.0), getRandom(0.0, 1.0), 
-							  0.4f, getRandom(1.0, 10.0),
+							  0.4f, getRandom(.1, 1.0),
 							  plane->getPosition(),
 							  0.3f, 0.2f, 0.1f, // not used
-							  plane->getRotation(), false, 
+							  plane->getRotation(), true, 
 							  plane->getVertexPosition(),
 							  plane->getScale());
     	areaLightCount++; 

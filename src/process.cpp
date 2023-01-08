@@ -137,7 +137,7 @@ void Process::Pushing() {
 		pressed += 1;
 	} else if (shoot) {
 		shoot = false;
-		Object* sphere = new Object(geometry::sphere, image::basic, camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
+		Object* sphere = new Object(geometry::sphere, image::white, camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
 		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
 		shader->addObject(sphere);
 		pressed = 0;
@@ -193,6 +193,11 @@ void Process::HandleMouse(){
 
 }
 
+int getRandomInt(int from=-4, int to=4) {
+	int mod = (to - from);
+	return int(rand()%mod + from);
+}
+
 void Process::PutDominoes(){
 	float heightDomino = 1.*2;
 	float widthDomino = 0.175*2;
@@ -216,7 +221,18 @@ void Process::PutDominoes(){
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
 
-				Object* domino = new Object(geometry::domino, image::basic, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2));	
+				int r = getRandomInt(0, 4);
+				const char *path;
+				if (r==0) path = image::white;
+				else if (r == 1) path = image::red;
+				else if (r == 2) path = image::blue;
+				else if (r == 3) path = image::green;
+				else if (r == 4) path = image::yellow;
+	
+				
+
+
+				Object* domino = new Object(geometry::domino, path, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2));	
 				world->addDomino(domino);
 				shader->addObject(domino);
 

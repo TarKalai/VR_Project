@@ -28,6 +28,7 @@ public:
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
+	//glm::vec3 color;
 	// VAO object, VBO shader
 	int id;
 	GLuint VAO, VBO;
@@ -42,13 +43,14 @@ public:
 	std::vector<glm::vec3> vt_normals;
 	std::vector<Vertex> vertices;
 
+
 	int numVertices;
 
 	glm::mat4 model = glm::mat4(1.0);
 
 	Object();
 	
-	Object(const char* geometryPath, const char* texturePath,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true);
+	Object(const char* geometryPath, const char* texturePath,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true);//, glm::vec3 Color);
 	
 	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
 
