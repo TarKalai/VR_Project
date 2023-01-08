@@ -9,13 +9,13 @@ int Object::objectCounter = 0;
 
 Object::Object() {}
 
-Object::Object(const char* geometryPath, const char* texturePath, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible){//, glm::vec3 Color){
+Object::Object(const char* geometryPath, const char* texturePath, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible, glm::vec3 Color){
     texturepath = texturePath;
     visible = is_visible;
     position = obj_pos;
     rotation = obj_rot;
     scale = obj_scale;
-    //color = Color;
+    color = Color;
     id = objectCounter;
     objectCounter++;  
 

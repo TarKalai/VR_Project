@@ -312,6 +312,7 @@ void Shader::DrawObjects(glm::mat4 view,
     for(Object* object : objectList) {
         if (object->visible) {
             setMatrix4("model", object->model);
+            setVector3f("objectColor", object->getColor());
             material.UseMaterial(glGetUniformLocation(ID, "material.specularIntensity"), glGetUniformLocation(ID, "material.shininess")); 
             // setMatrix4("itM", glm::inverseTranspose(object->model));
             object->draw();

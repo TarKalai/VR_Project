@@ -179,6 +179,6 @@ namespace color
     static constexpr glm::vec3 LightGrey = glm::vec3(0.827451f, 0.827451f, 0.827451f);
     static constexpr glm::vec3 Gainsboro = glm::vec3(0.862745f, 0.862745f, 0.862745f);
     static constexpr glm::vec3 WhiteSmoke = glm::vec3(0.960784f, 0.960784f, 0.960784f);
-    static constexpr glm::vec3 White = glm::vec3(1.0f, 1.0f, 1.0f);
+    static constexpr glm::vec3 White = glm::vec3(1.0f);
 }
 

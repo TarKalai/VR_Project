@@ -193,9 +193,9 @@ void Process::HandleMouse(){
 
 }
 
-int getRandomInt(int from=-4, int to=4) {
-	int mod = (to - from);
-	return int(rand()%mod + from);
+float getRandom2(float from=-4, float to=4) {
+	int mod = (to - from)*100;
+	return float(rand()%mod + 100*from)/100;
 }
 
 void Process::PutDominoes(){
@@ -221,18 +221,7 @@ void Process::PutDominoes(){
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
 
-				int r = getRandomInt(0, 4);
-				const char *path;
-				if (r==0) path = image::white;
-				else if (r == 1) path = image::red;
-				else if (r == 2) path = image::blue;
-				else if (r == 3) path = image::green;
-				else if (r == 4) path = image::yellow;
-	
-				
-
-
-				Object* domino = new Object(geometry::domino, path, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2));	
+				Object* domino = new Object(geometry::domino, image::white, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2), true, glm::vec3(getRandom2(0, 1), getRandom2(0, 1), getRandom2(0, 1)));	
 				world->addDomino(domino);
 				shader->addObject(domino);
 

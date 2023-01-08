@@ -67,6 +67,7 @@ uniform sampler2D LTC1; // for inverse M
 uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
 uniform Material material;
 uniform vec3 areaLightTranslate;
+uniform vec3 objectColor;
 
 uniform vec3 eyePosition; // camera position (view position)
 
@@ -332,5 +333,5 @@ void main(){
 
     finalColor += CalcAreaLights();
 
-    color = texture(theTexture, TexCoord)*finalColor;
+    color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
 }
