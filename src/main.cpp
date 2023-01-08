@@ -1,5 +1,3 @@
-// #pragma once
-
 #include<iostream>
 #include<cstdlib>
 
@@ -34,8 +32,9 @@
 #include "areaLight.h"
 #include "constant.h"
 #include "light_constructor.h"
-#include "utils.h"
 #include "object_constructor.h"
+#include "utils.h"
+
 
 Display mainWindow; 
 AreaLight areaLights[values::MAX_AREA_LIGHTS];
@@ -55,12 +54,6 @@ int main(int argc, char* argv[]){
 	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
 	Shader2D shader2D(true);
 
-	shinyMaterial = Material(1.f, 32.0f); 
-    dullMaterial = Material(0.3f, 4); 
-
-	LightConstructor lightConstructor = LightConstructor();
-
-
 	Object ground_obj = Object(geometry::plane, image::ground, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
@@ -68,7 +61,12 @@ int main(int argc, char* argv[]){
 	ObjectConstructor objectConstructor = ObjectConstructor(&world);
 	groundShader.addObjects(objectConstructor.getObjects());
 
+	shinyMaterial = Material(1.f, 32.0f); 
+    dullMaterial = Material(0.3f, 4); 
 
+	LightConstructor lightConstructor = LightConstructor();
+
+	// final constructor of lightobjects TODO !
 	unsigned int areaLightCount =0; 
 
 
