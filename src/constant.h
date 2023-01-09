@@ -21,6 +21,8 @@ namespace image
     static constexpr char green[128] = "../../image/green.png";
     static constexpr char blue[128] = "../../image/blue.png";
     static constexpr char yellow[128] = "../../image/yellow.png";
+    static constexpr char dirt[128] = "../../image/dirt.png";
+
 }
 
 namespace geometry

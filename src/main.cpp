@@ -54,14 +54,14 @@ int main(int argc, char* argv[]){
 	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
 	Shader2D shader2D(true);
 
-	Object ground_obj = Object(geometry::plane, image::ground, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
+	Object ground_obj = Object(geometry::plane, image::dirt, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
 	groundShader.addObject(&ground_obj);
 
 	ObjectConstructor objectConstructor = ObjectConstructor(&world);
 	groundShader.addObjects(objectConstructor.getObjects());
 
-	shinyMaterial = Material(1.f, 32.0f); 
+	shinyMaterial = Material(0.f, 0.0f); 
     dullMaterial = Material(0.3f, 4); 
 
 	LightConstructor lightConstructor = LightConstructor();
@@ -70,10 +70,10 @@ int main(int argc, char* argv[]){
 	unsigned int areaLightCount =0; 
 
 
-	for (int i=0; i<10; i++) {
+	for (int i=0; i<1; i++) {
 		// std::sin(glfwGetTime());
-		glm::vec3 pos = glm::vec3(Utils::getRandom(-50.0, 50.0), 5., Utils::getRandom(-50.0, 50.0));
-		glm::vec3 rot = glm::vec3(Utils::getRandom(glm::radians(-90.0), glm::radians(90.0)), Utils::getRandom(glm::radians(-90.0), glm::radians(90.0)), Utils::getRandom(glm::radians(-90.0), glm::radians(90.0)));//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
+		glm::vec3 pos = glm::vec3(Utils::getRandom(-50.0, 50.0), 0., Utils::getRandom(-50.0, 50.0));
+		glm::vec3 rot = glm::vec3(glm::radians(-90.0), 0, 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(Utils::getRandom(1.0, 3.0));
 
 		Object* plane = new Object(geometry::plane, image::white, pos, rot, scale);
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]){
 		process.processInput();
 
 		glm::mat4 view = camera.getViewMatrix();
-		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 1000.0);
+		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 200.0);
 		glfwPollEvents();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
