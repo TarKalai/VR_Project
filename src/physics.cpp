@@ -72,13 +72,19 @@ void PhysicalWorld::addCube(Object *obj, glm::vec3 velocity, int lifetime){
     addObject(obj, colShape, velocity, lifetime);
 }
 
+void PhysicalWorld::addWall(Object *obj, glm::vec3 velocity, int lifetime){
+    //create a dynamic rigidbody
+    btCollisionShape* colShape = new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
+    addObject(obj, colShape, velocity, lifetime, true);
+}
+
 void PhysicalWorld::addDomino(Object *obj, glm::vec3 velocity, int lifetime){
     //create a dynamic rigidbody
     btCollisionShape* colShape = new btBoxShape(btVector3(0.175*obj->scale.x, 1.*obj->scale.y, 0.5*obj->scale.z));
     addObject(obj, colShape, velocity, lifetime);
 }
 
-void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime){
+void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime, bool is_static){
     //btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale));
     collisionShapes.push_back(colShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
@@ -90,6 +96,10 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
     btScalar mass(1.);
 
     //rigidbody is dynamic if and only if mass is non zero, otherwise static
+    if (is_static){
+        mass = 0.0f; 
+    }
+
     bool isDynamic = (mass != 0.f);
 
     btVector3 localInertia(0,0,0);

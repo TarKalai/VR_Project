@@ -20,6 +20,7 @@ set(SOURCES_MAIN "main.cpp"
 "areaLight.cpp" "areaLight.h"
 "light_constructor.cpp" "light_constructor.h"
 "object_constructor.cpp" "object_constructor.h"
+"texture.cpp" "texture.h"
 "ltc_matrix.hpp" "utils.h") 
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}

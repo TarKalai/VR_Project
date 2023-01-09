@@ -65,6 +65,8 @@ uniform AreaLight areaLights[MAX_AREA_LIGHTS];
 uniform sampler2D theTexture; 
 uniform sampler2D LTC1; // for inverse M
 uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
+uniform sampler2D normalMap;  
+
 uniform Material material;
 uniform vec3 areaLightTranslate;
 uniform vec3 objectColor;
@@ -325,6 +327,10 @@ vec4 CalcAreaLights(){
 }
 
 void main(){
+
+    // Normal Mapping
+    vec3 normal = texture(normalMap, TexCoord).rgb; 
+    normal = normalize(normal * 2.0 - 1.0); 
 
     vec4 finalColor = CalcDirectionalLight();
     

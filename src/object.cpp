@@ -115,8 +115,8 @@ Object::Object(const char* geometryPath, const char* texturePath, glm::vec3 obj_
     numVertices = vertices.size();
 }
 
-void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal){ 
-    has_texture = shader_texture;
+void Object::MakeObject(GLuint shaderID, bool shader_normal){ 
+    // has_texture = shader_texture;
     //Create the VAO and VBO
     //Put your data into your VBO
     //Define VBO and VAO as active buffer and active vertex array
@@ -154,52 +154,52 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
         glVertexAttribPointer(att_pos, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0);
     }
     
-    if (shader_texture) {
-        glGenTextures(1, &texture);
+    // if (shader_texture) {
+    //     glGenTextures(1, &texture);
 
-        stbi_set_flip_vertically_on_load(true);
-        int width, height, nrComponents;
-        unsigned char *data = stbi_load(texturepath, &width, &height, &nrComponents, 0);
-        if (data)
-        {
-            GLenum internalFormat;
-            GLenum dataFormat;
-            if (nrComponents == 1)
-            {
-                internalFormat = dataFormat = GL_RED;
-            }
-            else if (nrComponents == 3)
-            {
-                // internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
-                dataFormat = GL_RGB;
-            }
-            else if (nrComponents == 4)
-            {
-                // internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
-                dataFormat = GL_RGBA;
-            }
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(GL_TEXTURE_2D, 0, dataFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            //3. Define the parameters for the texture
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        }
-        else {
-            std::cout << "Failed to Load texture" << std::endl;
-            const char* reason = stbi_failure_reason();
-            std::cout << reason << std::endl;
-        }
+    //     stbi_set_flip_vertically_on_load(true);
+    //     int width, height, nrComponents;
+    //     unsigned char *data = stbi_load(texturepath, &width, &height, &nrComponents, 0);
+    //     if (data)
+    //     {
+    //         GLenum internalFormat;
+    //         GLenum dataFormat;
+    //         if (nrComponents == 1)
+    //         {
+    //             internalFormat = dataFormat = GL_RED;
+    //         }
+    //         else if (nrComponents == 3)
+    //         {
+    //             // internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
+    //             dataFormat = GL_RGB;
+    //         }
+    //         else if (nrComponents == 4)
+    //         {
+    //             // internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
+    //             dataFormat = GL_RGBA;
+    //         }
+    //         glActiveTexture(GL_TEXTURE0);
+            // glBindTexture(GL_TEXTURE_2D, texture);
+    //         glTexImage2D(GL_TEXTURE_2D, 0, dataFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+    //         glGenerateMipmap(GL_TEXTURE_2D);
+    //         //3. Define the parameters for the texture
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //     }
+    //     else {
+    //         std::cout << "Failed to Load texture" << std::endl;
+    //         const char* reason = stbi_failure_reason();
+    //         std::cout << reason << std::endl;
+    //     }
 
-	    stbi_image_free(data);
-        auto att_tex = glGetAttribLocation(shaderID, "tex");
-        glEnableVertexAttribArray(att_tex);
-        glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        u_texture = glGetUniformLocation(shaderID, "theTexture");
-    }
+	//     stbi_image_free(data);
+    //     auto att_tex = glGetAttribLocation(shaderID, "tex");
+    //     glEnableVertexAttribArray(att_tex);
+    //     glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    //     u_texture = glGetUniformLocation(shaderID, "theTexture");
+    // }
 
     if (shader_normal) {
         auto att_col = glGetAttribLocation(shaderID, "norm"); //  "normal"
@@ -239,14 +239,14 @@ void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
 void Object::draw(){
 
     //bind your vertex arrays and call glDrawArrays
-    glBindVertexArray(this->VAO);
-    if (has_texture){
-        glUniform1i(u_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-    }
+    glBindVertexArray(VAO);
+    // if (has_texture){
+    //     glUniform1i(u_texture, 0);
+    //     glActiveTexture(GL_TEXTURE0);
+	// 	glBindTexture(GL_TEXTURE_2D, texture);
+    // }
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
+    glBindVertexArray(0);
 }
 
 std::vector<glm::vec3> Object::getVertexPosition(){

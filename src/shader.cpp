@@ -3,10 +3,10 @@
 #include <vector>
 #include <string>
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
+Shader::Shader(const char* vertexPath, const char* fragmentPath, bool normal)
 	{   
         // texturePath = imagePath;
-        shaderTexture = texture;
+        // shaderTexture = texture;
         shaderNormal = normal;
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
@@ -78,7 +78,7 @@ void Shader::setMatrix4(const GLchar* name, const glm::mat4& matrix)
     glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
 void Shader::addObject(Object *obj) {
-    obj->MakeObject(ID, shaderTexture, shaderNormal);
+    obj->MakeObject(ID, shaderNormal);
     objectList.push_back(obj);
 }
 
@@ -295,7 +295,8 @@ void Shader::DrawObjects(glm::mat4 view,
                          unsigned int sLightCount, 
                          AreaLight * aLights, 
                          unsigned int aLightCount,
-                         Material material) {
+                         Material material, 
+                         Texture texture) {
     use();
     setMatrix4("view", view); //V
     setMatrix4("projection", projection); //P
@@ -305,6 +306,8 @@ void Shader::DrawObjects(glm::mat4 view,
     SetSpotLights(sLights, sLightCount); 
     SetAreaLights(aLights, aLightCount);
 
+    // setInteger("diffuseMap", 0);
+    // setInteger("normalMap", 1);
     glm::vec3 lowerLight = position_cam; 
     lowerLight.y -= 0.3f;
 	sLights[0].SetFlash(lowerLight, front_cam);
@@ -314,6 +317,7 @@ void Shader::DrawObjects(glm::mat4 view,
             setMatrix4("model", object->model);
             setVector3f("objectColor", object->getColor());
             material.UseMaterial(glGetUniformLocation(ID, "material.specularIntensity"), glGetUniformLocation(ID, "material.shininess")); 
+            texture.UseTexture(); 
             // setMatrix4("itM", glm::inverseTranspose(object->model));
             object->draw();
         }

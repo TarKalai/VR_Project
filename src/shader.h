@@ -19,6 +19,7 @@
 #include "areaLight.h"
 #include "constant.h"
 #include "material.h"
+#include "texture.h"
 
 
 class Shader
@@ -32,7 +33,7 @@ public:
     bool shaderNormal;
     // char * texturePath;
 
-    Shader( const char* vertexPath, const char* fragmentPath, bool texture, bool normal); //char* imagePath,
+    Shader( const char* vertexPath, const char* fragmentPath, bool normal); //char* imagePath,
 
 	void use(); 
 
@@ -72,7 +73,8 @@ public:
                      unsigned int sLightCount,
                      AreaLight * aLights, 
                      unsigned int aLightCount,
-                     Material material); //, glm::vec3 light_pos);
+                     Material material, 
+                     Texture texture); //, glm::vec3 light_pos);
     
     void DrawLightObjects(glm::mat4 view, 
                           glm::mat4 projection,

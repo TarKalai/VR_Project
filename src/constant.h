@@ -21,6 +21,8 @@ namespace image
     static constexpr char green[128] = "../../image/green.png";
     static constexpr char blue[128] = "../../image/blue.png";
     static constexpr char yellow[128] = "../../image/yellow.png";
+    static constexpr char brickwall[128] = "../../image/brickwall.jpg"; 
+    static constexpr char normal_wall[128] = "../../image/brickwall_normal.jpg";
 }
 
 namespace geometry
@@ -29,6 +31,7 @@ namespace geometry
 	static constexpr char cube[128] = "../../objects/cube.obj";
 	static constexpr char plane[128] = "../../objects/plane.obj";
     static constexpr char domino[128] = "../../objects/domino.obj";
+    static constexpr char wall[128] = "../../objects/brickwall.obj"; 
 }
 
 namespace shaderfiles

@@ -29,9 +29,10 @@ public:
     void addSphere(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
     void addCube(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
     void addDomino(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
-    void addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime=-1);
+    void addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime=-1, bool is_static=false);
     int getLifeTime(btRigidBody* body) { return body->getUserIndex2(); }
     void setLifeTime(btRigidBody* body, int lifetime) { body->setUserIndex2(lifetime); }
+    void addWall(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1); 
     void animate();
     void clear();
 };

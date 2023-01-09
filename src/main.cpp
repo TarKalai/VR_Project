@@ -36,9 +36,15 @@
 #include "constant.h"
 #include "light_constructor.h"
 #include "utils.h"
+#include "texture.h"
 
 Display mainWindow; 
 AreaLight areaLights[values::MAX_AREA_LIGHTS];
+
+
+Texture groundTexture; 
+Texture wallTexture; 
+Texture plainTexture;
 
 Material shinyMaterial; 
 Material dullMaterial; 
@@ -54,11 +60,11 @@ Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.)
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 	mainWindow.Initialise();
 
-	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true, true);
-	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
+	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true);
+	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false);
 	Shader2D shader2D(true);
 
 	shinyMaterial = Material(1.f, 32.0f); 
@@ -69,27 +75,37 @@ int main(int argc, char* argv[]){
 
 	Object ground_obj = Object(geometry::plane, image::ground, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
     PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
+	groundTexture = Texture(image::ground);
+	groundTexture.LoadTextureA();
+	// groundTexture.UseTexture(); 
 	groundShader.addObject(&ground_obj);
 
+	Object wall_obj = Object(geometry::wall, image::brickwall, glm::vec3(-5.0, 5.0, -5.0), glm::vec3(3.14/2., 0.,  0.), glm::vec3(5., 5., 5.), 1); 
+	world.addWall(&wall_obj);
+	wallTexture = Texture(image::brickwall);
+	wallTexture.LoadTexture();
+	// wallTexture.UseTexture(); 
+	groundShader.addObject(&wall_obj);
 
 
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
-		Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
-		world.addSphere(sphere);  
-		groundShader.addObject(sphere);
-	}
 
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
-		Object* cube = new Object(geometry::cube, image::concrete, pos, rot, scale);	
-		world.addCube(cube);  
-		groundShader.addObject(cube);
-	}
+	// for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
+	// 	Object* sphere = new Object(geometry::sphere, image::concrete, pos, rot, scale);
+	// 	world.addSphere(sphere);  
+	// 	groundShader.addObject(sphere);
+	// }
+
+	// for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
+	// 	Object* cube = new Object(geometry::cube, image::concrete, pos, rot, scale);	
+	// 	world.addCube(cube);  
+	// 	groundShader.addObject(cube);
+	// }
 
 
 	unsigned int areaLightCount =0; 
@@ -133,7 +149,7 @@ int main(int argc, char* argv[]){
 
 		world.animate();
 		
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial);
+		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial, groundTexture);
 		lightShader.DrawLightObjects(view, projection, areaLights, areaLightCount);
 		
 		if (!camera.pause) {
