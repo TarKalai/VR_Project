@@ -115,8 +115,9 @@ Object::Object(const char* geometryPath, const char* texturePath, glm::vec3 obj_
     numVertices = vertices.size();
 }
 
-void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal){ 
-    has_texture = shader_texture;
+void Object::MakeObject(){ 
+
+
     //Create the VAO and VBO
     //Put your data into your VBO
     //Define VBO and VAO as active buffer and active vertex array
@@ -148,77 +149,96 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * numVertices, data, GL_STATIC_DRAW);
 
-    {
-        auto att_pos = glGetAttribLocation(shaderID, "pos"); //position
-        glEnableVertexAttribArray(att_pos);
-        glVertexAttribPointer(att_pos, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0);
-    }
-    
-    if (shader_texture) {
-        glGenTextures(1, &texture);
+    // { // old way, maybe cleaner to do like that (without the layout = 0...)
+    //     auto att_pos = glGetAttribLocation(shaderID, "pos"); //position
+    //     glVertexAttribPointer(att_pos, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0);
+    //     glEnableVertexAttribArray(att_pos);
+    // }
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
-        stbi_set_flip_vertically_on_load(true);
-        int width, height, nrComponents;
-        unsigned char *data = stbi_load(texturepath, &width, &height, &nrComponents, 0);
-        if (data)
-        {
-            GLenum internalFormat;
-            GLenum dataFormat;
-            if (nrComponents == 1)
-            {
-                internalFormat = dataFormat = GL_RED;
-            }
-            else if (nrComponents == 3)
-            {
-                // internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
-                dataFormat = GL_RGB;
-            }
-            else if (nrComponents == 4)
-            {
-                // internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
-                dataFormat = GL_RGBA;
-            }
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(GL_TEXTURE_2D, 0, dataFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            //3. Define the parameters for the texture
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        }
-        else {
-            std::cout << "Failed to Load texture" << std::endl;
-            const char* reason = stbi_failure_reason();
-            std::cout << reason << std::endl;
-        }
-
-	    stbi_image_free(data);
-        auto att_tex = glGetAttribLocation(shaderID, "tex");
-        glEnableVertexAttribArray(att_tex);
-        glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        u_texture = glGetUniformLocation(shaderID, "theTexture");
-    }
-
-    if (shader_normal) {
-        auto att_col = glGetAttribLocation(shaderID, "norm"); //  "normal"
-        glEnableVertexAttribArray(att_col);
-        glVertexAttribPointer(att_col, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
+    // auto att_tex = glGetAttribLocation(shaderID, "tex");
+    // glEnableVertexAttribArray(att_tex);
+    // glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    }
-    //desactive the buffer
+
+    // auto att_col = glGetAttribLocation(shaderID, "norm"); //  "normal"
+    // glEnableVertexAttribArray(att_col);
+    // glVertexAttribPointer(att_col, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     delete[] data;
-
-    // Example to modify the position, rotation and scale of an object(to keep in case ^^)
-    //model = glm::translate(model, position);
-    //model = glm::rotate(model, (float) 3.14/5, glm::vec3(0.0f, 0.0f, 1.f));
-    //model = glm::scale(model, glm::vec3(1,3,2));
-    //std::cout << glm::to_string(model) << std::endl;
-
     setPosRot(position, rotation);
+
+    
+    // if (shader_texture) {
+    //     glGenTextures(1, &texture);
+
+    //     stbi_set_flip_vertically_on_load(true);
+    //     int width, height, nrComponents;
+    //     unsigned char *data = stbi_load(texturepath, &width, &height, &nrComponents, 0);
+    //     if (data)
+    //     {
+    //         GLenum internalFormat;
+    //         GLenum dataFormat;
+    //         if (nrComponents == 1)
+    //         {
+    //             internalFormat = dataFormat = GL_RED;
+    //         }
+    //         else if (nrComponents == 3)
+    //         {
+    //             // internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
+    //             dataFormat = GL_RGB;
+    //         }
+    //         else if (nrComponents == 4)
+    //         {
+    //             // internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
+    //             dataFormat = GL_RGBA;
+    //         }
+    //         glActiveTexture(GL_TEXTURE0);
+    //         glBindTexture(GL_TEXTURE_2D, texture);
+    //         glTexImage2D(GL_TEXTURE_2D, 0, dataFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+    //         glGenerateMipmap(GL_TEXTURE_2D);
+    //         //3. Define the parameters for the texture
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //     }
+    //     else {
+    //         std::cout << "Failed to Load texture" << std::endl;
+    //         const char* reason = stbi_failure_reason();
+    //         std::cout << reason << std::endl;
+    //     }
+
+	//     stbi_image_free(data);
+    //     auto att_tex = glGetAttribLocation(shaderID, "tex");
+    //     glEnableVertexAttribArray(att_tex);
+    //     glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    //     u_texture = glGetUniformLocation(shaderID, "theTexture");
+    // }
+
+    // if (shader_normal) {
+    //     auto att_col = glGetAttribLocation(shaderID, "norm"); //  "normal"
+    //     glEnableVertexAttribArray(att_col);
+    //     glVertexAttribPointer(att_col, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
+    // glEnableVertexAttribArray(1);
+    // }
+    // //desactive the buffer
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glBindVertexArray(0);
+    // delete[] data;
+    // setPosRot(position, rotation);
+}
+
+void Object::UseTexture() {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureID);
 }
 
 void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
@@ -240,13 +260,13 @@ void Object::draw(){
 
     //bind your vertex arrays and call glDrawArrays
     glBindVertexArray(this->VAO);
-    if (has_texture){
-        glUniform1i(u_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-    }
+    // if (has_texture){
+    //     glUniform1i(u_texture, 0);
+    //     glActiveTexture(GL_TEXTURE0);
+	// 	glBindTexture(GL_TEXTURE_2D, texture);
+    // }
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
+    glBindVertexArray(0);
 }
 
 std::vector<glm::vec3> Object::getVertexPosition(){

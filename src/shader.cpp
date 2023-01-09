@@ -3,6 +3,60 @@
 #include <vector>
 #include <string>
 
+
+Shader::Shader()
+{/*
+Constructor used for initialisation of shader object type. 
+    */
+    shaderID = 0; 
+    uniformModel=0; 
+    uniformProjection=0; 
+
+    pointLightCount = 0;
+    spotLightCount = 0;  
+    areaLightCount = 0; 
+}
+
+
+void Shader::CreateFromString(const char* vertexCode, const char* fragmentCode)
+{
+    CompileShader(vertexCode, fragmentCode); 
+}
+
+void Shader::CreateFromFiles(const char* vertexLocation, const char* fragmentLocation)
+{
+    std::string vertexString = ReadFile(vertexLocation); 
+    std::string fragmentString = ReadFile(fragmentLocation); 
+
+    const char* vertexCode = vertexString.c_str(); //c_str : convert to c string format which is const char array. 
+    const char* fragmentCode = fragmentString.c_str(); 
+
+    CompileShader(vertexCode, fragmentCode); 
+}
+
+std::string Shader::ReadFile(const char* fileLocation)
+{
+    std::string content; 
+    std::ifstream fileStream(fileLocation, std::ios::in); 
+
+    if(!fileStream.is_open()){
+        printf("Failed to read %s, file doe snot exist!!! ", fileLocation); 
+        return ""; 
+    }
+
+    std::string line = ""; 
+    while(!fileStream.eof())
+    {   
+        std::getline(fileStream, line); 
+        content.append(line + "\n");
+    }
+
+    fileStream.close(); 
+    return content; 
+
+}
+
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath, bool texture, bool normal)
 	{   
         // texturePath = imagePath;

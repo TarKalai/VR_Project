@@ -51,7 +51,7 @@ public:
 	
 	Object(const char* geometryPath, const char* texturePath,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true, glm::vec3 Color=glm::vec3(1.0));
 	
-	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
+	void MakeObject();
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 
@@ -61,5 +61,7 @@ public:
 	glm::vec3 getRotation();
 	glm::vec3 getScale(){return scale;}
 	glm::vec3 getColor(){return color;}
+
+	void UseTexture(); 
 	void print();
 };

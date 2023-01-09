@@ -34,6 +34,7 @@
 #include "light_constructor.h"
 #include "object_constructor.h"
 #include "utils.h"
+#include "texture.h"
 
 
 Display mainWindow; 
@@ -80,7 +81,7 @@ int main(int argc, char* argv[]){
 		lightShader.addObject(plane);
 
 		areaLights[i] = AreaLight(Utils::getRandom(0.0, 1.0), Utils::getRandom(0.0, 1.0), Utils::getRandom(0.0, 1.0), 
-							  0.4f, Utils::getRandom(.1, 1.0),
+							  0.4f, Utils::getRandom(1, 5.0),
 							  plane->getPosition(),
 							  0.3f, 0.2f, 0.1f, // not used
 							  plane->getRotation(), true, 

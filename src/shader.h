@@ -29,7 +29,7 @@ public:
     bool shaderTexture;
     bool shaderNormal;
     // char * texturePath;
-
+    Shader(); 
     Shader( const char* vertexPath, const char* fragmentPath, bool texture, bool normal); //char* imagePath,
 
 	void use(); 
