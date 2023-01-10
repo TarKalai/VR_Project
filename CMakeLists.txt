@@ -76,7 +76,6 @@ endif ()
 
 
 include_directories(3rdParty/glad/include/
-                    # 3rdParty/glew/include/
                     3rdParty/glfw/include/
                     3rdParty/glm/
                     3rdParty/stb/
