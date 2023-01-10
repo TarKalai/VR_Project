@@ -47,7 +47,7 @@ Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.)
 int main(int argc, char* argv[]){
 	std::cout << "Project is running... " << std::endl;
 
-	mainWindow = Display(false); // if cursor disabled -> true, otherwise false.
+	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
 	mainWindow.Initialise();
 
 	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true, true);
@@ -106,6 +106,7 @@ int main(int argc, char* argv[]){
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		
 		world.animate();
 		
 		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial);

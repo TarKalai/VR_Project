@@ -13,7 +13,7 @@ int Display::Initialise(){
     // Initialise Glfw
     int width = 1920/2;
     int height = 1080/2;
-    glfwTerminate();
+    // glfwTerminate();
     if(!glfwInit()){
         printf("The inititialisation of glfw failed.");
         glfwTerminate(); 

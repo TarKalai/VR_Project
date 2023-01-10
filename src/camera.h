@@ -74,7 +74,7 @@ public:
 
     void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
 
-    void ProcessMouseScroll(float yoffset);
+    // void ProcessMouseScroll(float yoffset);
     
     void deactivateMouse(Display* display);
     void reactivateMouse(Display* display);

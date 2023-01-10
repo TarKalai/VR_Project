@@ -19,7 +19,7 @@
 #include "camera.h"
 #include "display.h"
 #include "constant.h"
-#include "constant.h"
+// #include "constant.h"
 #include "utils.h"
 
 class Camera; 
@@ -37,7 +37,7 @@ public:
     void initMousePosition();
     void processInput(); 
     void HandleMouse(); 
-    void processMouseScroll(float yoffset);
+    // void processMouseScroll(float yoffset);
     void PutDominoes();
     ~Process(); 
 private: 

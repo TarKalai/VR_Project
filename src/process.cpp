@@ -40,7 +40,7 @@ void Process::HandleMenuMode() {
 			oldSpeedAnimation = world->speedAnimation;
 			world->speedAnimation = 0;
 			glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
-    		// display->cursor_disabled = false;
+    		display->cursor_disabled = false;
 			camera->deactivateMouse(display);
 		}
 	}

@@ -14,15 +14,16 @@
 
 
 
-struct Resolution {
-    int width;
-    int height;
-};
+// struct Resolution {
+//     int width;
+//     int height;
+// };
 
 struct Point {
-    int x;
-    int y;
-};
+        int x;
+        int y;
+    };
+
 
 class Display{
 public: 
@@ -54,5 +55,6 @@ public:
 private: 
     GLFWwindow *mainWindow; 
     GLint width, height; 
-    GLint bufferWidth, bufferHeight; 
+    GLint bufferWidth, bufferHeight;
+    
 };
