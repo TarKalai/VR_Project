@@ -1,7 +1,7 @@
 #include "physics.h"
-#include <math.h>
-#include "glm/ext.hpp" 
-#include "glm/gtx/string_cast.hpp"
+
+
+PhysicalWorld::PhysicalWorld(){}
 
 PhysicalWorld::PhysicalWorld(Object *obj)
 {
@@ -124,7 +124,7 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
 void PhysicalWorld::animate()
 {
     ///-----stepsimulation_start-----
-    dynamicsWorld->stepSimulation(speedAnimation/60, 1, speedAnimation/60); 
+    dynamicsWorld->stepSimulation(Time::getSpeed()/60, 1, Time::getSpeed()/60); 
     //print positions of all objects
     for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--) // go through all the objects
     {
@@ -203,3 +203,5 @@ void PhysicalWorld::clear(){
         collisionShapes.clear();
         glObjects.clear();
 }
+
+PhysicalWorld::~PhysicalWorld(){}

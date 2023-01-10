@@ -1,11 +1,13 @@
 #include "gui.h"
 
 
-GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg) {
+
+GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg) {
     process = processArg;
     display = displayArg;
     world = worldArg;
     shader = shaderArg;
+    shadow = shadowArg;
 }
 
 void GUI::update() {
@@ -93,18 +95,18 @@ void GUI::displaySaveLoad() {
                             std::istringstream iss(line); // Like a "split"
                             std::string indice;
                             iss >> indice; // Go the next elem of the split (reach elem 1 by 1 separated by " ")
-                            //std::cout << "indice : " << indice << std::endl;
                             if (indice == "d") {
                                 int idx;
-                                float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, texture;
-                                iss >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> texture;
-                                //vt_positions.push_back(glm::vec3(x, y, z));
+                                float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ;
+                                iss >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ;
                                 glm::vec3 pos = glm::vec3(posX, posY, posZ);
                                 glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
                                 glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
-                                Object* domino = new Object(geometry::domino, image::white, pos, rot, scale);	
+
+                                Object* domino = new Object(geometry::domino,Textures::White(), Materials::Dull(),  pos, rot, scale);	
                                 world->addDomino(domino);  
                                 shader->addObject(domino);
+                                shadow->addObject(domino);
                             }
                         }
                     }
@@ -147,11 +149,7 @@ void GUI::displaySpeedAnimation() {
     ImGui::Begin("Animation Speed", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
     ImGui::SetCursorPos(ImVec2(0,18));
     ImGui::PushItemWidth(115);
-    float oldSpeed = world->speedAnimation;
-    ImGui::SliderFloat(" ", &world->speedAnimation, 0., 4.);
-    if (oldSpeed != world->speedAnimation) {
-        process->oldSpeedAnimation = world->speedAnimation;
-    }
+    ImGui::SliderFloat(" ", &(process->sliderSpeedAnimation), 0., 4.);
     ImGui::End();
 }
 

@@ -1,40 +1,72 @@
 #include "display.h"
 #include "debug.h"
-
 #include "process.h"
 #include "camera.h"
-float fov = 45; 
+#include "utils.h"
+
+float fov = 45;
 
 Display::Display(bool cursor){
     cursor_disabled = cursor;
+    width = 1920/2;
+    height = 1080/2;
 }
 
-int Display::Initialise(){
+// Display::Display()
+// {
+//     width = 800; 
+//     height = 600; 
+
+//     for(size_t i = 0; i<1024; i++)
+//     {   
+//         keys[i] = 0; 
+//     }
+// }
+
+// Display::Display(GLint windowWidth, GLint windowHeight)
+// {
+//     width = windowWidth; 
+//     height = windowHeight;
+
+//     xChange = 0.0; 
+//     yChange = 0.0; 
+
+//     for(size_t i = 0; i<1024; i++)
+//     {   
+//         keys[i] = 0; 
+//     }
+// }
+
+int Display::Initialise()
+{
+    // printf("here is the width of the bird texture : %d\n", Textures::Bird()->getWidth());
+    // Textures::Bird();
     // Initialise Glfw
-    int width = 1920/2;
-    int height = 1080/2;
-    // glfwTerminate();
     if(!glfwInit()){
         printf("The inititialisation of glfw failed.");
         glfwTerminate(); 
         return 1; 
     }
     
+    // Set the window properties
 
+    // Set the version of glfw to use to 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want it to be backwards compatible.
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // We want it to be forward compatible
 
     #ifndef NDEBUG
 	//create a debug context to help with Debugging
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     #endif
 
-	//mainWindow = glfwCreateWindow(width, height, "Project", glfwGetPrimaryMonitor(), NULL); // Fullscreen
-	mainWindow = glfwCreateWindow(width, height, "Project", NULL, NULL);
-	glfwSetWindowMonitor(mainWindow, 0,  0, 0, width, height, GLFW_DONT_CARE);
+    mainWindow = glfwCreateWindow(width, height, "Project", NULL, NULL); 
+
+    // glfwSetWindowMonitor(mainWindow, 0,  0, 0, width, height, GLFW_DONT_CARE);
+    // 1st NULL: which monitor want to use  
+    // 2scd NULL If we want to share the window across systems.  
 
 
     if(!mainWindow){
@@ -46,34 +78,39 @@ int Display::Initialise(){
     glfwMakeContextCurrent(mainWindow);  // Everything that will be done will bejoined to this window
 
     glfwSetFramebufferSizeCallback(mainWindow, framebuffer_size_callback);
-    // glfwSetScrollCallback(mainWindow, scroll_callback);
-    
+
     if (cursor_disabled)
 	    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// GLFW_CURSOR_DISABLED so that the cursor does not appear on the screen. 
 
+    
+    // Buffer size: the buffer is  the part which is going to hold all the Opengl data
+    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight); 
 
-    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+    //Handle Key and Mouse INput
+    // createCallbacks(); 
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
+    // glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// so that the cursor does not appear on the screen. 
+
+
+    //Set the size of the part we are drawing to on the window
+    // We want it to be the entire window
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
 		printf("Failed to initialize GLAD");
 	}
 
-    glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_CULL_FACE); // If the objects are behind the camera then they will not be rendered => Makes everything go faster. 
-    // This may cause a bug with the Normals, if a bug is observed (holes in objects) disabling this line may solve it. 
+    glEnable(GL_DEPTH_TEST); //Enable depth testing to determine which trangle is deeper into the image. 
 
     glViewport(0, 0, bufferWidth, bufferHeight);
 
-    // Setup Dear ImGui context
+    // glfwSetWindowUserPointer(mainWindow, this); // this: owner of the window => refers to the class. 
+
+     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
-    // Setup Dear ImGui style
     ImGui::StyleColorsLight();
-    //ImGui::StyleColorsLight();
-    // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
@@ -125,8 +162,68 @@ int Display::getHeight() {
     return height;
 }
 
-Display::~Display(){
+
+
+// void Display::handleKeys(GLFWwindow* window, int key, int code, int action, int mode)
+// {
+//     Display* theWindow = static_cast<Display*>(glfwGetWindowUserPointer(window)); 
+
+//     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+//         glfwSetWindowShouldClose(window, GL_TRUE);
+//     }
+
+//     if(key >= 0 && key < 1024){
+//         if(action == GLFW_PRESS){
+//             theWindow->keys[key]=true; 
+//         }
+//         else if (action == GLFW_RELEASE){
+//             theWindow->keys[key]=false; 
+//         }
+//     }
+
+// }
+
+// void Display::handleMouse(GLFWwindow* window, double xPos, double yPos)
+// {
+//     Display* theWindow = static_cast<Display*>(glfwGetWindowUserPointer(window)); 
+
+//     if(theWindow->mouseFirstMoved)
+//     {
+//         theWindow->lastX=xPos; 
+//         theWindow->lastY=yPos;
+//         theWindow->mouseFirstMoved=false;  
+//     }
+
+//     theWindow->xChange = xPos - theWindow->lastX; 
+//     theWindow->yChange = theWindow->lastY - yPos; 
+
+//     theWindow->lastX = xPos; 
+//     theWindow->lastY = yPos; 
+
+// }
+
+// void Display::createCallbacks(){
+//     glfwSetKeyCallback(mainWindow, handleKeys); // When a key i spressed on mainWindow then callback to handleKeys. 
+//     glfwSetCursorPosCallback(mainWindow, handleMouse);
+// }
+
+// GLfloat Display::getXchange()
+// {
+//     GLfloat theChange = xChange; 
+//     xChange = 0.0;
+//     return theChange;
+// }
+
+// GLfloat Display::getYchange()
+// {
+//     GLfloat theChange = yChange; 
+//     yChange = 0.0; 
+//     return theChange; 
+// }
+
+Display::~Display()
+{
     glfwDestroyWindow(mainWindow);
     glfwTerminate(); 
-}
 
+}

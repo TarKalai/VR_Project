@@ -11,11 +11,11 @@ SpotLight::SpotLight() : PointLight()
 
 
 SpotLight::SpotLight(GLfloat red, GLfloat green, GLfloat blue, 
-                     GLfloat aIntensity, GLfloat dIntensity,
-                     GLfloat xPos, GLfloat yPos, GLfloat zPos,
-                     GLfloat xDir, GLfloat yDir, GLfloat zDir, 
-                     GLfloat con, GLfloat lin, GLfloat exp,
-                     GLfloat edg) : PointLight(red, green, blue, aIntensity, dIntensity, xPos, yPos, zPos, con, lin, exp)
+        GLfloat aIntensity, GLfloat dIntensity,
+        GLfloat xPos, GLfloat yPos, GLfloat zPos,
+        GLfloat xDir, GLfloat yDir, GLfloat zDir, 
+        GLfloat con, GLfloat lin, GLfloat exp,
+        GLfloat edg) : PointLight(red, green, blue, aIntensity, dIntensity, xPos, yPos, zPos, con, lin, exp)
 {
     direction = glm::normalize(glm::vec3(xDir, yDir, zDir)); 
     edge = edg; 
@@ -23,9 +23,10 @@ SpotLight::SpotLight(GLfloat red, GLfloat green, GLfloat blue,
 }
 
 void SpotLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation, 
-                         GLuint diffuseIntensityLocation, GLuint positionLocation, GLuint directionLocation, 
-                         GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation, 
-                         GLuint edgeLocation){
+                GLuint diffuseIntensityLocation, GLuint positionLocation, GLuint directionLocation, 
+                GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation, 
+                GLuint edgeLocation)
+{
     glUniform3f(ambientColorLocation, color.x, color.y, color.z); // in the shader we will have a vec3 and it will be bound to ambientColorLocation
     glUniform1f(ambientIntensityLocation, ambientIntensity); 
     glUniform1f(diffuseIntensityLocation, diffuseIntensity); 
@@ -43,6 +44,8 @@ void SpotLight::SetFlash(glm::vec3 pos, glm::vec3 dir){
     position = pos; 
     direction = dir; 
 }
+
+
 
 
 SpotLight::~SpotLight(){} 

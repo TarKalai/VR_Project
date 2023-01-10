@@ -4,10 +4,10 @@
 #include <glm/glm.hpp>
 
 #include "directionalLight.h"
-// #include "material.h"
 #include "pointLight.h"
 #include "spotLight.h"
 #include "areaLight.h"
+
 #include "constant.h"
 
 class LightConstructor{
@@ -31,8 +31,8 @@ public:
 
 private: 
     DirectionalLight mainLight;
-    unsigned int pointLightCount = 0; 
+    int pointLightCount = 0; 
     PointLight pointLights[values::MAX_POINT_LIGHTS];
-    unsigned int spotLightCount = 0;
+    int spotLightCount = 0;
     SpotLight spotLights[values::MAX_SPOT_LIGHTS];
 }; 

@@ -1,84 +1,103 @@
 #pragma once
-#include <glad/glad.h>
-#include<glm/gtc/type_ptr.hpp>
-#include<glm/gtc/matrix_inverse.hpp>
 
-#include <string>
-#include <fstream>
-#include <sstream>
+#include <stdio.h>
+#include <string.h>
 #include <iostream>
-#include <vector> 
+#include <fstream>
+#include <string>
 
-#include "object.h"
+#include <glad/glad.h>
 
 #include "directionalLight.h"
 #include "pointLight.h"
+
+#include "constant.h"
 #include "spotLight.h"
 #include "areaLight.h"
-#include "constant.h"
-#include "material.h"
+#include "object.h"
+#include "camera.h"
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+
+#include <vector>
 
 
 class Shader
 {
-public:
-	GLuint ID;
-
+public: 
     std::vector<Object*> objectList;
+    GLuint shaderID;
+    Shader(); 
+
+    void CreateFromString(const char* vertexCode, const char* fragmentCode); //Create the shader from a string we pass into it without reading a file. 
+    void CreateFromFiles(const char* vertexLocation, const char* fragmentLocation); 
+
+    std::string ReadFile(const char* fileLocation); 
+
+    GLuint GetProjectionLocation(); 
+    GLuint GetModelLocation(); 
+    GLuint GetViewLocation(); 
+    GLuint GetAmbientIntensityLocation(); 
+    GLuint GetAmbientColorLocation(); 
+
+    GLuint GetDiffuseIntensityLocation(); 
+    GLuint GetDirectionLocation(); 
+    GLuint GetSpecularIntensityLocation(); 
+    GLuint GetShininessLocation(); 
+    GLuint GetEyePositionLocation(); 
+
+    void SetDirectionalLight(DirectionalLight * dLight);
+    void SetPointLights(PointLight * pLight,int lightCount); 
+    void SetSpotLights(SpotLight * sLight, int lightCount);
     
-    bool shaderTexture;
-    bool shaderNormal;
-    // char * texturePath;
+    void SetTexture(GLuint textureUnit); 
+    void SetDirectionalShadowMap(GLuint textureUnit);
+    void SetDirectionalLightTransform(glm::mat4* ltransform);  
 
-    Shader( const char* vertexPath, const char* fragmentPath, bool texture, bool normal); //char* imagePath,
-
-	void use(); 
-
-    void setInteger(const GLchar *name, GLint value); 
-
-    void setFloat(const GLchar* name, GLfloat value);
-
-    void setVector3f(const GLchar* name, GLfloat x, GLfloat y, GLfloat z);
-
-    void setVector3f(const GLchar* name, const glm::vec3& value);
-
-    void setVec3(const GLchar* name, const glm::vec3 &value);
-
-    void setMatrix4(const GLchar* name, const glm::mat4& matrix); 
-
-    void SetDirectionalLight(DirectionalLight * dLight); 
-
-    void SetPointLights(PointLight * pLight, unsigned int lightCount);
-
-    void SetSpotLights(SpotLight * sLight, unsigned int lightCount); 
-
-    void SetAreaLights(AreaLight *  aLight, unsigned int lightCount);
-
-    glm::mat4 getModelRotPos(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
-
-    // void setColor(const GLchar* name, glm::vec3& color);
-
-    void addObject(Object* obj);
+    void addObject(Object *obj);
     void addObjects(std::vector<Object*> objects);
 
-    void DrawObjects(glm::mat4 view, 
-                     glm::mat4 projection, 
-                     glm::vec3 position_cam, glm::vec3 front_cam,
-                     DirectionalLight* mainLight, 
-                     PointLight * pLights, 
-                     unsigned int pLightCount, 
-                     SpotLight * sLights, 
-                     unsigned int sLightCount,
-                     AreaLight * aLights, 
-                     unsigned int aLightCount,
-                     Material material); //, glm::vec3 light_pos);
-    
-    void DrawLightObjects(glm::mat4 view, 
-                          glm::mat4 projection,
-                          AreaLight * aLights, 
-                          unsigned int aLightCount);
 
-    GLuint uniformPointLightCount;
+    void RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view, 
+                         DirectionalLight *mainLight, 
+                         PointLight * pointLights, 
+                         int pointLightCount, 
+                         SpotLight * spotLights, 
+                         int spotLightCount, 
+                         AreaLight * areaLights, 
+                         int areaLightCount); // RenderPass
+    void DirectionalShadowMapPass(DirectionalLight* light); // DirectionalShadowMapPass
+    void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
+    void RenderScene(); // RenderScene
+
+    void UseShader(); 
+    void ClearShader();
+
+    void SetAreaLights(AreaLight *  aLights, int lightCount);
+ 
+
+
+    ~Shader(); 
+private: 
+    int pointLightCount;
+    int spotLightCount; 
+    int areaLightCount;
+
+    GLuint uniformProjection, uniformModel, uniformView, uniformEyePosition, 
+    uniformSpecularIntensity, uniformShininess,
+    uniformTexture, uniformColor,
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap;
+
+    struct {
+        GLuint uniformColor; 
+        GLuint uniformAmbientIntensity; 
+        GLuint uniformDiffuseIntensity; 
+
+        GLuint uniformDirection; 
+    } uniformDirectionalLight; // struct calls uniformDirectionalLight, it is an instance of the struct (which does not have a name)
+
+    GLuint uniformPointLightCount; 
+
     struct {
         GLuint uniformColor; 
         GLuint uniformAmbientIntensity; 
@@ -88,16 +107,9 @@ public:
         GLuint uniformConstant; 
         GLuint uniformLinear; 
         GLuint uniformExponent; 
-    } uniformPointLight[values::MAX_POINT_LIGHTS];
+    } uniformPointLight[values::MAX_POINT_LIGHTS]; // We are going to have mulitple lights, so we use an array
 
-    struct {
-        GLuint uniformColor; 
-        GLuint uniformAmbientIntensity; 
-        GLuint uniformDiffuseIntensity; 
-        GLuint uniformDirection; 
-    } uniformDirectionalLight;
-
-    GLuint uniformSpotLightCount;
+    GLuint uniformSpotLightCount; 
 
     struct {
         GLuint uniformColor; 
@@ -113,23 +125,22 @@ public:
         GLuint uniformEdge; 
     } uniformSpotLight[values::MAX_SPOT_LIGHTS];
 
+    GLuint uniformLTC1;
+    GLuint uniformLTC2;
+    GLuint uniformMaterialDiffuse;
     GLuint uniformAreaLightCount;
     struct {
         GLuint uniformColor; 
-        GLuint uniformAmbientIntensity; 
-        GLuint uniformDiffuseIntensity; 
+        GLuint uniformIntensity; 
+        GLuint uniformTwoSided;
 
-        GLuint uniformPosition;
-        GLuint uniformConstant; 
-        GLuint uniformLinear; 
-        GLuint uniformExponent; 
+        GLuint uniformPoint0;
+        GLuint uniformPoint1;
+        GLuint uniformPoint2;
+        GLuint uniformPoint3;
     } uniformAreaLight[values::MAX_AREA_LIGHTS];
 
-
-
-private:
-    GLuint compileShader(std::string shaderCode, GLenum shaderType);
-
-    GLuint compileProgram(GLuint vertexShader, GLuint fragmentShader); 
+    void CompileShader(const char* vertexCode, const char* fragmentCode); 
+    void AddShader(GLuint program, const char* shader_code, GLenum shader_type); 
 
 };

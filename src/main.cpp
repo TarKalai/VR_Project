@@ -1,129 +1,164 @@
-#include<iostream>
-#include<cstdlib>
 
+#include <stdio.h>
+#include <string.h>
+#include <cmath>
+#include <vector>
 
-//include glad before GLFW to avoid header conflict or define "#define GLFW_INCLUDE_NONE"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
-#include<glm/gtc/matrix_transform.hpp>
-#include<glm/gtc/type_ptr.hpp>
-#include<glm/gtc/matrix_inverse.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp> //use type_ptr to pass the values to the shaders
+#include "glm/gtx/string_cast.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "camera.h"
-#include "shader.h"
-#include "shader2D.h"
-#include "object.h"
-
-
 #include "physics.h"
-#include "display.h"
-#include "gui.h"
-#include "process.h"
+#include "shader.h"
+#include "camera.h"
+#include "light_constructor.h"
+#include "object_constructor.h"
 #include "directionalLight.h"
-#include "material.h"
 #include "pointLight.h"
 #include "spotLight.h"
 #include "areaLight.h"
 #include "constant.h"
-#include "light_constructor.h"
-#include "object_constructor.h"
+#include "object.h"
+#include "process.h"
+#include "gui.h"
 #include "utils.h"
 
-
 Display mainWindow; 
-AreaLight areaLights[values::MAX_AREA_LIGHTS];
 
-Material shinyMaterial; 
-Material dullMaterial; 
+PhysicalWorld physicalWorld;
 
-Camera camera(glm::vec3(0.0, 15.0, -25.0), glm::vec3(0.0, 1.0, 0.0), 90.0, -30.);
+Shader objectShader; 
+Shader directionalShadowShader; 
+Shader areaLightShader; 
 
-int main(int argc, char* argv[]){
-	std::cout << "Project is running... " << std::endl;
+Camera camera; 
 
-	mainWindow = Display(true); // if cursor disabled -> true, otherwise false.
-	mainWindow.Initialise();
+DirectionalLight* mainLight; 
+PointLight *pointLights; 
+SpotLight *spotLights; 
+AreaLight areaLights[values::MAX_AREA_LIGHTS]; 
 
-	Shader groundShader(shaderfiles::groundVertex, shaderfiles::groundFrag, true, true);
-	Shader lightShader(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag, false, false);
-	Shader2D shader2D(true);
+int pointLightCount; 
+int spotLightCount;
+int areaLightCount = 0;
 
-	Object ground_obj = Object(geometry::plane, image::dirt, glm::vec3(0.), glm::vec3(0.), glm::vec3(50., 20., 50.), 1);
-    PhysicalWorld world = PhysicalWorld(&ground_obj); // BULLET3
-	groundShader.addObject(&ground_obj);
+void CreateObjects(){
 
-	ObjectConstructor objectConstructor = ObjectConstructor(&world);
-	groundShader.addObjects(objectConstructor.getObjects());
+    Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Dull(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1., 1., 1.));
+    physicalWorld = PhysicalWorld(ground);
+    objectShader.addObject(ground);
+    directionalShadowShader.addObject(ground); 
 
-	shinyMaterial = Material(0.f, 0.0f); 
-    dullMaterial = Material(0.3f, 4); 
+    for (int i=0; i<10; i++) {
+		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
+		glm::vec3 color = glm::vec3(1.0);
+		Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
+        objectShader.addObject(sphere);
+        directionalShadowShader.addObject(sphere);
+        physicalWorld.addSphere(sphere); 
+	}
 
-	LightConstructor lightConstructor = LightConstructor();
+	for (int i=0; i<10; i++) {
+		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
+		glm::vec3 color = glm::vec3(1.0);
+		Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, 1, color);
+        objectShader.addObject(cube);
+        directionalShadowShader.addObject(cube);
+        physicalWorld.addCube(cube); 
+	}
+}
 
-	// final constructor of lightobjects TODO !
-	unsigned int areaLightCount =0; 
+void CreateShaders()
+{
+    objectShader.CreateFromFiles(shaderfiles::mainVertex, shaderfiles::mainFrag); 
+    directionalShadowShader.CreateFromFiles(shaderfiles::shadowMapVertex, shaderfiles::shadowMapFrag); 
+    areaLightShader.CreateFromFiles(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag); 
+}
 
+int main(){
 
+    mainWindow = Display(true); 
+    mainWindow.Initialise(); 
+    
+    CreateShaders();
+    CreateObjects(); 
+
+    camera = Camera(glm::vec3(0.0f, 15.0f, -25.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, -30.0f);
+
+    LightConstructor lightConstructor = LightConstructor();
+    mainLight = lightConstructor.getMainLight();
+    pointLights = lightConstructor.getPointLight();
+    pointLightCount = lightConstructor.getPointLightCount();
+    spotLights = lightConstructor.getSpotLight();
+    spotLightCount = lightConstructor.getSpotLightCount();
+    
 	for (int i=0; i<1; i++) {
-		// std::sin(glfwGetTime());
-		glm::vec3 pos = glm::vec3(Utils::getRandom(-50.0, 50.0), 0., Utils::getRandom(-50.0, 50.0));
+		glm::vec3 pos = glm::vec3(-10,1,0);
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0), 0, 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
-		glm::vec3 scale = glm::vec3(Utils::getRandom(1.0, 3.0));
+		glm::vec3 scale = glm::vec3(1);
 
-		Object* plane = new Object(geometry::plane, image::white, pos, rot, scale);
-		lightShader.addObject(plane);
+		Object* plane = new Object(geometry::plane, Textures::Dirt(), Materials::Empty(), pos, rot, scale, 1, glm::vec3(1,0,0));
+		areaLightShader.addObject(plane);
 
-		areaLights[i] = AreaLight(Utils::getRandom(0.0, 1.0), Utils::getRandom(0.0, 1.0), Utils::getRandom(0.0, 1.0), 
-							  0.4f, Utils::getRandom(.1, 1.0),
+		areaLights[i] = AreaLight(plane->color.x,plane->color.y, plane->color.z, 
+							  0.9f, 10.,
 							  plane->getPosition(),
-							  0.3f, 0.2f, 0.1f, // not used
+							  0.003f, 0.002f, 0.001f, // not used
 							  plane->getRotation(), true, 
 							  plane->getVertexPosition(),
 							  plane->getScale());
     	areaLightCount++; 
-	}
-	
-	//Rendering
+    }
+
 	glfwSwapInterval(1);
-	Process process = Process(&mainWindow, &camera, &world, &groundShader);
+
+    Process process = Process(&mainWindow, &camera, &physicalWorld, &objectShader, &directionalShadowShader);
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 	process.initMousePosition();
-	GUI gui(&process, &mainWindow, &world, &groundShader);
+    
+	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
+    while(!mainWindow.getShouldClose()){
 
-	while (!mainWindow.getShouldClose()){
+        glm::mat4 view = camera.getViewMatrix();
+        glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.001, 200.0);
+        // we want the perspective projection instead of orthographic (made for 2D)
+        // 1st: Field of view : how wide the view is (top to bottom) , 
+        //2scd : width of the window/height, 3rd; Near plane: how near can you see an object (we don't want to see through it)
+        // 4th Far plane: everything beyond this plane is cut off. 
 
-		process.processInput();
+         // Get and Handle user input
+         
+        glfwPollEvents(); 
 
-		glm::mat4 view = camera.getViewMatrix();
-		glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.01, 200.0);
-		glfwPollEvents();
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        physicalWorld.animate();
+        
+        // Order -> object before areaLight ! (try with shadow first ?) order = shadow, object, objectLight
 
-		
-		world.animate();
-		
-		groundShader.DrawObjects(view, projection, camera.Position, camera.Front, lightConstructor.getMainLight(), lightConstructor.getPointLight(), lightConstructor.getPointLightCount(), lightConstructor.getSpotLight(), lightConstructor.getSpotLightCount(), areaLights, areaLightCount, shinyMaterial);
-		lightShader.DrawLightObjects(view, projection, areaLights, areaLightCount);
-		
-		if (!camera.pause) {
-			shader2D.drawObject();
-		}
+        objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
+        areaLightShader.DrawLightObjects(projection, view);
+        // directionalShadowShader.DirectionalShadowMapPass(&mainLight); // shadow map will be updated for the light passed
+        directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed
+        // printf("light intensity : %f, %f \n", (&mainLight)->getAmbientIntensity(), (&mainLight)->getDiffuseIntensity());
+        
+        gui.update();
+        process.processInput();
+        mainWindow.swapBuffers(); // There are 2 scenes going on at once, we are drawing to the one that can't be seen, and we call swapBuffers to swap them around: so then the one we are drawing to is the one that can be seen and the one which could be seen originaly is the one we are drawing to. 
+    }
 
-		gui.update();
-		mainWindow.swapBuffers(); 
-	}
+    gui.clear();
 
-	gui.clear();
-
-	// BULLET3
-	world.clear();
-
-	return 0;
+    return 0; 
 }
+

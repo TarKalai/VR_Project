@@ -4,15 +4,15 @@
 
 namespace values
 {
-    static const int MAX_POINT_LIGHTS = 4;
-    static const int MAX_SPOT_LIGHTS = 3;
-    static const int MAX_AREA_LIGHTS = 100;
+    static constexpr int MAX_POINT_LIGHTS = 4;
+    static constexpr int MAX_SPOT_LIGHTS = 3;
+    static constexpr int MAX_AREA_LIGHTS = 100;
 }
 
 namespace image
 {
     static constexpr char white[128] = "../../image/white.png";
-    static constexpr char ground[128] = "../../image/woodFloor.png";
+    static constexpr char wood[128] = "../../image/woodFloor.png";
     static constexpr char damier[128] = "../../image/damier.png";
     static constexpr char container[128] = "../../image/container.jpg";
     static constexpr char concrete[128] = "../../image/concreteTexture.png";
@@ -21,8 +21,10 @@ namespace image
     static constexpr char green[128] = "../../image/green.png";
     static constexpr char blue[128] = "../../image/blue.png";
     static constexpr char yellow[128] = "../../image/yellow.png";
+    static constexpr char brick[128] = "../../image/brick.png";
     static constexpr char dirt[128] = "../../image/dirt.png";
-
+    static constexpr char bird[128] = "../../image/bird.png";
+    static constexpr char hulk[128] = "../../image/hulk.png";
 }
 
 namespace geometry
@@ -35,11 +37,24 @@ namespace geometry
 
 namespace shaderfiles
 {
-    static constexpr char groundVertex[128] = "../../src/Shaders/vertGround.vs";
-    static constexpr char groundFrag[128] = "../../src/Shaders/fragGround.fs";
+    static constexpr char mainVertex[128] = "../../src/Shaders/main.vs";
+    static constexpr char mainFrag[128] = "../../src/Shaders/main.fs";
     static constexpr char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
     static constexpr char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
+    static constexpr char shadowMapVertex[128] = "../../src/Shaders/directional_shadow_map.vs";
+    static constexpr char shadowMapFrag[128] = "../../src/Shaders/directional_shadow_map.fs";
 } 
+
+namespace general
+{
+    static constexpr glm::vec3 sceneSize = glm::vec3(100, 100, 100); // size of the scene, the scene is a cube (where the shadow are rendered in). (shadow box)
+    static constexpr int floorThickness = 1;
+}
+
+namespace Ttime
+{
+    static constexpr float coefficient = 0.005;
+}
 
 namespace color
 {

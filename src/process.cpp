@@ -1,15 +1,12 @@
 #include "process.h"
-#include "physics.h"
 
-
-
-
-Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg) {
+Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg) {
 	display = displayArg;
 	window = display->getWindow();
 	camera = cameraArg;
 	world = worldArg;
 	shader = shaderArg;
+	shadow = shadowArg;
 }
 
 
@@ -30,19 +27,19 @@ void Process::HandleMenuMode() {
 		menuPressed  = true;
 	}
 	else if (menuPressed) {
-		menuPressed = false;
-		if (camera->pause) {
+		if (camera->pause) {  // CONTINUE
 			display->cursor_disabled = true;
 			camera->reactivateMouse(display);
 			glfwSetCursorPos(window, oldCursorX, oldCursorY);
-			world->speedAnimation = oldSpeedAnimation;
-		} else {
-			oldSpeedAnimation = world->speedAnimation;
-			world->speedAnimation = 0;
+			Time::setSpeed(sliderSpeedAnimation);
+		} else { // PAUSE
+			sliderSpeedAnimation = Time::getSpeed();
+			if (menuPressed) { Time::setSpeed(0.);}
 			glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
     		display->cursor_disabled = false;
 			camera->deactivateMouse(display);
 		}
+		menuPressed = false;
 	}
 }
 
@@ -106,14 +103,19 @@ void Process::FullScreen() {
 
 void Process::AnimationSpeed() {
 	// Animation speed
-	if (glfwGetKey(window, GLFW_KEY_KP_0) == GLFW_PRESS) 
-		world->speedAnimation = 0;
-	else if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) 
-		world->speedAnimation = 0.25;
-	else if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) 
-		world->speedAnimation = 1.;
-	else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) 
-		world->speedAnimation = 4.;
+	if (glfwGetKey(window, GLFW_KEY_KP_0) == GLFW_PRESS) {
+		sliderSpeedAnimation = 0;
+		Time::setSpeed(0.);
+	} else if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) {
+		sliderSpeedAnimation = 0.25;
+		Time::setSpeed(0.25);
+	} else if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) {
+		sliderSpeedAnimation = 1.;
+		Time::setSpeed(1.);
+	} else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) {
+		sliderSpeedAnimation = 4.;
+		Time::setSpeed(4.);
+	}
 }
 
 void Process::PlacingDomino() {
@@ -130,9 +132,8 @@ void Process::Pushing() {
 		pressed += 1;
 	} else if (shoot) {
 		shoot = false;
-		Object* sphere = new Object(geometry::sphere, image::white, camera->Position, glm::vec3(0.), glm::vec3(1.), false); // visible=false
-		world->addSphere(sphere, camera->Front*glm::vec3(pressed), 30); // lifetime = 30
-		shader->addObject(sphere);
+		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Empty(), camera->getPosition(), glm::vec3(0.), glm::vec3(1.), false); // visible=false
+		world->addSphere(sphere, camera->getDirection()*glm::vec3(pressed), 30); // lifetime = 30
 		pressed = 0;
 	}
 }
@@ -156,15 +157,15 @@ void Process::initMousePosition(){
 	if (display->getCursorDisabled()){
 		int height, width;
 		glfwGetWindowSize(window, &width, &height);
-		camera->initRunX = width/2 - camera->Yaw*(1/camera->MouseSensitivity);
-		camera->initRunY = height/2 + camera->Pitch*(1/camera->MouseSensitivity);
+		camera->initRunX = width/2 - camera->getYaw()*(1/camera->getMouseSensitivity());
+		camera->initRunY = height/2 + camera->getPitch()*(1/camera->getMouseSensitivity());
 		printf("size width %d, height %d\n", width, height);
 	}
 	else {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos); 
-		camera->initRunX = xpos - camera->Yaw*(1/camera->MouseSensitivity);
-		camera->initRunY = ypos + camera->Pitch*(1/camera->MouseSensitivity);
+		camera->initRunX = xpos - camera->getYaw()*(1/camera->getMouseSensitivity());
+		camera->initRunY = ypos + camera->getPitch()*(1/camera->getMouseSensitivity());
 	}
 }
 
@@ -191,8 +192,8 @@ void Process::PutDominoes(){
 	float widthDomino = 0.175*2;
 	float espacement = 0.5*heightDomino + widthDomino; // distance between 2 domino
 
-	glm::vec3 dir = camera->Front;
-	glm::vec3 pos = camera->Position;
+	glm::vec3 dir = camera->getDirection(); 
+	glm::vec3 pos = camera->getPosition();
 
 	if (dir.y < 0) {
 		double ratio = (heightDomino/2 - pos.y)/dir.y;
@@ -208,11 +209,10 @@ void Process::PutDominoes(){
 				ratio = espacement/dist;
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
-
-				Object* domino = new Object(geometry::domino, image::white, glm::vec3(lastDomino), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2), true, glm::vec3(Utils::getRandom(0, 1), Utils::getRandom(0, 1), Utils::getRandom(0, 1)));	
+				Object* domino = new Object(geometry::domino, Textures::White(), Materials::Shiny(), lastDomino, glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2), true, glm::vec3(Utils::getRandom(0, 1), Utils::getRandom(0, 1), Utils::getRandom(0, 1)));	
 				world->addDomino(domino);
 				shader->addObject(domino);
-
+				shadow->addObject(domino);
 				lastDomino = nextDomino; // go to next domino
 			}
 		}

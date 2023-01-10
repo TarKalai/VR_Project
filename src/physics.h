@@ -4,6 +4,10 @@
 #include <btBulletDynamicsCommon.h>
 #include <map>
 #include "object.h"
+#include <math.h>
+#include "glm/ext.hpp" 
+#include "glm/gtx/string_cast.hpp"
+#include "utils.h"
 
 
 class PhysicalWorld{
@@ -20,6 +24,7 @@ public:
     std::map<int, Object*> glObjects;
 
     // constructor
+    PhysicalWorld();
     PhysicalWorld(Object *obj);
 
     void initializeEngine();
@@ -32,4 +37,5 @@ public:
     void setLifeTime(btRigidBody* body, int lifetime) { body->setUserIndex2(lifetime); }
     void animate();
     void clear();
+    ~PhysicalWorld();
 };

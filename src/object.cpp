@@ -1,6 +1,4 @@
 #include "object.h"
-#include "glm/ext.hpp" 
-#include "glm/gtx/string_cast.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -9,8 +7,9 @@ int Object::objectCounter = 0;
 
 Object::Object() {}
 
-Object::Object(const char* geometryPath, const char* texturePath, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible, glm::vec3 Color){
-    texturepath = texturePath;
+Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible, glm::vec3 Color){
+    texture = tex;
+    material = matos;
     visible = is_visible;
     position = obj_pos;
     rotation = obj_rot;
@@ -113,10 +112,11 @@ Object::Object(const char* geometryPath, const char* texturePath, glm::vec3 obj_
     infile.close();
 
     numVertices = vertices.size();
+    MakeObject();
 }
 
-void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal){ 
-    has_texture = shader_texture;
+void Object::MakeObject(){ 
+    //has_texture = shader_texture;
     //Create the VAO and VBO
     //Put your data into your VBO
     //Define VBO and VAO as active buffer and active vertex array
@@ -140,83 +140,35 @@ void Object::MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal
         data[i * 8 + 7] = v.Normal.z;
     }
     
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    //define VBO and VAO as active buffer and active vertex array
+    glGenVertexArrays(1, &VAO); // first arg: amount of arrays we want, scd arg: ids of the arrays
+    // bind the VAO: 
     glBindVertexArray(VAO);
+
+    // define a buffer object to go inside the VAO: 
+    glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * numVertices, data, GL_STATIC_DRAW);
 
-    {
-        auto att_pos = glGetAttribLocation(shaderID, "pos"); //position
-        glEnableVertexAttribArray(att_pos);
-        glVertexAttribPointer(att_pos, 3, GL_FLOAT, false, 8 * sizeof(float), (void*)0);
-    }
-    
-    if (shader_texture) {
-        glGenTextures(1, &texture);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    //1st arg: location of the attribute, 2sd: size of the value passed here it is 3 because we pass x, y, z. 
+    // 3rd: type of the values passed, 4th : if we want to normalise the values, 5th: with Opengl we can have colors and position int 
+    //eh same valeus if we do so we should indicarte the amount of values we should skip to consider one vertex whole (in the vertices variable)
+    // Here we are not doing that, 6th: offset which tells where the data starts, you can tell it it starts from 1 (so we basically ignore the first elment of variable vertices)
 
-        stbi_set_flip_vertically_on_load(true);
-        int width, height, nrComponents;
-        unsigned char *data = stbi_load(texturepath, &width, &height, &nrComponents, 0);
-        if (data)
-        {
-            GLenum internalFormat;
-            GLenum dataFormat;
-            if (nrComponents == 1)
-            {
-                internalFormat = dataFormat = GL_RED;
-            }
-            else if (nrComponents == 3)
-            {
-                // internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
-                dataFormat = GL_RGB;
-            }
-            else if (nrComponents == 4)
-            {
-                // internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
-                dataFormat = GL_RGBA;
-            }
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(GL_TEXTURE_2D, 0, dataFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            //3. Define the parameters for the texture
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        }
-        else {
-            std::cout << "Failed to Load texture" << std::endl;
-            const char* reason = stbi_failure_reason();
-            std::cout << reason << std::endl;
-        }
+    glEnableVertexAttribArray(0); // Corresponds to the location of attribut (int he layout) directly linked to first arg of tehe previous command.
 
-	    stbi_image_free(data);
-        auto att_tex = glGetAttribLocation(shaderID, "tex");
-        glEnableVertexAttribArray(att_tex);
-        glVertexAttribPointer(att_tex, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        u_texture = glGetUniformLocation(shaderID, "theTexture");
-    }
+    glVertexAttribPointer(1, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    // Arg 1: eaquals to 1 so we are dealing with texture coord. 
+    // last arg: offset for the first value. 
+    glEnableVertexAttribArray(1); 
 
-    if (shader_normal) {
-        auto att_col = glGetAttribLocation(shaderID, "norm"); //  "normal"
-        glEnableVertexAttribArray(att_col);
-        glVertexAttribPointer(att_col, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    }
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
     //desactive the buffer
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER,0); // bind to nothing => UNBIND
+    glBindVertexArray(0); // UNBIND VAO
     delete[] data;
-
-    // Example to modify the position, rotation and scale of an object(to keep in case ^^)
-    //model = glm::translate(model, position);
-    //model = glm::rotate(model, (float) 3.14/5, glm::vec3(0.0f, 0.0f, 1.f));
-    //model = glm::scale(model, glm::vec3(1,3,2));
-    //std::cout << glm::to_string(model) << std::endl;
 
     setPosRot(position, rotation);
 }
@@ -239,13 +191,9 @@ void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
 void Object::draw(){
 
     //bind your vertex arrays and call glDrawArrays
-    glBindVertexArray(this->VAO);
-    if (has_texture){
-        glUniform1i(u_texture, 0);
-        glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-    }
+    glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    glBindVertexArray(0);
 
 }
 

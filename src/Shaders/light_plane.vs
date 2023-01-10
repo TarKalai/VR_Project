@@ -1,8 +1,8 @@
 #version 330 core
 
-in vec3 pos; // position
-in vec3 norm; //Normal
-in vec2 tex;
+layout (location=0) in vec3 pos;
+layout (location=1) in vec2 tex; 
+layout (location=2) in vec3 norm;
 
 uniform mat4 model; // M
 uniform mat4 view;

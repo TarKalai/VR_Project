@@ -16,6 +16,12 @@ public:
         glm::vec3 Position, 
         GLfloat con, GLfloat lin, GLfloat exp, 
         glm::vec3 Rotation, bool TwoSided, std::vector<glm::vec3> VertexPosition, glm::vec3 Scale); 
+
+    void UseLight(GLuint uniformPoint0, GLuint uniformPoint1, 
+                GLuint uniformPoint2, GLuint uniformPoint3,
+                GLuint uniformColor, GLuint uniformIntensity, GLuint uniformTwoSided);
+
+    glm::mat4 getModelRotPos(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
     
 
     std::vector<glm::vec3>getVertexPosition(){return vertexPosition;}

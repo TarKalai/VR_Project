@@ -7,12 +7,15 @@ LightConstructor::LightConstructor(){
 }
 
 void LightConstructor::createMainLight(){
-    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
-                                 0.2f, 0.2f, 
+
+    mainLight = DirectionalLight(8196, 8196, 
+                                1.0f, 1.0f, 1.0f, 
+                                0.4f, 0.4f, 
                                 -1.0f, -1.0f, 0.0f); 
 }
 
-void LightConstructor::createPointLight(){    
+void LightConstructor::createPointLight(){  
+
     pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
                                 0.4f, 1.0f,
                                 10.0f,4.0f, 10.0f,

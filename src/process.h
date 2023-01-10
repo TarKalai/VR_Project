@@ -1,8 +1,5 @@
 #pragma once
 
-// #ifndef PROCESS_H
-// #define PROCESS_H
-
 #include <iostream>
 #include <stdio.h>
 #include "string.h"
@@ -19,7 +16,6 @@
 #include "camera.h"
 #include "display.h"
 #include "constant.h"
-// #include "constant.h"
 #include "utils.h"
 
 class Camera; 
@@ -31,14 +27,15 @@ public:
     Camera* camera;
     PhysicalWorld* world;
     Shader* shader;
-    float oldSpeedAnimation;
+    Shader* shadow;
+    float sliderSpeedAnimation = 1.;
 
-    Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg); 
+    Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
     void initMousePosition();
     void processInput(); 
     void HandleMouse(); 
-    // void processMouseScroll(float yoffset);
     void PutDominoes();
+	void AnimationSpeed();
     ~Process(); 
 private: 
     bool menuPressed = false;
@@ -61,9 +58,7 @@ private:
 	void DecreaseScreen();
 	void IncreaseScreen();
 	void FullScreen();
-	void AnimationSpeed();
 	void PlacingDomino();
 	void Pushing();
 	void Deplacement();
 }; 
-// #endif

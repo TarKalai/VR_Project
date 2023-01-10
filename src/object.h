@@ -13,6 +13,15 @@
 #include <glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 
+#include "texture.h"
+#include "material.h"
+
+// Material shinyMaterial; 
+// Material dullMaterial; 
+
+// shinyMaterial = Material(4.0f, 256); 
+// dullMaterial = Material(0.3f, 4); 
+// shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec2 Texture;
@@ -33,9 +42,11 @@ public:
 	GLuint VAO, VBO;
 	const char* texturepath;
 
-	bool has_texture;
 	GLuint u_texture;
-	GLuint texture;
+	GLuint textureID;
+	Texture* texture;
+	Material* material;
+
 
 	std::vector<glm::vec3> vt_positions;
 	std::vector<glm::vec2> vt_textures;
@@ -49,9 +60,9 @@ public:
 
 	Object();
 	
-	Object(const char* geometryPath, const char* texturePath,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true, glm::vec3 Color=glm::vec3(1.0));
+	Object(const char* geometryPath, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true, glm::vec3 Color=glm::vec3(1.0));
 	
-	void MakeObject(GLuint shaderID, bool shader_texture, bool shader_normal);
+	void MakeObject();
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
 

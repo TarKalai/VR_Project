@@ -19,9 +19,6 @@ enum Camera_Movement {
     DOWN
 };
 
-
-
-
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
 class Camera
 {
@@ -32,21 +29,14 @@ public:
     float PITCH; //= 0.0f;
     float SPEED = 2.0f;
     float SENSITIVITY = 0.1f;
-    float ZOOM = 45.0f;
+    float ZOOM = 60.0f;
    
     // camera Attributes
-    glm::vec3 Position;
-    glm::vec3 Front;
-    glm::vec3 Up;
-    glm::vec3 Right;
-    glm::vec3 WorldUp;
+    
+    glm::vec3 up;
+    glm::vec3 right;
+    glm::vec3 worldUp;
     // euler Angles
-    float Yaw;
-    float Pitch;
-    // camera options
-    float MovementSpeed;
-    float MouseSensitivity;
-    float Zoom;
 
     // mouse position when start program
     float initRunX;
@@ -55,7 +45,7 @@ public:
     // constructor with vectors
     
     // constructor with scalar values
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f, float pitch =  0.0f); // : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+    Camera(glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f), float Yaw = -90.0f, float Pitch =  0.0f); // : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 getViewMatrix();
 
@@ -73,8 +63,6 @@ public:
 //    vois ScrollHandler(GLFWwindow * window); 
 
     void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
-
-    // void ProcessMouseScroll(float yoffset);
     
     void deactivateMouse(Display* display);
     void reactivateMouse(Display* display);
@@ -85,7 +73,26 @@ public:
 
     void CreateCallBacks(GLFWwindow* window, double xoffset, double yoffset); 
 
+    // getters
+    glm::vec3 getPosition(){return position;}
+    glm::vec3 getDirection(){return normalize(front);}
+    float getYaw(){return yaw;}
+    float getPitch(){return pitch;}
+    float getMouseSensitivity(){return mouseSensitivity;}
+    float getZoom(){return zoom;}
+
+
+
 private:
+    float yaw;
+    float pitch;
+    float zoom;
+    // camera options
+    float movementSpeed;
+    float mouseSensitivity;
+
+    glm::vec3 position;
+    glm::vec3 front;
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors();
 };

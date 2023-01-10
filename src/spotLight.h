@@ -1,8 +1,4 @@
 #pragma once
-// #ifndef SPOTLIGHT_H
-// #define SPOTLIGHT_H
-
-
 #include "pointLight.h"
 
 class SpotLight: 
