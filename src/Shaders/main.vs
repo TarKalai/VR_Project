@@ -25,7 +25,7 @@ void main(){
 
     TexCoord = tex; 
 
-    mat3 normalMatrix = mat3(transpose(inverse(model)))
+    mat3 normalMatrix = mat3(transpose(inverse(model)));
     Normal = normalize(normalMatrix * norm); 
     // Normal is in relation to where the model is, because if we move the light around we are lihghting objects in different ways. 
     // If we rotate the object the normal doe not move, or if we scale an object the normal will bend so we need to multiply norm by 
