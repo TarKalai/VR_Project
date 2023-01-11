@@ -6,9 +6,10 @@ Material::Material(){
     shininess = 0.0f; 
 }
 
-Material:: Material(GLfloat sIntensity, GLfloat shine){
+Material:: Material(GLfloat sIntensity, GLfloat shine, const char* _name){
     specularIntensity = sIntensity; 
     shininess = shine; 
+    name = _name;
 }
 
 void Material::UseMaterial(GLuint specularIntensityLocation, GLuint shininessLocation){

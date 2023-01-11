@@ -58,9 +58,14 @@ class Textures {
 	public:
 		Textures(const Textures&) = delete;
 
-		static Textures& Get(){
-			static Textures instance;
-			return instance;
+		static Texture* Get(std::string name){
+			if (name == "brick") {return Get().IBrick();}
+			else if (name == "dirt") {return Get().IDirt();}
+			else if (name == "white") {return Get().IWhite();}
+			else if (name == "wood") {return Get().IWood();}
+			else if (name == "hulk") {return Get().IHulk();}
+			else if (name == "bird") {return Get().IBird();}
+			else {return Get().IWhite();}
 		} 
 
 		static Texture* Brick(){return Get().IBrick();}
@@ -73,6 +78,11 @@ class Textures {
 	private:
 		Textures(){}
 
+		static Textures& Get(){
+			static Textures instance;
+			return instance;
+		} 
+
 		Texture* IBrick(){return &brick;}
 		Texture* IDirt(){return &dirt;}
 		Texture* IWhite(){return &white;}
@@ -80,12 +90,12 @@ class Textures {
 		Texture* IHulk(){return &hulk;}
 		Texture* IBird(){return &bird;}
 
-		Texture brick = Texture(image::brick); 
-		Texture dirt  = Texture(image::dirt); 
-		Texture white = Texture(image::white);
-		Texture wood  = Texture(image::wood);
-		Texture hulk  = Texture(image::hulk);
-		Texture bird  = Texture(image::bird);
+		Texture brick = Texture(image::brick, "brick"); 
+		Texture dirt  = Texture(image::dirt, "dirt"); 
+		Texture white = Texture(image::white, "white");
+		Texture wood  = Texture(image::wood, "wood");
+		Texture hulk  = Texture(image::hulk, "hulk");
+		Texture bird  = Texture(image::bird, "bird");
 
 };
 
@@ -93,9 +103,11 @@ class Materials {
 	public:
 		Materials(const Materials&) = delete;
 
-		static Materials& Get(){
-			static Materials instance;
-			return instance;
+		static Material* Get(std::string name){
+			if (name == "shiny") {return Get().IShiny();}
+			else if (name == "dull") {return Get().IDull();}
+			else if (name == "empty") {return Get().IEmpty();}
+			else {return Get().IEmpty();}
 		} 
 
 		static Material* Shiny(){return Get().IShiny();}
@@ -105,13 +117,18 @@ class Materials {
 	private:
 		Materials(){}
 
+		static Materials& Get(){
+			static Materials instance;
+			return instance;
+		} 
+
 		Material* IShiny(){return &shiny;}
 		Material* IDull(){return &dull;}
 		Material* IEmpty(){return &empty;}
 
-		Material shiny = Material(4.0f, 256.0f); 
-    	Material dull  = Material(0.3f, 4.0f); 
-    	Material empty = Material(0.0f, 0.0f); 
+		Material shiny = Material(4.0f, 256.0f, "shiny"); 
+    	Material dull  = Material(0.3f, 4.0f, "dull"); 
+    	Material empty = Material(0.0f, 0.0f, "empty"); 
 
 };
 
