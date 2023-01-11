@@ -34,7 +34,7 @@ void PhysicalWorld::createGround(Object *obj){
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0,-obj->scale.y,0));
+    groundTransform.setOrigin(btVector3(0,2*obj->position.y,0));
 
     btScalar mass(0.);
 

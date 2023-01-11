@@ -52,7 +52,7 @@ int areaLightCount = 0;
 
 void CreateObjects(){
 
-    Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Dull(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1., 1., 1.));
+    Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Dull(), glm::vec3(0., -general::floorThickness, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1., 1., 1.));
     physicalWorld = PhysicalWorld(ground);
     objectShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
@@ -134,7 +134,7 @@ int main(){
         process.processInput();
 
         glm::mat4 view = camera.getViewMatrix();
-        glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.001, 200.0);
+        glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.1, 200.0);
         // we want the perspective projection instead of orthographic (made for 2D)
         // 1st: Field of view : how wide the view is (top to bottom) , 
         //2scd : width of the window/height, 3rd; Near plane: how near can you see an object (we don't want to see through it)
