@@ -65,22 +65,22 @@ void GUI::displayFPS() {
 
 void GUI::displayTime() {
 
-    Point size = Point({115, 50});
-    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x-200, -8));
+    Point size = Point({115, 45});
+    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, -8));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
     ImGui::Begin("time", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
     Day day = Time::getDate();
     ImGui::Text("  Time: %ih%i", day.hour, day.minute);
-    float time = Time::getTime();
     ImGui::PushItemWidth(115);
-    ImGui::SliderFloat(" ", (&time), 0., Ttime::maxTime-1);
+    float time = Time::getTime();
+    ImGui::SliderFloat(" ", (&time), 0., Ttime::maxTime-1, " ",  ImGuiSliderFlags_None);
     Time::setTime(time);
     ImGui::End();
 }
 
 void GUI::displaySpeedAnimation() {
     Point size = Point({115, 100});
-    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 55));
+    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 45));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
     ImGui::Begin("Animation Speed", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
     ImGui::SetCursorPos(ImVec2(0,18));
