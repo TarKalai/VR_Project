@@ -66,8 +66,7 @@ void Texture::UseTexture(){
 }
 
 
-void Texture::ClearTexture(){
-
+void Texture::ClearTexture() {
     glDeleteTextures(1, &textureID); 
     textureID = 0; 
     width=0; 
