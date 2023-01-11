@@ -51,33 +51,10 @@ int spotLightCount;
 int areaLightCount = 0;
 
 void CreateObjects(){
-
-    Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Dull(), glm::vec3(0., -general::floorThickness, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1., 1., 1.));
+    Object* ground = new Object(geometry::cube, Textures::Wood(), Materials::Dull(), glm::vec3(0., -1, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1., 1., 1.));
     physicalWorld = PhysicalWorld(ground);
     objectShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
-
-    for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(sphere);
-        directionalShadowShader.addObject(sphere);
-        physicalWorld.addSphere(sphere); 
-	}
-
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(cube);
-        directionalShadowShader.addObject(cube);
-        physicalWorld.addCube(cube); 
-	}
 }
 
 void CreateShaders()

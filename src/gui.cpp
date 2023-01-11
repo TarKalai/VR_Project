@@ -1,7 +1,5 @@
 #include "gui.h"
 
-
-
 GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg) {
     process = processArg;
     display = displayArg;
@@ -19,6 +17,7 @@ void GUI::update() {
     displayFPS();
     displayTime();
     displaySpeedAnimation();
+    displayDominoInfo();
     displaySaveLoad();
     shortcutList();
 
@@ -86,6 +85,17 @@ void GUI::displaySpeedAnimation() {
     ImGui::SetCursorPos(ImVec2(0,18));
     ImGui::PushItemWidth(115);
     ImGui::SliderFloat(" ", &(process->sliderSpeedAnimation), 0., 4.);
+    ImGui::End();
+}
+
+
+void GUI::displayDominoInfo() {
+    Point size = Point({150, 100});
+    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 100));
+    ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+    ImGui::Begin("Domino Information", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
+    //ImGui::PushItemWidth(100);
+    ImGui::InputFloat("scale", &(process->scaleDomino));
     ImGui::End();
 }
 

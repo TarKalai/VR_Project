@@ -53,7 +53,15 @@ namespace general
 
 namespace Ttime
 {
-    static constexpr int maxTime = 60; // (number of seconds, e.g. 24h = 86400 seconds)
+    static constexpr int maxTime = 5*60; // (number of seconds, e.g. 24h = 86400 seconds)
+    static constexpr float startTime = 6 * maxTime /24;
+}
+
+namespace dominoDim
+{
+    static constexpr float height = 2*1.;
+    static constexpr float width = 2*0.5;
+    static constexpr float thick = 2*0.175;
 }
 
 namespace color
