@@ -16,11 +16,11 @@ void GUI::update() {
     ImGui::NewFrame();
 
     menuTitle();
-    shortcutList();
     displayFPS();
     displayTime();
-    displaySaveLoad();
     displaySpeedAnimation();
+    displaySaveLoad();
+    shortcutList();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -65,12 +65,27 @@ void GUI::displayFPS() {
 
 void GUI::displayTime() {
 
-    Point size = Point({115, 10});
-    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, -8));
+    Point size = Point({115, 50});
+    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x-200, -8));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
-    ImGui::Begin("time", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("time", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
     Day day = Time::getDate();
     ImGui::Text("  Time: %ih%i", day.hour, day.minute);
+    float time = Time::getTime();
+    ImGui::PushItemWidth(115);
+    ImGui::SliderFloat(" ", (&time), 0., Ttime::maxTime-1);
+    Time::setTime(time);
+    ImGui::End();
+}
+
+void GUI::displaySpeedAnimation() {
+    Point size = Point({115, 100});
+    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 55));
+    ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+    ImGui::Begin("Animation Speed", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
+    ImGui::SetCursorPos(ImVec2(0,18));
+    ImGui::PushItemWidth(115);
+    ImGui::SliderFloat(" ", &(process->sliderSpeedAnimation), 0., 4.);
     ImGui::End();
 }
 
@@ -152,17 +167,6 @@ void GUI::displaySaveLoad() {
         }
         ImGui::End();
     }
-}
-
-void GUI::displaySpeedAnimation() {
-    Point size = Point({115, 100});
-    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 15));
-    ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
-    ImGui::Begin("Animation Speed", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
-    ImGui::SetCursorPos(ImVec2(0,18));
-    ImGui::PushItemWidth(115);
-    ImGui::SliderFloat(" ", &(process->sliderSpeedAnimation), 0., 4.);
-    ImGui::End();
 }
 
 void GUI::shortcutList() {

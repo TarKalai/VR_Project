@@ -36,10 +36,10 @@ private:
     float fps = 0;
 
     void menuTitle();
-    void shortcutList();
     float* getFPS();
     void displayFPS();
     void displayTime();
-    void displaySaveLoad();
     void displaySpeedAnimation();
+    void displaySaveLoad();
+    void shortcutList();
 };
