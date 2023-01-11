@@ -122,18 +122,51 @@ void Process::AnimationSpeed() {
 }
 
 void Process::PlacingParameter() {
-	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		scaleIncrease = true;
-		scaleDecrease = false;
-	} 
-	else if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+	// SIZE
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
 		scaleIncrease = false;
 		scaleDecrease = true;
 	} 
+	else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+		scaleIncrease = true;
+		scaleDecrease = false;
+	}
 	else {
 		scaleIncrease = false;
 		scaleDecrease = false;
 	}
+	// COLOR
+	// RED
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+		colorDomino.x -= 0.01;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+		colorDomino.x += 0.01;
+	}
+	// GREEN
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+		colorDomino.y -= 0.01;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+		colorDomino.y += 0.01;
+	}
+	// BLUE
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+		colorDomino.z -= 0.01;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+		colorDomino.z += 0.01;
+	}
+	// RANDOM
+	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
+		colorDomino = Utils::getRandom3();
+	}
+	// RAINBOW
+	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
+		colorDomino = Utils::RainbowColor(glfwGetTime());
+	}
+	colorDomino = normalize(colorDomino);
+
 }
 
 void Process::PlacingDomino() {
@@ -222,12 +255,14 @@ void Process::PutDominoes(){
 		else  {
 			float dist = glm::distance(lastDomino, cursorPosition);
 			if (dist > espacement) { 
-				if (scaleIncrease) { scaleDomino = glm::min(10, scaleDomino*1.1); }
-				else if (scaleDecrease) { scaleDomino = glm::max(0.1, scaleDomino*0.9); }
+				if (scaleIncrease) { scaleDomino = glm::min(10., scaleDomino*1.1); }
+				else if (scaleDecrease) { scaleDomino = glm::max(0.2, scaleDomino*0.9); }
 				ratio = espacement/dist;
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
-				Object* domino = new Object(geometry::domino, Textures::White(), Materials::Shiny(), glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), true, glm::vec3(Utils::getRandom(0, 1), Utils::getRandom(0, 1), Utils::getRandom(0, 1)));	
+				Object* domino = new Object(geometry::domino, Textures::White(), Materials::Shiny(), 
+											glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
+											true, normalize(colorDomino));	
 				world->addDomino(domino);
 				shader->addObject(domino);
 				shadow->addObject(domino);
