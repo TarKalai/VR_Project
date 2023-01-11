@@ -17,7 +17,7 @@ glm::mat4 Camera::getViewMatrix(){
 }
 
 glm::mat4 Camera::getProjectionMatrix(GLFWwindow* window, float near, float far){
-	int width, height;
+    int width, height;
 	glfwGetWindowSize(window, &width, &height);
     return glm::perspective(glm::radians(zoom), (float) width/height, near, far);
 }

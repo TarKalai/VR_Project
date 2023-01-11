@@ -131,6 +131,7 @@ int main(){
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
     while(!mainWindow.getShouldClose()){
         Time::updateTime();
+        process.processInput();
 
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.001, 200.0);
@@ -147,11 +148,11 @@ int main(){
         
         // Order is really important : order = shadow, object, objectLight
         directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
+        mainWindow.resetViewport();
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         areaLightShader.DrawLightObjects(projection, view);
              
         gui.update();
-        process.processInput();
         mainWindow.swapBuffers(); // There are 2 scenes going on at once, we are drawing to the one that can't be seen, and we call swapBuffers to swap them around: so then the one we are drawing to is the one that can be seen and the one which could be seen originaly is the one we are drawing to. 
     }
 

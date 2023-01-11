@@ -12,35 +12,9 @@ Display::Display(bool cursor){
     height = 1080/2;
 }
 
-// Display::Display()
-// {
-//     width = 800; 
-//     height = 600; 
-
-//     for(size_t i = 0; i<1024; i++)
-//     {   
-//         keys[i] = 0; 
-//     }
-// }
-
-// Display::Display(GLint windowWidth, GLint windowHeight)
-// {
-//     width = windowWidth; 
-//     height = windowHeight;
-
-//     xChange = 0.0; 
-//     yChange = 0.0; 
-
-//     for(size_t i = 0; i<1024; i++)
-//     {   
-//         keys[i] = 0; 
-//     }
-// }
 
 int Display::Initialise()
 {
-    // printf("here is the width of the bird texture : %d\n", Textures::Bird()->getWidth());
-    // Textures::Bird();
     // Initialise Glfw
     if(!glfwInit()){
         printf("The inititialisation of glfw failed.");
@@ -125,6 +99,11 @@ int Display::Initialise()
 	}
 #endif
     return 0;  
+}
+
+void Display::resetViewport() {
+    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+    glViewport(0, 0, bufferWidth, bufferHeight);
 }
 
 void Display::framebuffer_size_callback(GLFWwindow* window, int width, int height){
