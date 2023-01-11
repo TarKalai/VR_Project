@@ -3,8 +3,6 @@ layout (location=0) in vec3 pos;
 layout (location=1) in vec2 tex; 
 layout (location=2) in vec3 norm; // normal of the vertex we are looking at, it as a direction
 // we will define the normals as an average of each vertex. 
-layout (location=3) in vec3 tangent;
-layout (location=4) in vec2 bitangent; 
 
 out vec4 vertexColor;
 out vec2 TexCoord; 
@@ -27,7 +25,8 @@ void main(){
 
     TexCoord = tex; 
 
-    Normal = mat3(transpose(inverse(model))) * norm; 
+    mat3 normalMatrix = mat3(transpose(inverse(model)))
+    Normal = normalize(normalMatrix * norm); 
     // Normal is in relation to where the model is, because if we move the light around we are lihghting objects in different ways. 
     // If we rotate the object the normal doe not move, or if we scale an object the normal will bend so we need to multiply norm by 
     // the transform of the model. 

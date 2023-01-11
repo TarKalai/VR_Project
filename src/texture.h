@@ -21,7 +21,4 @@ private:
 
     GLuint textureID, normalID; 
     int width, height, nrComponents; 
-
-    // const char* fileLocation, normalLocation;  
-
 };
