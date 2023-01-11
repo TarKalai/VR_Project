@@ -149,7 +149,6 @@ int main(){
         directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         areaLightShader.DrawLightObjects(projection, view);
-        
              
         gui.update();
         process.processInput();

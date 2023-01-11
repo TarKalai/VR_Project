@@ -18,6 +18,7 @@ void GUI::update() {
     menuTitle();
     shortcutList();
     displayFPS();
+    displayTime();
     displaySaveLoad();
     displaySpeedAnimation();
 
@@ -59,6 +60,17 @@ void GUI::displayFPS() {
     ImGui::Begin("fps", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
     ImGui::SetCursorPos(ImVec2(0,0));
     ImGui::InputFloat("##fps", getFPS(), 0, 0, "%.1f", ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_CharsNoBlank);
+    ImGui::End();
+}
+
+void GUI::displayTime() {
+
+    Point size = Point({115, 10});
+    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, -8));
+    ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+    ImGui::Begin("time", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
+    Day day = Time::getDate();
+    ImGui::Text("  Time: %ih%i", day.hour, day.minute);
     ImGui::End();
 }
 
@@ -144,7 +156,7 @@ void GUI::displaySaveLoad() {
 
 void GUI::displaySpeedAnimation() {
     Point size = Point({115, 100});
-    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 0));
+    ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 15));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
     ImGui::Begin("Animation Speed", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
     ImGui::SetCursorPos(ImVec2(0,18));

@@ -39,6 +39,7 @@ private:
     void shortcutList();
     float* getFPS();
     void displayFPS();
+    void displayTime();
     void displaySaveLoad();
     void displaySpeedAnimation();
 };
