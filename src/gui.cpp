@@ -188,7 +188,9 @@ void GUI::displaySaveLoad() {
                             out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
                             out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
                             out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
-                            out << "textureToDo" << std::endl;
+                            out << object->color.x << " " << object->color.y << " " << object->color.z << " ";
+                            out << "texture";
+                            out << "material" << std::endl;
                         }
                     }  
                     // Close the file

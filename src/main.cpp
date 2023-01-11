@@ -30,6 +30,7 @@
 #include "process.h"
 #include "gui.h"
 #include "utils.h"
+#include "shader2D.h"
 
 Display mainWindow; 
 
@@ -38,6 +39,7 @@ PhysicalWorld physicalWorld;
 Shader objectShader; 
 Shader directionalShadowShader; 
 Shader areaLightShader; 
+Shader2D shader2D;
 
 Camera camera; 
 
@@ -62,6 +64,7 @@ void CreateShaders()
     objectShader.CreateFromFiles(shaderfiles::mainVertex, shaderfiles::mainFrag); 
     directionalShadowShader.CreateFromFiles(shaderfiles::shadowMapVertex, shaderfiles::shadowMapFrag); 
     areaLightShader.CreateFromFiles(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag); 
+    shader2D = Shader2D(true);
 }
 
 int main(){
@@ -128,6 +131,7 @@ int main(){
         mainWindow.resetViewport();
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         areaLightShader.DrawLightObjects(projection, view);
+        shader2D.drawObject();
              
         gui.update();
         mainWindow.swapBuffers(); // There are 2 scenes going on at once, we are drawing to the one that can't be seen, and we call swapBuffers to swap them around: so then the one we are drawing to is the one that can be seen and the one which could be seen originaly is the one we are drawing to. 
