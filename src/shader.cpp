@@ -71,7 +71,7 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
-    // spotLights[0].SetFlash(lowerLight, camera.getCameraDirection()); 
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
     RenderScene();
 }

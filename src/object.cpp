@@ -7,7 +7,7 @@ int Object::objectCounter = 0;
 
 Object::Object() {}
 
-Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible, glm::vec3 Color){
+Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible, glm::vec3 Color, bool Bumpmap){
     texture = tex;
     material = matos;
     visible = is_visible;
@@ -16,6 +16,7 @@ Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec
     scale = obj_scale;
     color = Color;
     id = objectCounter;
+    bumpmap = Bumpmap;
     objectCounter++;  
 
     // Read the file defined by the path argument 
@@ -37,7 +38,6 @@ Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec
             float x, y, z;
             iss >> x >> y >> z;
             vt_positions.push_back(glm::vec3(x, y, z));
-
         }
         else if (indice == "vn") {
             float x, y, z;
@@ -49,61 +49,21 @@ Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec
             iss >> u >> v;
             vt_textures.push_back(glm::vec2(u, v));
         }
-        else if (indice == "f") {
+        else if (indice == "f") { // for face
             std::string f1, f2, f3;
             iss >> f1 >> f2 >> f3;
 
-            std::string p, t, n;
+            Vertex v1, v2, v3;
+            AssignPoNoTe(&v1, f1);
+            AssignPoNoTe(&v2, f2);
+            AssignPoNoTe(&v3, f3);
 
-            //for face 1
-            Vertex v1;
+            if (bumpmap){
+                AssignTaBiTa(&v1, &v2, &v3);
+            }
 
-            p = f1.substr(0, f1.find("/"));
-            f1.erase(0, f1.find("/") + 1);
-
-            t = f1.substr(0, f1.find("/"));
-            f1.erase(0, f1.find("/") + 1);
-
-            n = f1.substr(0, f1.find("/"));
-
-
-            v1.Position = vt_positions.at(std::stof(p) - 1);
-            v1.Normal = vt_normals.at(std::stof(n) - 1);
-            v1.Texture = vt_textures.at(std::stof(t) - 1);
             vertices.push_back(v1);
-
-            //for face 2
-            Vertex v2;
-
-            p = f2.substr(0, f2.find("/"));
-            f2.erase(0, f2.find("/") + 1);
-
-            t = f2.substr(0, f2.find("/"));
-            f2.erase(0, f2.find("/") + 1);
-
-            n = f2.substr(0, f2.find("/"));
-
-
-            v2.Position = vt_positions.at(std::stof(p) - 1);
-            v2.Normal = vt_normals.at(std::stof(n) - 1);
-            v2.Texture = vt_textures.at(std::stof(t) - 1);
             vertices.push_back(v2);
-
-            //for face 3
-            Vertex v3;
-
-            p = f3.substr(0, f3.find("/"));
-            f3.erase(0, f3.find("/") + 1);
-
-            t = f3.substr(0, f3.find("/"));
-            f3.erase(0, f3.find("/") + 1);
-
-            n = f3.substr(0, f3.find("/"));
-
-
-            v3.Position = vt_positions.at(std::stof(p) - 1);
-            v3.Normal = vt_normals.at(std::stof(n) - 1);
-            v3.Texture = vt_textures.at(std::stof(t) - 1);
             vertices.push_back(v3);
         }
     }
@@ -115,7 +75,55 @@ Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec
     MakeObject();
 }
 
+void Object::AssignPoNoTe(Vertex* vertex, std::string f){
+    std::string p, t, n;
+
+    p = f.substr(0, f.find("/"));
+    f.erase(0, f.find("/") + 1);
+
+    t = f.substr(0, f.find("/"));
+    f.erase(0, f.find("/") + 1);
+
+    n = f.substr(0, f.find("/"));
+
+    vertex->Position = vt_positions.at(std::stof(p) - 1);
+    vertex->Normal = vt_normals.at(std::stof(n) - 1);
+    vertex->Texture = vt_textures.at(std::stof(t) - 1);
+}
+
+void Object::AssignTaBiTa(Vertex *v1, Vertex *v2, Vertex *v3){
+    glm::vec3 Edge1 = v2->Position - v1->Position;
+    glm::vec3 Edge2 = v3->Position - v1->Position;
+
+    float DeltaU1 = v2->Texture.x - v1->Texture.x;
+    float DeltaV1 = v2->Texture.y - v1->Texture.y;
+    float DeltaU2 = v3->Texture.x - v1->Texture.x;
+    float DeltaV2 = v3->Texture.y - v1->Texture.y;
+
+    float f = 1.0f / (DeltaU1 * DeltaV2 - DeltaU2 * DeltaV1);
+
+    glm::vec3 tangent, bitangent;
+
+    tangent.x = f * (DeltaV2 * Edge1.x - DeltaV1 * Edge2.x);
+    tangent.y = f * (DeltaV2 * Edge1.y - DeltaV1 * Edge2.y);
+    tangent.z = f * (DeltaV2 * Edge1.z - DeltaV1 * Edge2.z);
+
+    bitangent.x = f * (-DeltaU2 * Edge1.x + DeltaU1 * Edge2.x);
+    bitangent.y = f * (-DeltaU2 * Edge1.y + DeltaU1 * Edge2.y);
+    bitangent.z = f * (-DeltaU2 * Edge1.z + DeltaU1 * Edge2.z);
+
+    v1->Tangent = tangent;
+    v2->Tangent = tangent;
+    v3->Tangent = tangent;
+
+    v1->Bitangent = bitangent;
+    v2->Bitangent = bitangent;
+    v3->Bitangent = bitangent;
+}
+
 void Object::MakeObject(){ 
+
+
     //has_texture = shader_texture;
     //Create the VAO and VBO
     //Put your data into your VBO
@@ -125,20 +133,7 @@ void Object::MakeObject(){
     //you can use the boolean defined above to not specify these attribute 
     //desactive the buffer and delete the datas when your done
 
-    float* data = new float[8 * numVertices];
-    for (int i = 0; i < numVertices; i++) {
-        Vertex v = vertices.at(i);
-        data[i * 8] = v.Position.x;
-        data[i * 8 + 1] = v.Position.y;
-        data[i * 8 + 2] = v.Position.z;
-
-        data[i * 8 + 3] = v.Texture.x;
-        data[i * 8 + 4] = v.Texture.y;
-
-        data[i * 8 + 5] = v.Normal.x;
-        data[i * 8 + 6] = v.Normal.y;
-        data[i * 8 + 7] = v.Normal.z;
-    }
+    float* data = getData();
     
     glGenVertexArrays(1, &VAO); // first arg: amount of arrays we want, scd arg: ids of the arrays
     // bind the VAO: 
@@ -165,6 +160,13 @@ void Object::MakeObject(){
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
+    if (bumpmap){
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(8 * sizeof(float)));
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(11 * sizeof(float)));
+        glEnableVertexAttribArray(4);
+    }
+
     //desactive the buffer
     glBindBuffer(GL_ARRAY_BUFFER,0); // bind to nothing => UNBIND
     glBindVertexArray(0); // UNBIND VAO
@@ -186,6 +188,51 @@ void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
     float z2 = (sin(rotation.x)*cos(rotation.y)) * scale.y;
     float z3 = (cos(rotation.x)*cos(rotation.y)) * scale.z;
     model = glm::mat4(x1,y1,z1,0,x2,y2,z2,0,x3,y3,z3,0,position.x,position.y,position.z,1);
+}
+
+float* Object::getData(){
+    float* data;
+    if (bumpmap){
+        data = new float[14 * numVertices];
+        for (int i = 0; i < numVertices; i++) {
+            Vertex v = vertices.at(i);
+            data[i * 14] = v.Position.x;
+            data[i * 14 + 1] = v.Position.y;
+            data[i * 14 + 2] = v.Position.z;
+
+            data[i * 14 + 3] = v.Texture.x;
+            data[i * 14 + 4] = v.Texture.y;
+
+            data[i * 14 + 5] = v.Normal.x;
+            data[i * 14 + 6] = v.Normal.y;
+            data[i * 14 + 7] = v.Normal.z;
+
+            data[i * 14 + 5] = v.Tangent.x;
+            data[i * 14 + 6] = v.Tangent.y;
+            data[i * 14 + 7] = v.Tangent.z;
+
+            data[i * 14 + 5] = v.Bitangent.x;
+            data[i * 14 + 6] = v.Bitangent.y;
+            data[i * 14 + 7] = v.Bitangent.z;
+        }
+    }
+    else{
+        data = new float[8 * numVertices];
+        for (int i = 0; i < numVertices; i++) {
+            Vertex v = vertices.at(i);
+            data[i * 8] = v.Position.x;
+            data[i * 8 + 1] = v.Position.y;
+            data[i * 8 + 2] = v.Position.z;
+
+            data[i * 8 + 3] = v.Texture.x;
+            data[i * 8 + 4] = v.Texture.y;
+
+            data[i * 8 + 5] = v.Normal.x;
+            data[i * 8 + 6] = v.Normal.y;
+            data[i * 8 + 7] = v.Normal.z;
+        }
+    }
+    return data;
 }
 
 void Object::draw(){

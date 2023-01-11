@@ -33,6 +33,8 @@ namespace geometry
 	static constexpr char cube[128] = "../../objects/cube.obj";
 	static constexpr char plane[128] = "../../objects/plane.obj";
     static constexpr char domino[128] = "../../objects/domino.obj";
+    static constexpr char bunny[128] = "../../objects/bunny_big.obj";
+
 }
 
 namespace shaderfiles
