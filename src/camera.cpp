@@ -41,13 +41,11 @@ void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime)
 void Camera::deactivateMouse(Display* display) {
     glfwSetInputMode(display->getWindow(), GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
     mouseSensitivity = 0;
-    pause = true;
 }
 
 void Camera::reactivateMouse(Display* display) {
     glfwSetInputMode(display->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     mouseSensitivity = SENSITIVITY;
-    pause = false;
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch=true){
@@ -60,7 +58,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constr
     if (yoffset)
         PitchRot -= yoffset*mouseSensitivity;
 
-    if (!pause) {
+    if (!Time::pause()) {
         yaw = YawRot;
         pitch = PitchRot;
     }

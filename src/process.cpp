@@ -17,7 +17,7 @@ void Process::processInput() {
 	PlacingDomino();
 	Pushing();
 	Deplacement();
-	if (!camera->pause) {
+	if (!Time::pause()) {
 		HandleMouse();
 	}
 }
@@ -27,7 +27,7 @@ void Process::HandleMenuMode() {
 		menuPressed  = true;
 	}
 	else if (menuPressed) {
-		if (camera->pause) {  // CONTINUE
+		if (Time::pause()) {  // CONTINUE
 			display->cursor_disabled = true;
 			camera->reactivateMouse(display);
 			glfwSetCursorPos(window, oldCursorX, oldCursorY);

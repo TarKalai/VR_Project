@@ -53,7 +53,7 @@ namespace general
 
 namespace Ttime
 {
-    static constexpr float coefficient = 0.005;
+    static constexpr int maxTime = 60; // (number of seconds, e.g. 24h = 86400 seconds)
 }
 
 namespace color

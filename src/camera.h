@@ -8,6 +8,7 @@
 #include<glm/gtc/matrix_transform.hpp>
 
 #include "display.h"
+#include "utils.h"
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -23,7 +24,6 @@ enum Camera_Movement {
 class Camera
 {
 public:
-    bool pause = false;
      // Default camera values
     float YAW; // = -90.0f;
     float PITCH; //= 0.0f;

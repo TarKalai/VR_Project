@@ -1,12 +1,13 @@
 #pragma once
 
-#ifndef UTILS_H 
-#define UTILS_H 
-
 #include <string> 
+#include <math.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "texture.h"
-#include "constant.h"
 #include "material.h"
+#include "constant.h"
 
 class Utils { 
 	public: 
@@ -52,7 +53,6 @@ class Textures {
 
 };
 
-
 class Materials {
 	public:
 		Materials(const Materials&) = delete;
@@ -81,6 +81,12 @@ class Materials {
 
 
 //https://stackoverflow.com/questions/45613707/proper-setter-and-getter-for-static-member-variable-in-header-only-library
+struct Day {
+    int hour;
+    int minute;
+    int second;
+};
+
 class Time 
 {
     public:
@@ -88,20 +94,51 @@ class Time
         // The setter uses the fact that speed()
         // returns a non-const reference,
         // so we can assign to it.
-        static void setSpeed(const float _v){
+        static void setSpeed(const float _v)
+        {
 			oldSpeed() = getSpeed();
             speed() = _v;
         }           
 
         // A true getter.
         // Returns const float&, so we cannot assign to it.
-        static const float& getSpeed(){
+        static const float& getSpeed()
+        {
             return speed();
         }		
 		
-		static const float& getOldSpeed(){
+		static const float& getOldSpeed()
+        {
             return oldSpeed();
         }
+
+		static void updateTime()
+        {
+			deltaTime() = glfwGetTime() - oldTime();
+			time() = time() + speed() * deltaTime();
+			oldTime() = glfwGetTime();
+        }
+
+		static const float getTime()
+        {
+			return fmod(time(), Ttime::maxTime);
+        }
+
+		static const Day getDate()
+        {
+			float hour = fmod(24 * time() / Ttime::maxTime, 24);
+        	float minute = 60*(hour - floor(hour));
+        	float second = 60*(minute - floor(minute));
+			return Day{(int) hour, (int) minute, (int) second};
+        }
+
+		static const bool pause()
+        {
+			if (getSpeed()==0)
+				return true;
+			return false;
+        }
+
 
 	private:
 
@@ -114,6 +151,19 @@ class Time
 			static float old = 1;
             return old;
 		}
-};
 
-#endif 
+		static float& time(){
+			static float time = 0;
+            return time;
+		}
+
+		static float& oldTime(){
+			static float oldTime = 0;
+            return oldTime;
+		}
+
+		static float& deltaTime(){
+			static float deltaTime = 0;
+            return deltaTime;
+		}
+};

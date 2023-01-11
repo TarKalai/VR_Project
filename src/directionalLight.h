@@ -1,10 +1,11 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "light.h"
 #include "constant.h"
 #include "utils.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 
 class DirectionalLight:
