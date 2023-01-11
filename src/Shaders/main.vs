@@ -2,7 +2,9 @@
 layout (location=0) in vec3 pos;
 layout (location=1) in vec2 tex; 
 layout (location=2) in vec3 norm; // normal of the vertex we are looking at, it as a direction
-// we will define the normalas as an average of each vertex. 
+// we will define the normals as an average of each vertex. 
+layout (location=3) in vec3 tangent;
+layout (location=4) in vec2 bitangent; 
 
 out vec4 vertexColor;
 out vec2 TexCoord; 

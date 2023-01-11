@@ -137,6 +137,10 @@ void Object::MakeObject(){
     //desactive the buffer and delete the datas when your done
 
     float* data = getData();
+    int size = 8;
+    if (bumpmap) size = 14;
+
+
     
     glGenVertexArrays(1, &VAO); // first arg: amount of arrays we want, scd arg: ids of the arrays
     // bind the VAO: 
@@ -147,7 +151,7 @@ void Object::MakeObject(){
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * numVertices, data, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, size * sizeof(float), (void*)0);
     //1st arg: location of the attribute, 2sd: size of the value passed here it is 3 because we pass x, y, z. 
     // 3rd: type of the values passed, 4th : if we want to normalise the values, 5th: with Opengl we can have colors and position int 
     //eh same valeus if we do so we should indicarte the amount of values we should skip to consider one vertex whole (in the vertices variable)
@@ -155,18 +159,18 @@ void Object::MakeObject(){
 
     glEnableVertexAttribArray(0); // Corresponds to the location of attribut (int he layout) directly linked to first arg of tehe previous command.
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, false, size * sizeof(float), (void*)(3 * sizeof(float)));
     // Arg 1: eaquals to 1 so we are dealing with texture coord. 
     // last arg: offset for the first value. 
     glEnableVertexAttribArray(1); 
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
     if (bumpmap){
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(8 * sizeof(float)));
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(8 * sizeof(float)));
         glEnableVertexAttribArray(3);
-        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(11 * sizeof(float)));
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(11 * sizeof(float)));
         glEnableVertexAttribArray(4);
     }
 
