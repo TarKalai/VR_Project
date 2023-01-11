@@ -23,7 +23,9 @@ DirectionalLight::DirectionalLight( GLfloat shadowWidth, GLfloat shadowHeight,
 
 void DirectionalLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation,  GLfloat diffuseIntensityLocation, GLfloat directionLocation){
     // Color and intensity rendering (empirique values)
-    glUniform3f(ambientColorLocation, 1+color::OrangeRed.x*pow(x,20), 1+color::OrangeRed.y*pow(x,20), 1+color::OrangeRed.z*pow(x,20)); // in the shader we will have a vec3 and it will be bound to ambientColorLocation
+    float base = 1.5;
+    glm::vec3 color = normalize(glm::vec3(base+color::OrangeRed.x*pow(x,20), base+color::OrangeRed.y*pow(x,20), base+color::OrangeRed.z*pow(x,20)));
+    glUniform3f(ambientColorLocation, color.x, color.y, color.z); // in the shader we will have a vec3 and it will be bound to ambientColorLocation
     glUniform1f(ambientIntensityLocation, 0.5-y*0.25); 
     glUniform3f(directionLocation, x, y, z); 
     glUniform1f(diffuseIntensityLocation, 0.25-y*0.25); 

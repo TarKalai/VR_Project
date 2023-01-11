@@ -114,14 +114,31 @@ class Time
 
 		static void updateTime()
         {
-			deltaTime() = glfwGetTime() - oldTime();
-			time() = time() + speed() * deltaTime();
-			oldTime() = glfwGetTime();
+			if (!pause()) {
+				deltaTime() = glfwGetTime() - glfOldTime();
+				time() = time() + speed() * deltaTime();
+				glfOldTime() = glfwGetTime();
+			}
+			else {
+				glfOldTime() = glfwGetTime();
+			}
         }
 
 		static const float getTime()
         {
 			return fmod(time(), Ttime::maxTime);
+        }
+
+		static void setTime(const float _t)
+        {
+			if (pause()) {
+				deltaTime() = _t - oldTime();
+				time() = _t;
+				oldTime() = _t;
+			}
+			else {
+				oldTime() = _t;
+			}
         }
 
 		static const Day getDate()
@@ -140,7 +157,7 @@ class Time
 		static void setPause(const bool _p)
         {
             isPause() = _p;
-        }  
+        }
 
 
 	private:
@@ -164,6 +181,11 @@ class Time
 		static float& time(){
 			static float time = 0;
             return time;
+		}
+
+		static float& glfOldTime(){
+			static float glfOldTime = 0;
+            return glfOldTime;
 		}
 
 		static float& oldTime(){
