@@ -132,12 +132,15 @@ class Time
 			return Day{(int) hour, (int) minute, (int) second};
         }
 
-		static const bool pause()
+		static const bool& pause()
         {
-			if (getSpeed()==0)
-				return true;
-			return false;
+			return isPause();
         }
+
+		static void setPause(const bool _p)
+        {
+            isPause() = _p;
+        }  
 
 
 	private:
@@ -151,6 +154,12 @@ class Time
 			static float old = 1;
             return old;
 		}
+
+		static bool& isPause(){
+			static bool pause = false;
+            return pause;
+		}
+
 
 		static float& time(){
 			static float time = 0;

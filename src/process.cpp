@@ -32,7 +32,9 @@ void Process::HandleMenuMode() {
 			camera->reactivateMouse(display);
 			glfwSetCursorPos(window, oldCursorX, oldCursorY);
 			Time::setSpeed(sliderSpeedAnimation);
+			Time::setPause(false);
 		} else { // PAUSE
+			Time::setPause(true);
 			sliderSpeedAnimation = Time::getSpeed();
 			if (menuPressed) { Time::setSpeed(0.);}
 			glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
