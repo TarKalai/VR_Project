@@ -137,8 +137,8 @@ void Object::MakeObject(){
     //desactive the buffer and delete the datas when your done
 
     float* data = getData();
-    int size = 8;
-    if (bumpmap) size = 14;
+    int size = 8; // pos is a vec3, tex is a vec2, normal is a vec3 (sum = 8)
+    if (bumpmap) size += 6; // bitangent are both vec3 (sum += 6)
 
 
     
