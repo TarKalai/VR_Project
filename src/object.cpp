@@ -19,58 +19,7 @@ Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec
     bumpmap = Bumpmap;
     objectCounter++;  
 
-    // Read the file defined by the path argument 
-    // open the .obj file into a text editor and see how the data are organized
-    // you will see line starting by v, vt, vn and f --> what are these ?
-    // Then parse it to extract the data you need
-    // keep track of the number of vertices you need
-
-    std::ifstream infile(geometryPath);
-    //TODO Error management
-    std::string line;
-    while (std::getline(infile, line))
-    {
-        std::istringstream iss(line); // Like a "split"
-        std::string indice;
-        iss >> indice; // Go the next elem of the split (reach elem 1 by 1 separated by " ")
-        //std::cout << "indice : " << indice << std::endl;
-        if (indice == "v") {
-            float x, y, z;
-            iss >> x >> y >> z;
-            vt_positions.push_back(glm::vec3(x, y, z));
-        }
-        else if (indice == "vn") {
-            float x, y, z;
-            iss >> x >> y >> z;
-            vt_normals.push_back(glm::vec3(x, y, z));
-        }
-        else if (indice == "vt") {
-            float u, v;
-            iss >> u >> v;
-            vt_textures.push_back(glm::vec2(u, v));
-        }
-        else if (indice == "f") { // for face
-            std::string f1, f2, f3;
-            iss >> f1 >> f2 >> f3;
-
-            Vertex v1, v2, v3;
-            AssignPoNoTe(&v1, f1);
-            AssignPoNoTe(&v2, f2);
-            AssignPoNoTe(&v3, f3);
-
-            if (bumpmap){
-                AssignTaBiTa(&v1, &v2, &v3);
-            }
-
-            vertices.push_back(v1);
-            vertices.push_back(v2);
-            vertices.push_back(v3);
-        }
-    }
-    std::cout << "Load model with " << vertices.size() << " vertices" << std::endl;
-
-    infile.close();
-
+    LoadVertices(geometryPath);
     numVertices = vertices.size();
     MakeObject();
 }
@@ -119,6 +68,60 @@ void Object::AssignTaBiTa(Vertex *v1, Vertex *v2, Vertex *v3){
     v1->Bitangent = bitangent;
     v2->Bitangent = bitangent;
     v3->Bitangent = bitangent;
+}
+
+void Object::LoadVertices(const char* geometryPath){
+    // Read the file defined by the path argument 
+    // open the .obj file into a text editor and see how the data are organized
+    // you will see line starting by v, vt, vn and f --> what are these ?
+    // Then parse it to extract the data you need
+    // keep track of the number of vertices you need
+
+    std::ifstream infile(geometryPath);
+    std::string line;
+    while (std::getline(infile, line))
+    {
+        std::istringstream iss(line); // Like a "split"
+        std::string indice;
+        iss >> indice; // Go the next elem of the split (reach elem 1 by 1 separated by " ")
+        //std::cout << "indice : " << indice << std::endl;
+        if (indice == "v") {
+            float x, y, z;
+            iss >> x >> y >> z;
+            vt_positions.push_back(glm::vec3(x, y, z));
+        }
+        else if (indice == "vn") {
+            float x, y, z;
+            iss >> x >> y >> z;
+            vt_normals.push_back(glm::vec3(x, y, z));
+        }
+        else if (indice == "vt") {
+            float u, v;
+            iss >> u >> v;
+            vt_textures.push_back(glm::vec2(u, v));
+        }
+        else if (indice == "f") { // for face
+            std::string f1, f2, f3;
+            iss >> f1 >> f2 >> f3;
+
+            Vertex v1, v2, v3;
+            AssignPoNoTe(&v1, f1);
+            AssignPoNoTe(&v2, f2);
+            AssignPoNoTe(&v3, f3);
+
+            if (bumpmap){
+                AssignTaBiTa(&v1, &v2, &v3);
+            }
+
+            vertices.push_back(v1);
+            vertices.push_back(v2);
+            vertices.push_back(v3);
+        }
+    }
+    std::cout << "Load model with " << vertices.size() << " vertices" << std::endl;
+
+    infile.close();
+
 }
 
 void Object::MakeObject(){ 

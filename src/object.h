@@ -71,6 +71,7 @@ public:
     void AssignPoNoTe(Vertex* vertex, std::string f);
 	void AssignTaBiTa(Vertex *v1, Vertex *v2, Vertex *v3);
 	float * getData();
+	void LoadVertices(const char* geometryPath);
 
 
 	void draw();
