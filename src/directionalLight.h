@@ -26,8 +26,6 @@ public :
     ~DirectionalLight(); 
 
 private:
+    float x,y,z;
     float deltaSpeed = 0;
-    glm::vec3 direction; 
-
-    
 };

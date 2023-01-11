@@ -2,13 +2,11 @@
 
 DirectionalLight::DirectionalLight() : Light() // before it goes into the function code, it will call Light() where we set some parameters
 {
-    direction = glm::vec3(0.0f, -1.0f, 0.0f); 
-    
-    float x, y, z;
-    x = 0.75*general::sceneSize.x;
-    y = 0.75*general::sceneSize.y;
-    z = 0.75*general::sceneSize.z;
-    lightProj = glm::ortho(-x, x, -y, y, -z, z); 
+    float x_size, y_size, z_size;
+    x_size = 0.75*general::sceneSize.x;
+    y_size = 0.75*general::sceneSize.y;
+    z_size = 0.75*general::sceneSize.z;
+    lightProj = glm::ortho(-x_size, x_size, -y_size, y_size, -z_size, z_size); 
 }
 
 DirectionalLight::DirectionalLight( GLfloat shadowWidth, GLfloat shadowHeight,
@@ -16,35 +14,31 @@ DirectionalLight::DirectionalLight( GLfloat shadowWidth, GLfloat shadowHeight,
                                     GLfloat aIntensity,  GLfloat dIntensity, 
                                     GLfloat xDir, GLfloat yDir, GLfloat zDir) : Light(shadowWidth, shadowHeight, red, green, blue, aIntensity, dIntensity)
 {
-    direction = normalize(glm::vec3(xDir, yDir, zDir)); 
-    float x, y, z;
-    x = 0.75*general::sceneSize.x;
-    y = 0.75*general::sceneSize.y;
-    z = 0.75*general::sceneSize.z;
-    lightProj = glm::ortho(-x, x, -y, y, -z, z); 
+    float x_size, y_size, z_size;
+    x_size = 0.75*general::sceneSize.x;
+    y_size = 0.75*general::sceneSize.y;
+    z_size = 0.75*general::sceneSize.z;
+    lightProj = glm::ortho(-x_size, x_size, -y_size, y_size, -z_size, z_size); 
 }
 
 void DirectionalLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation,  GLfloat diffuseIntensityLocation, GLfloat directionLocation){
-
-    glUniform3f(ambientColorLocation, color.x, color.y, color.z); // in the shader we will have a vec3 and it will be bound to ambientColorLocation
-    glUniform1f(ambientIntensityLocation, ambientIntensity); 
-
-    glUniform3f(directionLocation, direction.x, direction.y, direction.z); 
-    glUniform1f(diffuseIntensityLocation, diffuseIntensity); 
+    // Color and intensity rendering (empirique values)
+    glUniform3f(ambientColorLocation, 1+color::OrangeRed.x*pow(x,20), 1+color::OrangeRed.y*pow(x,20), 1+color::OrangeRed.z*pow(x,20)); // in the shader we will have a vec3 and it will be bound to ambientColorLocation
+    glUniform1f(ambientIntensityLocation, 0.5-y*0.25); 
+    glUniform3f(directionLocation, x, y, z); 
+    glUniform1f(diffuseIntensityLocation, 0.25-y*0.25); 
 }
 
 
 glm::mat4 DirectionalLight::CalculateLightTransform(){
 
-    float x, y, z;
+
     float time = Time::getTime();
-    
     x = glm::sin(2*3.14*time/Ttime::maxTime);
     y = glm::cos(2*3.14*time/Ttime::maxTime);
     z = glm::sin(2*3.14*time/Ttime::maxTime);
-    direction = glm::vec3(x, y, z);
     
-    return lightProj * glm::lookAt(-direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));  
+    return lightProj * glm::lookAt(-glm::vec3(x, y, z), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));  
     // the model is on the shader so we only do projection and view here
     // to get the view we use glm::lookAt and we take the opposite of the direction, for the fragment being lit the lihgh is coming from the opposite
     // of the direction => We are here faking a position 

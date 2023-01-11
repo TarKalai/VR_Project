@@ -120,24 +120,11 @@ void Shader::DrawLightObjects(glm::mat4 projection, glm::mat4 view) {
     uniformProjection = GetProjectionLocation(); 
     uniformView = GetViewLocation(); 
 
-    // glViewport(0, 0, 1366, 768); 
-
-    // glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
-
-    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
-    //glClear is also clearing the depth buffer bit.
-
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     
     // RENDER SCENE
     RenderScene();
-    // Object* lightObject = lightObjectList[0];
-
-    // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(lightObject->model));
-    // glUniform3f(glGetUniformLocation(areaLightShader.shaderID, "lightColor"), lightObject->color.x, lightObject->color.y, lightObject->color.z);
-    // lightObject->texture->UseTexture();
-    // lightObject->draw();
 }
 
 
