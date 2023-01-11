@@ -94,51 +94,43 @@ class Time
         // The setter uses the fact that speed()
         // returns a non-const reference,
         // so we can assign to it.
-        static void setSpeed(const float _v)
-        {
+        static void setSpeed(const float _v){
 			oldSpeed() = getSpeed();
             speed() = _v;
         }           
 
         // A true getter.
         // Returns const float&, so we cannot assign to it.
-        static const float& getSpeed()
-        {
+        static const float& getSpeed(){
             return speed();
         }		
 		
-		static const float& getOldSpeed()
-        {
+		static const float& getOldSpeed(){
             return oldSpeed();
         }
 
-		static void updateTime()
-        {
+		static void updateTime(){
 			deltaTime() = glfwGetTime() - oldTime();
 			time() = time() + speed() * deltaTime();
 			oldTime() = glfwGetTime();
         }
 
-		static const float getTime()
-        {
+		static const float getTime(){
 			return fmod(time(), Ttime::maxTime);
         }
 
-		static const Day getDate()
-        {
+		static const Day getDate(){
 			float hour = fmod(24 * time() / Ttime::maxTime, 24);
         	float minute = 60*(hour - floor(hour));
         	float second = 60*(minute - floor(minute));
 			return Day{(int) hour, (int) minute, (int) second};
         }
 
-		static const bool& pause()
-        {
+		static const bool& pause(){
 			return isPause();
         }
 
-		static void setPause(const bool _p)
-        {
+		static void setPause(const bool _p){
             isPause() = _p;
         }  
 
@@ -159,7 +151,6 @@ class Time
 			static bool pause = false;
             return pause;
 		}
-
 
 		static float& time(){
 			static float time = 0;
