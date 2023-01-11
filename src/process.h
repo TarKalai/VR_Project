@@ -30,6 +30,7 @@ public:
     Shader* shadow;
     float sliderSpeedAnimation = 1.;
     float scaleDomino = 1.;
+    glm::vec3 colorDomino = glm::vec3(1.);
 
     Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
     void initMousePosition();

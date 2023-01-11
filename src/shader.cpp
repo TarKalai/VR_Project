@@ -51,10 +51,11 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
+    
+    SetAreaLights(areaLights, areaLightCount); 
     SetDirectionalLight(mainLight);
     SetPointLights(pointLights, pointLightCount);//since it is an array we don't need to pass the address. 
     SetSpotLights(spotLights, spotLightCount); 
-    SetAreaLights(areaLights, areaLightCount); 
     // --------------------------------------------------------- // 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 

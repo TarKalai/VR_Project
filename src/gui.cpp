@@ -72,7 +72,7 @@ void GUI::displayTime() {
     ImGui::Text("  Time: %ih%i", day.hour, day.minute);
     ImGui::PushItemWidth(115);
     float time = Time::getTime();
-    ImGui::SliderFloat(" ", (&time), 0., Ttime::maxTime-1, " ",  ImGuiSliderFlags_None);
+    ImGui::SliderFloat("##slideTime", (&time), 0., Ttime::maxTime-1, " ",  ImGuiSliderFlags_None);
     Time::setTime(time);
     ImGui::End();
 }
@@ -90,12 +90,14 @@ void GUI::displaySpeedAnimation() {
 
 
 void GUI::displayDominoInfo() {
-    Point size = Point({150, 100});
+    Point size = Point({152, 300});
     ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 100));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
     ImGui::Begin("Domino Information", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
-    //ImGui::PushItemWidth(100);
     ImGui::InputFloat("scale", &(process->scaleDomino));
+    float color[3] = {process->colorDomino.x, process->colorDomino.y, process->colorDomino.z};
+    ImGui::ColorEdit3("color", color, ImGuiColorEditFlags_DisplayRGB);
+    process->colorDomino = glm::vec3(color[0], color[1], color[2]);
     ImGui::End();
 }
 

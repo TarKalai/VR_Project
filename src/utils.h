@@ -11,9 +11,45 @@
 
 class Utils { 
 	public: 
-		static float getRandom(float from=-4, float to=4) {
+		static float getRandom(float from=0, float to=1) {
 			int mod = (to - from)*100;
 			return float(rand()%mod + 100*from)/100;
+		}
+
+		static glm::vec3 getRandom3(float from=0, float to=1){
+			return glm::vec3(getRandom(from, to), getRandom(from, to),getRandom(from, to));
+		} 
+
+		static glm::vec3 RainbowColor(float t) {
+			t = fmod(t, 1.0f);
+			float h = t * 6.0f;
+			float r, g, b;
+			if (h < 1.0f) {
+				r = 1.0f;
+				g = h;
+				b = 0.0f;
+			} else if (h < 2.0f) {
+				r = 2.0f - h;
+				g = 1.0f;
+				b = 0.0f;
+			} else if (h < 3.0f) {
+				r = 0.0f;
+				g = 1.0f;
+				b = h - 2.0f;
+			} else if (h < 4.0f) {
+				r = 0.0f;
+				g = 4.0f - h;
+				b = 1.0f;
+			} else if (h < 5.0f) {
+				r = h - 4.0f;
+				g = 0.0f;
+				b = 1.0f;
+			} else {
+				r = 1.0f;
+				g = 0.0f;
+				b = 6.0f - h;
+			}
+			return glm::vec3(r, g, b);
 		}
 }; 
 
