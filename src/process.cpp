@@ -14,11 +14,11 @@ void Process::processInput() {
 	HandleMenuMode();
 	HandleWindow();
 	AnimationSpeed();
-	PlacingParameter();
-	PlacingDomino();
-	Pushing();
-	Deplacement();
 	if (!Time::pause()) {
+		PlacingParameter();
+		PlacingDomino();
+		Pushing();
+		Deplacement();
 		HandleMouse();
 	}
 }
@@ -135,6 +135,7 @@ void Process::PlacingParameter() {
 		scaleIncrease = false;
 		scaleDecrease = false;
 	}
+
 	// COLOR
 	// RED
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
@@ -166,7 +167,6 @@ void Process::PlacingParameter() {
 		colorDomino = Utils::RainbowColor(glfwGetTime());
 	}
 	colorDomino = normalize(colorDomino);
-
 }
 
 void Process::PlacingDomino() {
@@ -260,7 +260,7 @@ void Process::PutDominoes(){
 				ratio = espacement/dist;
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
-				Object* domino = new Object(geometry::domino, Textures::White(), Materials::Shiny(), 
+				Object* domino = new Object(geometry::domino, textureDomino, materialDomino, 
 											glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
 											true, normalize(colorDomino));	
 				world->addDomino(domino);

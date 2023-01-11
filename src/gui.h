@@ -35,6 +35,9 @@ private:
 	int deltaFrame = 0;
     float fps = 0;
 
+    bool texturePicked = false;
+    bool materialPicked = false;
+
     void menuTitle();
     float* getFPS();
     void displayFPS();
