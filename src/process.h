@@ -17,6 +17,8 @@
 #include "display.h"
 #include "constant.h"
 #include "utils.h"
+#include "texture.h"
+#include "material.h"
 
 class Camera; 
 
@@ -31,6 +33,8 @@ public:
     float sliderSpeedAnimation = 1.;
     float scaleDomino = 1.;
     glm::vec3 colorDomino = glm::vec3(1.);
+    Texture* textureDomino = Textures::White();
+    Material* materialDomino = Materials::Shiny();
 
     Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
     void initMousePosition();

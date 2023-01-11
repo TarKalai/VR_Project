@@ -90,14 +90,33 @@ void GUI::displaySpeedAnimation() {
 
 
 void GUI::displayDominoInfo() {
-    Point size = Point({152, 300});
+    Point size = Point({152, 110});
     ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 100));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
-    ImGui::Begin("Domino Information", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Domino Information", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
     ImGui::InputFloat("scale", &(process->scaleDomino));
     float color[3] = {process->colorDomino.x, process->colorDomino.y, process->colorDomino.z};
-    ImGui::ColorEdit3("color", color, ImGuiColorEditFlags_DisplayRGB);
+    ImGui::ColorEdit3("color", color, ImGuiColorEditFlags_NoPicker);
     process->colorDomino = glm::vec3(color[0], color[1], color[2]);
+
+    if (ImGui::BeginMenu("Texture", !texturePicked)) {
+        texturePicked = true;
+        if (ImGui::Button("White")) {process->textureDomino = Textures::White();}
+        else if (ImGui::Button("Brick")) {process->textureDomino = Textures::Brick();}
+        else if (ImGui::Button("Dirt")) {process->textureDomino = Textures::Dirt();}
+        else if (ImGui::Button("Wood")) {process->textureDomino = Textures::Wood();}
+        else { texturePicked = false; }
+        ImGui::EndMenu();
+    } else { texturePicked = false; }
+    if (ImGui::BeginMenu("Material", !materialPicked)) {
+        materialPicked = true;
+        if (ImGui::Button("Shiny")) {process->materialDomino = Materials::Shiny();}
+        else if (ImGui::Button("Dull")) {process->materialDomino = Materials::Dull();}
+        else if (ImGui::Button("Empty")) {process->materialDomino = Materials::Empty();}
+        else { materialPicked = false; }
+        ImGui::EndMenu();
+    } else { materialPicked = false; }
+
     ImGui::End();
 }
 
@@ -161,7 +180,9 @@ void GUI::displaySaveLoad() {
                     // Open a file for writing
                     std::ofstream out("../../save/"+std::string(name));
                     // Write to the file
-                    for (auto& [idx, object] : world->glObjects) {
+                    for (auto& pair : world->glObjects) {
+                        int idx = pair.first;
+                        Object* object = pair.second;
                         if (idx != 0) {
                             out << "d " << idx << " ";
                             out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
@@ -184,7 +205,7 @@ void GUI::displaySaveLoad() {
 void GUI::shortcutList() {
     if (!display->cursor_disabled) {
         int screenHeight = display->getHeight();
-        Point size = Point({600, (float) 0.7*screenHeight});
+        Point size = Point({600, (int) (0.7*screenHeight)});
         ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
         ImGui::SetNextWindowPos(ImVec2(display->getWidth()/2-size.x/2, display->getHeight()/2-size.y/2.5));
         ImGui::Begin("Shortcuts List", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
