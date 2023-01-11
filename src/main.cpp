@@ -30,6 +30,7 @@
 #include "process.h"
 #include "gui.h"
 #include "utils.h"
+#include "skybox.h"
 
 Display mainWindow; 
 
@@ -38,6 +39,8 @@ PhysicalWorld physicalWorld;
 Shader objectShader; 
 Shader directionalShadowShader; 
 Shader areaLightShader; 
+
+Skybox skybox; 
 
 Camera camera; 
 
@@ -129,6 +132,20 @@ int main(){
 	process.initMousePosition();
     
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
+
+    
+    std::vector<std::string> skyboxFaces; 
+
+    skyboxFaces.push_back("../../image/posx.jpg"); 
+    skyboxFaces.push_back("../../image/negx.jpg"); 
+    skyboxFaces.push_back("../../image/posy.jpg"); 
+    skyboxFaces.push_back("../../image/negy.jpg"); 
+    skyboxFaces.push_back("../../image/posz.jpg"); 
+    skyboxFaces.push_back("../../image/negz.jpg");
+
+    skybox = Skybox(skyboxFaces);
+     
+
     while(!mainWindow.getShouldClose()){
         Time::updateTime();
         process.processInput();
@@ -149,6 +166,13 @@ int main(){
         // Order is really important : order = shadow, object, objectLight
         directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
         mainWindow.resetViewport();
+        // skybox.DrawSkyBox(view, projection); 
+        glViewport(0, 0, 960, 540); 
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
+        //glClear is also clearing the depth buffer bit.
+
+        skybox.DrawSkyBox(view, projection);
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         areaLightShader.DrawLightObjects(projection, view);
              

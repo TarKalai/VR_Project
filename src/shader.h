@@ -24,9 +24,11 @@
 
 class Shader
 {
-public: 
+public:
+
     std::vector<Object*> objectList;
     GLuint shaderID;
+
     Shader(); 
 
     void CreateFromString(const char* vertexCode, const char* fragmentCode); //Create the shader from a string we pass into it without reading a file. 
@@ -70,6 +72,10 @@ public:
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
     void RenderScene(); // RenderScene
 
+    void Validate(); 
+
+    void CompileProgram(); 
+
     void UseShader(); 
     void ClearShader();
 
@@ -79,6 +85,7 @@ public:
 
     ~Shader(); 
 private: 
+
     int pointLightCount;
     int spotLightCount; 
     int areaLightCount;

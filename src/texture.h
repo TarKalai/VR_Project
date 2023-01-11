@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "stb_image.h"
+#include "constant.h"
 
 
 class Texture{

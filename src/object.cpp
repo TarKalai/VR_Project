@@ -5,7 +5,10 @@
 
 int Object::objectCounter = 0;
 
-Object::Object() {}
+Object::Object() {
+    VAO = 0; 
+    VBO = 0; 
+}
 
 Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible, glm::vec3 Color){
     texture = tex;

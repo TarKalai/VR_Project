@@ -20,6 +20,7 @@ set(SOURCES_REFACTOR "main.cpp"
 "display.cpp" "display.h"
 "physics.cpp" "physics.h"
 "gui.cpp" "gui.h"
+"skybox.cpp" "skybox.h"
 "debug.h"
 "constant.h")
 
