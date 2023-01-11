@@ -195,6 +195,18 @@ void GUI::shortcutList() {
         ImGui::Text("'Left Ctrl + Q' : Quit");
         ImGui::Text("'P' : Putting dominos (pressed)");
         ImGui::Text("'Enter' : Pushing force (proportionnal to time pressed)");
+
+        ImGui::Text("'T' : Increase size of next domino (keep pressed)");
+        ImGui::Text("'T + I' : Decrease size of next domino (keep pressed)");
+        ImGui::Text("'Y' : Random color for following dominos (keep pressed)");
+        ImGui::Text("'H' : Rainbow color for following dominos (keep pressed)");
+        ImGui::Text("'R' : Increase red component of following dominos");
+        ImGui::Text("'R + I' : Decrease red component of following dominos");
+        ImGui::Text("'G' : Increase red component of following dominos");
+        ImGui::Text("'G + I' : Decrease red component of following dominos");
+        ImGui::Text("'B' : Increase red component of following dominos");
+        ImGui::Text("'B + I' : Decrease red component of following dominos");
+
         ImGui::Text("'Q | Left': Left direction");
         ImGui::Text("'D | Right': Right direction");
         ImGui::Text("'Z | Up': Forward direction");
