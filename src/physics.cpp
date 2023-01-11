@@ -34,7 +34,7 @@ void PhysicalWorld::createGround(Object *obj){
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0,2*obj->position.y,0));
+    groundTransform.setOrigin(btVector3(0,obj->position.y,0));
 
     btScalar mass(0.);
 
@@ -87,7 +87,7 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
     btTransform startTransform;
     startTransform.setIdentity();
 
-    btScalar mass(1.);
+    btScalar mass(obj->scale.x * obj->scale.y * obj->scale.z);
 
     //rigidbody is dynamic if and only if mass is non zero, otherwise static
     bool isDynamic = (mass != 0.f);

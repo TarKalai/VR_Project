@@ -115,12 +115,12 @@ class Time
 		static void updateTime()
         {
 			if (!pause()) {
-				deltaTime() = glfwGetTime() - glfOldTime();
+				deltaTime() = glfwGetTime() - glfwOldTime();
 				time() = time() + speed() * deltaTime();
-				glfOldTime() = glfwGetTime();
+				glfwOldTime() = glfwGetTime();
 			}
 			else {
-				glfOldTime() = glfwGetTime();
+				glfwOldTime() = glfwGetTime();
 			}
         }
 
@@ -177,15 +177,14 @@ class Time
             return pause;
 		}
 
-
 		static float& time(){
 			static float time = 0;
             return time;
 		}
 
-		static float& glfOldTime(){
-			static float glfOldTime = 0;
-            return glfOldTime;
+		static float& glfwOldTime(){
+			static float glfwOldTime = -Ttime::startTime;
+            return glfwOldTime;
 		}
 
 		static float& oldTime(){

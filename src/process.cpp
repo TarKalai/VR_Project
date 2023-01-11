@@ -14,6 +14,7 @@ void Process::processInput() {
 	HandleMenuMode();
 	HandleWindow();
 	AnimationSpeed();
+	PlacingParameter();
 	PlacingDomino();
 	Pushing();
 	Deplacement();
@@ -120,6 +121,21 @@ void Process::AnimationSpeed() {
 	}
 }
 
+void Process::PlacingParameter() {
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+		scaleIncrease = true;
+		scaleDecrease = false;
+	} 
+	else if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+		scaleIncrease = false;
+		scaleDecrease = true;
+	} 
+	else {
+		scaleIncrease = false;
+		scaleDecrease = false;
+	}
+}
+
 void Process::PlacingDomino() {
 	// Putting Domino
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
@@ -190,15 +206,13 @@ void Process::HandleMouse(){
 }
 
 void Process::PutDominoes(){
-	float heightDomino = 1.*2;
-	float widthDomino = 0.175*2;
-	float espacement = 0.5*heightDomino + widthDomino; // distance between 2 domino
+	float espacement = scaleDomino*(dominoDim::height/2 + dominoDim::thick); // distance between 2 domino
 
 	glm::vec3 dir = camera->getDirection(); 
 	glm::vec3 pos = camera->getPosition();
 
 	if (dir.y < 0) {
-		double ratio = (heightDomino/2 - pos.y)/dir.y;
+		double ratio = (dominoDim::height/2 - pos.y)/dir.y;
 		glm::vec3 cursorPosition = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
 		
 		if (firstDomino) {
@@ -208,10 +222,12 @@ void Process::PutDominoes(){
 		else  {
 			float dist = glm::distance(lastDomino, cursorPosition);
 			if (dist > espacement) { 
+				if (scaleIncrease) { scaleDomino = scaleDomino*1.1; }
+				else if (scaleDecrease) { scaleDomino = glm::max(scaleDomino*0.9, 0.1); }
 				ratio = espacement/dist;
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
-				Object* domino = new Object(geometry::domino, Textures::White(), Materials::Shiny(), lastDomino, glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(heightDomino/2), true, glm::vec3(Utils::getRandom(0, 1), Utils::getRandom(0, 1), Utils::getRandom(0, 1)));	
+				Object* domino = new Object(geometry::domino, Textures::White(), Materials::Shiny(), glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), true, glm::vec3(Utils::getRandom(0, 1), Utils::getRandom(0, 1), Utils::getRandom(0, 1)));	
 				world->addDomino(domino);
 				shader->addObject(domino);
 				shadow->addObject(domino);

@@ -40,6 +40,7 @@ private:
     void displayFPS();
     void displayTime();
     void displaySpeedAnimation();
+    void displayDominoInfo();
     void displaySaveLoad();
     void shortcutList();
 };

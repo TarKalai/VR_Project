@@ -29,6 +29,7 @@ public:
     Shader* shader;
     Shader* shadow;
     float sliderSpeedAnimation = 1.;
+    float scaleDomino = 1.;
 
     Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
     void initMousePosition();
@@ -50,6 +51,8 @@ private:
     int pressed = 0;
     bool decreaseResolution = false;
     bool increaseResolution = false;
+    bool scaleIncrease = false;
+    bool scaleDecrease = false;
     std::vector<glm::vec3> cursor_path;
 
     void HandleMenuMode();
@@ -58,6 +61,7 @@ private:
 	void DecreaseScreen();
 	void IncreaseScreen();
 	void FullScreen();
+	void PlacingParameter();
 	void PlacingDomino();
 	void Pushing();
 	void Deplacement();
