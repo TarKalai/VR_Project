@@ -42,7 +42,7 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformShininess = GetShininessLocation();
 
     //glEnable(GL_CULL_FACE);
-    glViewport(0, 0, 960, 540); 
+    //glViewport(0, 0, 960, 540); 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
     //glClear is also clearing the depth buffer bit.

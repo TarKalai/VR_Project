@@ -28,6 +28,7 @@ public:
 
     int Initialise(); 
 
+    void resetViewport();
     void static framebuffer_size_callback(GLFWwindow* window, int width, int height);
     void static scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
