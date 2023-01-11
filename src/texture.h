@@ -8,9 +8,9 @@ class Texture{
 
 public: 
     Texture(); 
-    Texture(const char* fileLoc); 
+    Texture(const char* FileLocation, const char* NormalLocation=nullptr); 
 
-    bool LoadTexture();
+    GLuint LoadTexture(const char* FileLoc);
     void UseTexture(); 
     void ClearTexture(); 
     int getWidth(){return width;}
@@ -19,9 +19,9 @@ public:
 
 private: 
 
-    GLuint textureID; 
+    GLuint textureID, normalID; 
     int width, height, nrComponents; 
 
-    const char* fileLocation;  
+    // const char* fileLocation, normalLocation;  
 
 };

@@ -362,8 +362,8 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     glUniform1i(uniformAreaLightCount, lightCount); // make sure it is an int ! to go through the loop
     
     glUniform1i(uniformMaterialDiffuse, 0);
-    glUniform1i(uniformLTC1, 1);
-    glUniform1i(uniformLTC2, 2); 
+    glUniform1i(uniformLTC1, 2);
+    glUniform1i(uniformLTC2, 3); 
 
     for(int i=0; i < lightCount; i++){
 

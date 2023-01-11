@@ -5,31 +5,30 @@
 
 Texture::Texture(){
 
-    textureID = 0; 
+    textureID = normalID = 0;
     width = 0; 
     height = 0; 
     nrComponents=0;
-    fileLocation="";
-    LoadTexture();
 }
 
-Texture::Texture(const char* fileLoc){
-
-    textureID = 0; 
+Texture::Texture(const char* FileLocation, const char * NormalLocation){
     width = 0; 
     height = 0; 
     nrComponents=0;
-    fileLocation=fileLoc; 
-    LoadTexture();
+    textureID = LoadTexture(FileLocation);
+    if (NormalLocation != nullptr){
+        normalID = LoadTexture(NormalLocation);
+    }
 }
 
-bool Texture::LoadTexture(){
-    std::cout << fileLocation << std::endl;
+GLuint Texture::LoadTexture(const char* fileLoc){
+    GLuint id;
+    std::cout << fileLoc << std::endl;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load(fileLocation, &width, &height, &nrComponents, 0);
+    unsigned char *data = stbi_load(fileLoc, &width, &height, &nrComponents, 0);
 
     if (!data) {
-        printf("Failed to find texture : ", fileLocation); 
+        printf("Failed to find texture : %s", fileLoc); 
         return false; 
     }
 
@@ -42,8 +41,8 @@ bool Texture::LoadTexture(){
         dataFormat = GL_RGBA;
     }
 
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID); // The 3D type of texture: for instance if w efly through a could, there is texture inside the cloud. 
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id); // The 3D type of texture: for instance if w efly through a could, there is texture inside the cloud. 
     //3. Define the parameters for the texture
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);  // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // The S and T axis corresponds to the u,v coordinates. (x and y)
@@ -55,25 +54,30 @@ bool Texture::LoadTexture(){
 
     glBindTexture(GL_TEXTURE_2D, 0); 
     stbi_image_free(data);
-    return true;
+    return id;
 }
 
 
 void Texture::UseTexture(){
     glActiveTexture(GL_TEXTURE0); // GL_TEXTURE0: texture unit => when the texture is run in the fragment shader, there will be a sampler that will have access to the data for the texture and it accesses it throught the texture unit. 
     glBindTexture(GL_TEXTURE_2D, textureID); // bind to the texture unit. 
-
+    if (normalID != 0){
+        glActiveTexture(GL_TEXTURE1); // the normal texture
+        glBindTexture(GL_TEXTURE_2D, normalID);
+    }
 }
 
 
 void Texture::ClearTexture(){
 
     glDeleteTextures(1, &textureID); 
+    glDeleteTextures(1, &normalID); 
     textureID = 0; 
+    normalID = 0; 
     width=0; 
     height=0; 
     nrComponents=0;
-    fileLocation=""; 
+
 }
 
 Texture::~Texture(){
