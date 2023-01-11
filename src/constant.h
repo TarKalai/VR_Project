@@ -4,9 +4,9 @@
 
 namespace values
 {
-    static constexpr int MAX_POINT_LIGHTS = 4;
-    static constexpr int MAX_SPOT_LIGHTS = 3;
-    static constexpr int MAX_AREA_LIGHTS = 100;
+    static constexpr int MAX_POINT_LIGHTS = 5;
+    static constexpr int MAX_SPOT_LIGHTS = 5;
+    static constexpr int MAX_AREA_LIGHTS = 5;
 }
 
 namespace image
