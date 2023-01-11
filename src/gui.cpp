@@ -155,13 +155,16 @@ void GUI::displaySaveLoad() {
                             iss >> indice; // Go the next elem of the split (reach elem 1 by 1 separated by " ")
                             if (indice == "d") {
                                 int idx;
-                                float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ;
-                                iss >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ;
+                                float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, colX, colY, colZ;
+                                std::string tex, mat;
+                                iss >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
                                 glm::vec3 pos = glm::vec3(posX, posY, posZ);
                                 glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
                                 glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
-
-                                Object* domino = new Object(geometry::domino,Textures::White(), Materials::Dull(),  pos, rot, scale);	
+                                glm::vec3 color = glm::vec3(colX, colY, colZ);
+                                Texture* texture = Textures::Get(tex);
+                                Material* material= Materials::Get(mat);
+                                Object* domino = new Object(geometry::domino, texture, material,  pos, rot, scale, 1, color);	
                                 world->addDomino(domino);  
                                 shader->addObject(domino);
                                 shadow->addObject(domino);
@@ -189,8 +192,8 @@ void GUI::displaySaveLoad() {
                             out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
                             out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
                             out << object->color.x << " " << object->color.y << " " << object->color.z << " ";
-                            out << "texture";
-                            out << "material" << std::endl;
+                            out << object->texture->name << " ";
+                            out << object->material->name << std::endl;
                         }
                     }  
                     // Close the file

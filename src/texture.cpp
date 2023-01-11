@@ -4,7 +4,7 @@
 
 
 Texture::Texture(){
-
+    name = "";
     textureID = 0; 
     width = 0; 
     height = 0; 
@@ -13,8 +13,8 @@ Texture::Texture(){
     LoadTexture();
 }
 
-Texture::Texture(const char* fileLoc){
-
+Texture::Texture(const char* fileLoc, const char* _name){
+    name = _name;
     textureID = 0; 
     width = 0; 
     height = 0; 

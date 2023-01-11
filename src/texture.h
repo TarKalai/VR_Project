@@ -7,8 +7,9 @@
 class Texture{
 
 public: 
+    const char* name;
     Texture(); 
-    Texture(const char* fileLoc); 
+    Texture(const char* fileLoc, const char* _name); 
 
     bool LoadTexture();
     void UseTexture(); 
