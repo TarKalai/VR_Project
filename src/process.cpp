@@ -222,8 +222,8 @@ void Process::PutDominoes(){
 		else  {
 			float dist = glm::distance(lastDomino, cursorPosition);
 			if (dist > espacement) { 
-				if (scaleIncrease) { scaleDomino = scaleDomino*1.1; }
-				else if (scaleDecrease) { scaleDomino = glm::max(scaleDomino*0.9, 0.1); }
+				if (scaleIncrease) { scaleDomino = glm::min(10, scaleDomino*1.1); }
+				else if (scaleDecrease) { scaleDomino = glm::max(0.1, scaleDomino*0.9); }
 				ratio = espacement/dist;
 				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
 				glm::vec3 delta_dir = nextDomino-lastDomino;
