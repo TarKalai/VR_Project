@@ -64,6 +64,13 @@ namespace dominoDim
     static constexpr float thick = 2*0.175;
 }
 
+namespace PHYSIC
+{
+    static constexpr int ANY_TYPE = 0;
+    static constexpr int NORMAL_OBJECT = 1;
+    static constexpr int GROUND_OBJECT = 2;
+}
+
 namespace color
 {
     static constexpr glm::vec3 Maroon = glm::vec3(0.501961f, 0.0f, 0.0f);

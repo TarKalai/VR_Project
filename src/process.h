@@ -40,9 +40,9 @@ public:
     void initMousePosition();
     void processInput(); 
     void HandleMouse(); 
-    void PutDominoes();
+    void deleteDominos();
+    void PutDominos();
 	void AnimationSpeed();
-    void RayCasting();
     ~Process(); 
 private: 
     bool menuPressed = false;

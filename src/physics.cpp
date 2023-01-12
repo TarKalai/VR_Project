@@ -1,6 +1,5 @@
 #include "physics.h"
 
-
 PhysicalWorld::PhysicalWorld(){}
 
 PhysicalWorld::PhysicalWorld(Object *obj)
@@ -51,6 +50,7 @@ void PhysicalWorld::createGround(Object *obj){
     btRigidBody* body = new btRigidBody(rbInfo);
 
     body->setUserIndex(obj->id);
+    setType(body, PHYSIC::GROUND_OBJECT);
     //setLifeTime(body, -1000);
     //add the body to the dynamics world
     dynamicsWorld -> addRigidBody(body);
@@ -117,39 +117,26 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
     btRigidBody* body = new btRigidBody(rbInfo);
     setLifeTime(body, lifetime);
     body->setUserIndex(obj->id); // >0 used for classical collisionable object with openGL display (e.g. dominos)
+    setType(body, PHYSIC::NORMAL_OBJECT);
     body->setLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
     dynamicsWorld->addRigidBody(body);
 }
 
-// glm::vec3 PhysicalWorld::getObject(glm::vec3 from, glm::vec3 to) {
-//     btRigidBody* nearestRigidbody;
-//     btVector3 rayFrom(from.x, from.y, from.z); 
-//     btVector3 rayTo(to.x, to.y, to.z);
-//     btCollisionWorld::ClosestRayResultCallback callback(rayFrom, rayTo);
-//     dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+void PhysicalWorld::DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type) {
+    btRigidBody* body = RayCastBody(from, to, type);
+    if (body != nullptr) {
+        printf("in\n");
+        Object* glObj = glObjects.at(body->getUserIndex());
+        glObj->visible = false;
+        dynamicsWorld->removeRigidBody(body);
+        delete body;
+    }
+}
 
-//     if (callback.hasHit())
-//     {
-//         btRigidBody* nearestRigidbody = const_cast<btRigidBody*>(btRigidBody::upcast(callback.m_collisionObject));
-//         if (nearestRigidbody)
-//         {
-//             // do something with the nearest rigidbody
-//             std::cout << nearestRigidbody->getCenterOfMassPosition().getX() << " " << nearestRigidbody->getCenterOfMassPosition().getY() << " " << nearestRigidbody->getCenterOfMassPosition().getZ() << " " << std::endl;
-//             // nearestRigidbody->applyCentralImpulse(btVector3(0,10,0));
-//             int idx = nearestRigidbody->getUserIndex();
-//             // Object* glObj = glObjects.at(nearestRigidbody->getUserIndex());
-//             // glObj->position = glm::vec3(0,5,0);
-//             return glm::vec3(nearestRigidbody->getCenterOfMassPosition().getX(), nearestRigidbody->getCenterOfMassPosition().getY(),nearestRigidbody->getCenterOfMassPosition().getZ());
-
-//         }
-//     }
-//     return glm::vec3(-1);
-// }
-
-glm::vec3 PhysicalWorld::getObject(glm::vec3 from, glm::vec3 to) {
-    btVector3 rayFrom(from.x, from.y, from.z); 
-    btVector3 rayTo(to.x, to.y, to.z);
-
+btRigidBody* PhysicalWorld::RayCastBody(glm::vec3 from, glm::vec3 to, int type) {
+    btVector3 rayFrom = btVector3(from.x, from.y, from.z);
+    btVector3 rayTo = btVector3(to.x, to.y, to.z);
+    btRigidBody* hitRigidbody;
     btCollisionWorld::AllHitsRayResultCallback callback(rayFrom, rayTo);
     dynamicsWorld->rayTest(rayFrom, rayTo, callback);
 
@@ -160,21 +147,45 @@ glm::vec3 PhysicalWorld::getObject(glm::vec3 from, glm::vec3 to) {
             btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[i]);
             if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
             {
-                btRigidBody* hitRigidbody = btRigidBody::upcast(object);
-                if (hitRigidbody->getUserIndex() == 0) {
-                btVector3 hitPoint = callback.m_hitPointWorld[i];
-                btVector3 hitNormal = callback.m_hitNormalWorld[i];
-                // do something with the hit rigidbody, hit point, and hit normal
-                std::cout << i << " :: " << hitPoint.getX() << " " << hitPoint.getY() << " " << hitPoint.getZ() << " " << std::endl;
-                return glm::vec3(hitPoint.getX(), hitPoint.getY()+2, hitPoint.getZ());
+                hitRigidbody = btRigidBody::upcast(object);
+                printf("%d %d\n", getType(hitRigidbody), type);
+                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
+                    printf("lol\n");
+                    //btVector3 hitPoint = callback.m_hitPointWorld[i];
+                    //btVector3 hitNormal = callback.m_hitNormalWorld[i];
+                    return hitRigidbody;
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+
+glm::vec3 PhysicalWorld::RayCastPos(glm::vec3 from, glm::vec3 to, int type) {
+    btVector3 rayFrom = btVector3(from.x, from.y, from.z);
+    btVector3 rayTo = btVector3(to.x, to.y, to.z);
+    btRigidBody* hitRigidbody;
+    btCollisionWorld::AllHitsRayResultCallback callback(rayFrom, rayTo);
+    dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+
+    if (callback.hasHit())
+    {
+        for (int i = 0; i < callback.m_collisionObjects.size(); i++)
+        {
+            btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[i]);
+            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+            {
+                hitRigidbody = btRigidBody::upcast(object);
+                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
+                    btVector3 hitPoint = callback.m_hitPointWorld[i];
+                    return glm::vec3(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
                 }
             }
         }
     }
     return glm::vec3(-1);
 }
-
-
 
 
 void PhysicalWorld::animate()
