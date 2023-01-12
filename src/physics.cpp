@@ -51,34 +51,33 @@ void PhysicalWorld::createGround(Object *obj){
 
     body->setUserIndex(obj->id);
     setType(body, PHYSIC::GROUND_OBJECT);
-    //setLifeTime(body, -1000);
     //add the body to the dynamics world
     dynamicsWorld -> addRigidBody(body);
 }
 
-void PhysicalWorld::addSphere(Object *obj, glm::vec3 velocity, int lifetime){
+void PhysicalWorld::addSphere(Object *obj, glm::vec3 velocity){
     //create a dynamic rigidbody
     if (obj->scale.x!=obj->scale.y || obj->scale.y!=obj->scale.z) { // Check if it's a sphere
         std::cout << "The sphere has not spherical dimensions !" << std::endl;
         exit(-1);
     }
     btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale.x));
-    addObject(obj, colShape, velocity, lifetime);
+    addObject(obj, colShape, velocity);
 }
 
-void PhysicalWorld::addCube(Object *obj, glm::vec3 velocity, int lifetime){
+void PhysicalWorld::addCube(Object *obj, glm::vec3 velocity){
     //create a dynamic rigidbody
     btCollisionShape* colShape = new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
-    addObject(obj, colShape, velocity, lifetime);
+    addObject(obj, colShape, velocity);
 }
 
-void PhysicalWorld::addDomino(Object *obj, glm::vec3 velocity, int lifetime){
+void PhysicalWorld::addDomino(Object *obj, glm::vec3 velocity){
     //create a dynamic rigidbody
     btCollisionShape* colShape = new btBoxShape(btVector3(0.175*obj->scale.x, 1.*obj->scale.y, 0.5*obj->scale.z));
-    addObject(obj, colShape, velocity, lifetime);
+    addObject(obj, colShape, velocity);
 }
 
-void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime){
+void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity){
     //btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale));
     collisionShapes.push_back(colShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
@@ -115,12 +114,45 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
     //rbInfo.m_initialLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
 
     btRigidBody* body = new btRigidBody(rbInfo);
-    setLifeTime(body, lifetime);
     body->setUserIndex(obj->id); // >0 used for classical collisionable object with openGL display (e.g. dominos)
     setType(body, PHYSIC::NORMAL_OBJECT);
     body->setLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
     dynamicsWorld->addRigidBody(body);
 }
+
+void PhysicalWorld::RayCastPush(glm::vec3 from, glm::vec3 to, int type, int power) {
+    btVector3 rayFrom = btVector3(from.x, from.y, from.z);
+    btVector3 rayTo = btVector3(to.x, to.y, to.z);
+    btRigidBody* hitRigidbody;
+    btCollisionWorld::AllHitsRayResultCallback callback(rayFrom, rayTo);
+    dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+
+    if (callback.hasHit())
+    {
+        for (int i = 0; i < callback.m_collisionObjects.size(); i++)
+        {
+            btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[i]);
+            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+            {
+                hitRigidbody = btRigidBody::upcast(object);
+                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
+                    btVector3 hitPoint = callback.m_hitPointWorld[i];
+                    btVector3 hitNormal = callback.m_hitNormalWorld[i];
+
+                    btVector3 dir = rayTo-rayFrom;
+                    btVector3 impulse = (dir/dir.length()) * power; // impulse vector
+                    btVector3 relativePosition = hitPoint - hitRigidbody->getCenterOfMassPosition(); // relative position
+
+                    hitRigidbody->activate(true);
+                    hitRigidbody->applyImpulse(impulse, relativePosition);
+                    //hitRigidbody->applyForce(impulse, relativePosition);
+                    break; // Push only the first object
+                }
+            }
+        }
+    }
+}
+
 
 Object* PhysicalWorld::RayCastObj(glm::vec3 from, glm::vec3 to, int type) {
     btRigidBody* body = RayCastBody(from, to, type);
@@ -155,8 +187,6 @@ btRigidBody* PhysicalWorld::RayCastBody(glm::vec3 from, glm::vec3 to, int type) 
             {
                 hitRigidbody = btRigidBody::upcast(object);
                 if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
-                    //btVector3 hitPoint = callback.m_hitPointWorld[i];
-                    //btVector3 hitNormal = callback.m_hitNormalWorld[i];
                     return hitRigidbody;
                 }
             }
@@ -219,13 +249,6 @@ void PhysicalWorld::animate()
             trans.getRotation().getEulerZYX(yaw,pitch,roll);
             glm::vec3 translation = glm::vec3(float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
             glObj->setPosRot(translation, glm::vec3(roll, pitch, yaw));
-            setLifeTime(body, getLifeTime(body)-1); 
-        }
-        if (getLifeTime(body) == 0) {
-                Object* glObj = glObjects.at(body->getUserIndex());
-                glObj->visible = false;
-                dynamicsWorld->removeRigidBody(body);
-                delete body;
         }
     }
 }

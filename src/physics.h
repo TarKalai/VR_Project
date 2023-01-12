@@ -30,19 +30,18 @@ public:
 
     void initializeEngine();
     void createGround(Object *obj);
-    void addSphere(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
-    void addCube(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
-    void addDomino(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0), int lifetime=-1);
-    void addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime=-1);
+    void addSphere(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0));
+    void addCube(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0));
+    void addDomino(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0));
+    void addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity);
     int getType(btRigidBody* body) { return body->getUserIndex2(); }
     void setType(btRigidBody* body, int type) { body->setUserIndex2(type); }
-    int getLifeTime(btRigidBody* body) { return body->getUserIndex3(); }
-    void setLifeTime(btRigidBody* body, int lifetime) { body->setUserIndex3(lifetime); }
     
     Object* RayCastObj(glm::vec3 from, glm::vec3 to, int type);
     btRigidBody* RayCastBody(glm::vec3 from, glm::vec3 to, int type);
     glm::vec3 RayCastPos(glm::vec3 from, glm::vec3 to, int type);
     void DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type);
+    void RayCastPush(glm::vec3 from, glm::vec3 to, int type, int power);
     
     void animate();
     void clear();

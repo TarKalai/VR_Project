@@ -185,8 +185,14 @@ void Process::Pushing() {
 		pressed += 1;
 	} else if (shoot) {
 		shoot = false;
-		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Empty(), camera->getPosition(), glm::vec3(0.), glm::vec3(1.), false); // visible=false
-		world->addSphere(sphere, camera->getDirection()*glm::vec3(pressed), 30); // lifetime = 30
+
+		glm::vec3 dir = camera->getDirection(); 
+		glm::vec3 pos = camera->getPosition();
+
+		double dist = 200; // Distance to push object (May vary depending of the farplane)
+		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
+
+		world->RayCastPush(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT, pressed);
 		pressed = 0;
 	}
 }
