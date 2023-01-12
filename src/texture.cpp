@@ -15,9 +15,11 @@ Texture::Texture(const char* FileLocation, const char * NormalLocation){
     width = 0; 
     height = 0; 
     nrComponents=0;
-    textureID = LoadTexture(FileLocation);
     if (NormalLocation != nullptr){
-        normalID = LoadTexture(NormalLocation);
+        textureID = LoadTexture(FileLocation, true);
+        normalID = LoadTexture(NormalLocation, true);
+    }else{
+        textureID = LoadTexture(FileLocation);
     }
 }
 

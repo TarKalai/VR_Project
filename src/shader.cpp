@@ -22,6 +22,27 @@ void Shader::addObjects(std::vector<Object*> objects){
     }
 }
 
+void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view){
+    UseShader(); 
+
+    uniformModel = GetModelLocation(); 
+    uniformProjection = GetProjectionLocation(); 
+    uniformView = GetViewLocation(); 
+    uniformEyePosition = GetEyePositionLocation(); 
+
+    GLuint lightpos = glGetUniformLocation(shaderID, "lightPos");
+    glm::vec3 pos = glm::vec3(0.0, 1.0, 0.0); //glm::cos(glfwGetTime())
+    glUniform3f(lightpos, pos.x, pos.y, pos.z); // tochange later on
+
+    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
+
+    SetTexture(0); // bound to texture unit 0 
+    SetNormalMap(1);
+
+    RenderScene();
+}
 
 void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,  
                          DirectionalLight* mainLight,
@@ -40,13 +61,7 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformEyePosition = GetEyePositionLocation(); 
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
-
-
-    GLuint lightpos = glGetUniformLocation(shaderID, "lightPos");
-    glm::vec3 pos = glm::vec3(0.0, 1.0, 0.0);
-    glUniform3f(lightpos, pos.x, pos.y, pos.z); // tochange later on
-
-
+    
     
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -67,7 +82,6 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     // shadowMap is going to be bound to GL_TEXTURE1
 
     SetTexture(0); // bound to texture unit 0 
-    SetNormalMap(1);
     SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
     
 

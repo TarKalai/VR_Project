@@ -20,11 +20,11 @@ uniform vec3 lightPos;
 uniform vec3 eyePosition;
 
 void main(){
-    gl_Position = projection * view * model * vec4(pos, 1.0);
-
+    FragPos =  vec3(model * vec4(pos, 1.0)); 
     TexCoord = tex; 
+    
 
-    mat3 normalMatrix = mat3(transpose(inverse(model)));
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 N = normalize(normalMatrix * norm);
     vec3 T = normalize(normalMatrix * tangent);
     T = normalize(T - dot(T, N) * N);
@@ -35,5 +35,5 @@ void main(){
     TangentViewPos  = TBN * eyePosition;
     TangentFragPos  = TBN * FragPos;
 
-    FragPos =  (model * vec4(pos, 1.0)).xyz; 
+    gl_Position = projection * view * model * vec4(pos, 1.0);
 }

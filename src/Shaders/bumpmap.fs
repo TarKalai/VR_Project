@@ -27,7 +27,7 @@ void main()
     vec3 ambient = 0.1 * fragColor;
     // diffuse
     vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
-    float diff = max(dot(-lightDir, normal), 0.0);
+    float diff = max(dot(lightDir, normal), 0.0);
     vec3 diffuse = diff * fragColor;
     // specular
     vec3 viewDir = normalize(TangentViewPos - TangentFragPos);
@@ -36,5 +36,5 @@ void main()
     float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
 
     vec3 specular = vec3(0.2) * spec;
-    color = vec4(ambient + diffuse + specular, 1.0);
+    color = vec4(ambient + diffuse + specular, 1.0);//vec4(ambient + diffuse + specular, 1.0);
 }

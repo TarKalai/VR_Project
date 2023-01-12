@@ -59,32 +59,32 @@ void CreateObjects(){
     bumpMapShader.addObject(ground);
     // directionalShadowShader.addObject(ground); 
 
-    Object* test = new Object(geometry::plane2, Textures::Brickwall(), Materials::Shiny(), glm::vec3(10., 2., 10.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.0), 1, glm::vec3(1., 1., 1.));
-    objectShader.addObject(test);
-    directionalShadowShader.addObject(test);
+    // Object* test = new Object(geometry::plane2, Textures::Brickwall(), Materials::Shiny(), glm::vec3(10., 2., 10.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.0), 1, glm::vec3(1., 1., 1.));
+    // objectShader.addObject(test);
+    // directionalShadowShader.addObject(test);
 
 
-    for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(sphere);
-        directionalShadowShader.addObject(sphere);
-        physicalWorld.addSphere(sphere); 
-	}
+    // for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
+	// 	glm::vec3 color = glm::vec3(1.0);
+	// 	Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
+    //     objectShader.addObject(sphere);
+    //     directionalShadowShader.addObject(sphere);
+    //     physicalWorld.addSphere(sphere); 
+	// }
 
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(cube);
-        directionalShadowShader.addObject(cube);
-        physicalWorld.addCube(cube); 
-	}
+	// for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
+	// 	glm::vec3 color = glm::vec3(1.0);
+	// 	Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, 1, color);
+    //     objectShader.addObject(cube);
+    //     directionalShadowShader.addObject(cube);
+    //     physicalWorld.addCube(cube); 
+	// }
 }
 
 void CreateShaders()
@@ -155,16 +155,16 @@ int main(){
         physicalWorld.animate();
         
         // Order is really important : order = shadow, object, objectLight
-        directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
+        // directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
         mainWindow.resetViewport();
 
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
-        bumpMapShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
+        bumpMapShader.RenderBump(camera, projection, view); 
+        // objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
 
-        areaLightShader.DrawLightObjects(projection, view);
+        // areaLightShader.DrawLightObjects(projection, view);
              
         gui.update();
         mainWindow.swapBuffers(); // There are 2 scenes going on at once, we are drawing to the one that can't be seen, and we call swapBuffers to swap them around: so then the one we are drawing to is the one that can be seen and the one which could be seen originaly is the one we are drawing to. 
