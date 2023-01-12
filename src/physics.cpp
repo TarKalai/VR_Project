@@ -121,6 +121,62 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
     dynamicsWorld->addRigidBody(body);
 }
 
+// glm::vec3 PhysicalWorld::getObject(glm::vec3 from, glm::vec3 to) {
+//     btRigidBody* nearestRigidbody;
+//     btVector3 rayFrom(from.x, from.y, from.z); 
+//     btVector3 rayTo(to.x, to.y, to.z);
+//     btCollisionWorld::ClosestRayResultCallback callback(rayFrom, rayTo);
+//     dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+
+//     if (callback.hasHit())
+//     {
+//         btRigidBody* nearestRigidbody = const_cast<btRigidBody*>(btRigidBody::upcast(callback.m_collisionObject));
+//         if (nearestRigidbody)
+//         {
+//             // do something with the nearest rigidbody
+//             std::cout << nearestRigidbody->getCenterOfMassPosition().getX() << " " << nearestRigidbody->getCenterOfMassPosition().getY() << " " << nearestRigidbody->getCenterOfMassPosition().getZ() << " " << std::endl;
+//             // nearestRigidbody->applyCentralImpulse(btVector3(0,10,0));
+//             int idx = nearestRigidbody->getUserIndex();
+//             // Object* glObj = glObjects.at(nearestRigidbody->getUserIndex());
+//             // glObj->position = glm::vec3(0,5,0);
+//             return glm::vec3(nearestRigidbody->getCenterOfMassPosition().getX(), nearestRigidbody->getCenterOfMassPosition().getY(),nearestRigidbody->getCenterOfMassPosition().getZ());
+
+//         }
+//     }
+//     return glm::vec3(-1);
+// }
+
+glm::vec3 PhysicalWorld::getObject(glm::vec3 from, glm::vec3 to) {
+    btVector3 rayFrom(from.x, from.y, from.z); 
+    btVector3 rayTo(to.x, to.y, to.z);
+
+    btCollisionWorld::AllHitsRayResultCallback callback(rayFrom, rayTo);
+    dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+
+    if (callback.hasHit())
+    {
+        for (int i = 0; i < callback.m_collisionObjects.size(); i++)
+        {
+            btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[i]);
+            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
+            {
+                btRigidBody* hitRigidbody = btRigidBody::upcast(object);
+                if (hitRigidbody->getUserIndex() == 0) {
+                btVector3 hitPoint = callback.m_hitPointWorld[i];
+                btVector3 hitNormal = callback.m_hitNormalWorld[i];
+                // do something with the hit rigidbody, hit point, and hit normal
+                std::cout << i << " :: " << hitPoint.getX() << " " << hitPoint.getY() << " " << hitPoint.getZ() << " " << std::endl;
+                return glm::vec3(hitPoint.getX(), hitPoint.getY()+2, hitPoint.getZ());
+                }
+            }
+        }
+    }
+    return glm::vec3(-1);
+}
+
+
+
+
 void PhysicalWorld::animate()
 {
     ///-----stepsimulation_start-----

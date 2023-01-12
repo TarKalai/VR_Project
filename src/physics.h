@@ -6,6 +6,7 @@
 #include "object.h"
 #include <math.h>
 #include "glm/ext.hpp" 
+
 #include "glm/gtx/string_cast.hpp"
 #include "utils.h"
 
@@ -14,7 +15,7 @@ class PhysicalWorld{
     
 public:
     float speedAnimation = 1.;
-    btDiscreteDynamicsWorld* dynamicsWorld;
+    btDynamicsWorld* dynamicsWorld;
     btDefaultCollisionConfiguration* collisionConfiguration;
     btCollisionDispatcher* dispatcher;
     btBroadphaseInterface* overlappingPairCache;
@@ -35,6 +36,8 @@ public:
     void addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity, int lifetime=-1);
     int getLifeTime(btRigidBody* body) { return body->getUserIndex2(); }
     void setLifeTime(btRigidBody* body, int lifetime) { body->setUserIndex2(lifetime); }
+    glm::vec3 getObject(glm::vec3 from, glm::vec3 to);
+    
     void animate();
     void clear();
     ~PhysicalWorld();

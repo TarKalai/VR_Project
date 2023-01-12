@@ -21,6 +21,9 @@ void Process::processInput() {
 		Deplacement();
 		HandleMouse();
 	}
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+		RayCasting();
+	}
 }
 
 void Process::HandleMenuMode() {
@@ -231,12 +234,31 @@ void Process::HandleMouse(){
 	xoffset = xpos - camera->initRunX;
 	yoffset = ypos - camera->initRunY; 
 
-	if (xoffset || yoffset)
+	if (xoffset || yoffset) 
 		camera->processMouseMovement(xoffset, yoffset, 1);
 
 	camera->CreateCallBacks(window, xoffset, yoffset); 
 
 }
+
+void Process::RayCasting() {
+	glm::vec3 pos = camera->getPosition();
+	glm::vec3 dir = camera->getDirection();
+	if (dir.y < 0) {
+		double ratio = -pos.y/dir.y;
+		glm::vec3 cursorPos = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
+		// Object* domino = new Object(geometry::domino, textureDomino, materialDomino, 
+		// 							glm::vec3(cursorPos.x, scaleDomino, cursorPos.z), glm::vec3(0.), glm::vec3(scaleDomino), 
+		// 							true, normalize(colorDomino));	
+		glm::to_string(world->getObject(pos, cursorPos));
+	}
+}
+
+// pos: vec3(0.000000, 15.000000, -25.000000)
+// dir: vec3(-0.000000, -0.500000, 0.866025)
+
+// pos: vec3(25.800026, 15.000000, -25.000000)
+// dir: vec3(-0.000000, -0.500000, 0.866025)
 
 void Process::PutDominoes(){
 	float espacement = scaleDomino*(dominoDim::height/2 + dominoDim::thick); // distance between 2 domino
@@ -244,29 +266,38 @@ void Process::PutDominoes(){
 	glm::vec3 dir = camera->getDirection(); 
 	glm::vec3 pos = camera->getPosition();
 
+	std::cout << "pos: " << glm::to_string(pos) << std::endl;
+	std::cout << "dir: " << glm::to_string(dir) << std::endl;
+
 	if (dir.y < 0) {
-		double ratio = (dominoDim::height/2 - pos.y)/dir.y;
-		glm::vec3 cursorPosition = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
+		//double ratio = (dominoDim::height/2 - pos.y)/dir.y;
+		// glm::vec3 cursorPosition = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
 		
-		if (firstDomino) {
-			firstDomino = false;
-			lastDomino = cursorPosition;
-		} 
-		else  {
-			float dist = glm::distance(lastDomino, cursorPosition);
-			if (dist > espacement) { 
-				if (scaleIncrease) { scaleDomino = glm::min(10., scaleDomino*1.1); }
-				else if (scaleDecrease) { scaleDomino = glm::max(0.2, scaleDomino*0.9); }
-				ratio = espacement/dist;
-				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
-				glm::vec3 delta_dir = nextDomino-lastDomino;
-				Object* domino = new Object(geometry::domino, textureDomino, materialDomino, 
-											glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
-											true, normalize(colorDomino));	
-				world->addDomino(domino);
-				shader->addObject(domino);
-				shadow->addObject(domino);
-				lastDomino = nextDomino; // go to next domino
+		double ratio = -pos.y/dir.y;
+		glm::vec3 to = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
+		glm::vec3 cursorPosition = world->getObject(camera->getPosition(), to);
+
+		if (cursorPosition.y != -1) {
+			if (firstDomino) {
+				firstDomino = false;
+				lastDomino = cursorPosition;
+			} 
+			else  {
+				float dist = glm::distance(lastDomino, cursorPosition);
+				if (dist > espacement) { 
+					if (scaleIncrease) { scaleDomino = glm::min(10., scaleDomino*1.1); }
+					else if (scaleDecrease) { scaleDomino = glm::max(0.2, scaleDomino*0.9); }
+					ratio = espacement/dist;
+					glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition;;//glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
+					glm::vec3 delta_dir = nextDomino-lastDomino;
+					Object* domino = new Object(geometry::domino, textureDomino, materialDomino, 
+												glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
+												true, normalize(colorDomino));	
+					world->addDomino(domino);
+					shader->addObject(domino);
+					shadow->addObject(domino);
+					lastDomino = nextDomino; // go to next domino
+				}
 			}
 		}
 	}

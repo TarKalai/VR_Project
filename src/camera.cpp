@@ -1,11 +1,11 @@
 #include "camera.h"
 
-Camera::Camera(glm::vec3 Position, glm::vec3 Up, float Yaw, float Pitch){
+Camera::Camera(glm::vec3 _Position, glm::vec3 Up, float Yaw, float Pitch){
     this->front = glm::vec3(0.0f, 0.0f, -1.0f); 
     this->movementSpeed = SPEED; 
     this->mouseSensitivity = SENSITIVITY; 
     this->zoom = ZOOM; 
-    this->position = Position; 
+    this->position = _Position; 
     this->worldUp = Up;
     this->yaw = Yaw;
     this->pitch = Pitch;

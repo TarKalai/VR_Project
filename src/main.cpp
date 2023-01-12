@@ -109,6 +109,7 @@ int main(){
 	process.initMousePosition();
     
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
+    camera.processKeyboardMovement(LEFT, 0.1); // DO NOT REMOVE ! Fix bug updating camera position
     while(!mainWindow.getShouldClose()){
         Time::updateTime();
         process.processInput();

@@ -42,6 +42,7 @@ public:
     void HandleMouse(); 
     void PutDominoes();
 	void AnimationSpeed();
+    void RayCasting();
     ~Process(); 
 private: 
     bool menuPressed = false;
