@@ -56,7 +56,6 @@ class Textures {
 		Texture bird  = Texture(image::bird);
 		Texture brickwall  = Texture(image::brickwall, image::brickwalln);
 
-
 };
 
 class Materials {

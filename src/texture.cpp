@@ -21,10 +21,10 @@ Texture::Texture(const char* FileLocation, const char * NormalLocation){
     }
 }
 
-GLuint Texture::LoadTexture(const char* fileLoc){
+GLuint Texture::LoadTexture(const char* fileLoc, bool flip){
     GLuint id;
     std::cout << fileLoc << std::endl;
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(flip);
     unsigned char *data = stbi_load(fileLoc, &width, &height, &nrComponents, 0);
 
     if (!data) {

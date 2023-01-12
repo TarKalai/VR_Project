@@ -41,11 +41,7 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
 
-    //glEnable(GL_CULL_FACE);
-    //glViewport(0, 0, 960, 540); 
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
-    //glClear is also clearing the depth buffer bit.
+    
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
@@ -66,6 +62,8 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
 
     SetTexture(0); // bound to texture unit 0 
     SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
+    SetNormalMap(2);
+
     // --------------------------------------------------------- // 
 
     glm::vec3 lowerLight = camera.getPosition(); 
@@ -280,6 +278,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     }
 
     uniformTexture = glGetUniformLocation(shaderID, "theTexture");
+    uniformNormalMap = glGetUniformLocation(shaderID, "normalMap");
     uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform"); // it will bind for vertex a AND frag because it is the same name
     uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 
@@ -362,8 +361,8 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     glUniform1i(uniformAreaLightCount, lightCount); // make sure it is an int ! to go through the loop
     
     glUniform1i(uniformMaterialDiffuse, 0);
-    glUniform1i(uniformLTC1, 2);
-    glUniform1i(uniformLTC2, 3); 
+    glUniform1i(uniformLTC1, 3);
+    glUniform1i(uniformLTC2, 4); 
 
     for(int i=0; i < lightCount; i++){
 
@@ -381,6 +380,10 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
 
 void Shader::SetTexture(GLuint textureUnit){
     glUniform1i(uniformTexture, textureUnit);
+}
+
+void Shader::SetNormalMap(GLuint textureUnit){
+    glUniform1i(uniformNormalMap, textureUnit);
 }
 
 

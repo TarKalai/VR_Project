@@ -10,7 +10,7 @@ public:
     Texture(); 
     Texture(const char* FileLocation, const char* NormalLocation=nullptr); 
 
-    GLuint LoadTexture(const char* FileLoc);
+    GLuint LoadTexture(const char* FileLoc, bool flip=true);
     void UseTexture(); 
     void ClearTexture(); 
     int getWidth(){return width;}

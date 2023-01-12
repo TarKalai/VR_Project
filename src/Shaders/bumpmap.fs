@@ -64,11 +64,11 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS]; 
 uniform AreaLight areaLights[MAX_AREA_LIGHTS];
 
-uniform sampler2D theTexture;
-uniform sampler2D normalMap;
-uniform sampler2D directionalShadowMap; 
-uniform sampler2D LTC1; // for inverse M
-uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
+uniform sampler2D theTexture; //0 
+uniform sampler2D directionalShadowMap; //1
+uniform sampler2D normalMap;//2
+uniform sampler2D LTC1; // for inverse M //3
+uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere //4
 uniform Material material; 
 
 uniform vec3 eyePosition; // camera position
@@ -148,9 +148,20 @@ float CalcDirectionalShadowFactor(DirectionalLight light)
 
 vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor) // in the point light calculation there is a part where we need to compute the light based on the direction, directional light calculate all of it by direction. 
 {
+    vec3 TangentLightPos = TBN * (-direction);
+    vec3 TangentViewPos  = TBN * eyePosition;
+    vec3 TangentFragPos  = TBN * FragPos;
+    
+    vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
+    vec3 normal = texture(normalMap, TexCoord).rgb;
+    normal = normalize(normal*2.0 -1.0);
+
     vec4 ambientColor = vec4(light.color, 1.0f)*light.ambientIntensity; // convert the color into vec4
 
-    float diffuseFactor = max(dot(normalize(Normal), -normalize(direction)), 0.0f); 
+    float diffuseFactor = 1.0;//max(dot(-lightDir, normal), 0.0);
+
+    // float diffuseFactor = max(dot(normalize(Normal), normalize(direction)), 0.0f); 
+
     // FAUT UN MOINS /!\
 
     // 0 if it is neg. 
@@ -163,20 +174,26 @@ vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor) // in
 
     if(diffuseFactor>0.0f)
     {
-        vec3 fragToEye = normalize(eyePosition - FragPos); // we just want the direction where the fragment is from the eye
-        vec3 reflectedVertex = normalize(reflect(direction, normalize(Normal))); // we want ot know where the light ray is reflected around the normal. The first argument is what we want ot reflect and the scd is what we are reflecting it around. 
-        // we are reflecting the light direction across the normal pointing out of the object. 
-        // if fragToEye is the same as reflectedVertex then we will see bright light because specular is most intance at that point. 
 
-        float specularFactor = dot(fragToEye, reflectedVertex); 
+        // vec3 viewDir = normalize(TangentViewPos - TangentFragPos);
+        // vec3 reflectDir = reflect(-lightDir, normal);
+        // vec3 halfwayDir = normalize(lightDir + viewDir);  
+        // float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+
+        vec3 fragToEye = normalize(TangentViewPos - TangentFragPos); 
+        vec3 reflectedVertex = reflect(lightDir, normal); 
+        vec3 halfwayDir = normalize(lightDir + fragToEye);  
+
+
+        float specularFactor = max(dot(normal, halfwayDir), 0.0); 
 
         if (specularFactor >0.0f){
-            specularFactor = pow(specularFactor, material.shininess); //We update the specular factor
+            specularFactor = 1.0;//pow(specularFactor, 256.0); //We update the specular factor
             specularColor = vec4(light.color * material.specularIntensity * specularFactor, 1.0f);  
         }
     }
 
-    return (ambientColor + (1.0 -  shadowFactor) * (diffuseColor + specularColor));
+    return (ambientColor + (1.0 -  shadowFactor) * (diffuseColor + specularColor)); //(1.0 -  shadowFactor)
 
 }
 
@@ -400,16 +417,6 @@ vec4 CalcAreaLights(){
 }
 
 void main(){
-
-    vec3 TangentLightPos = TBN * (-directionalLight.direction);
-    vec3 TangentViewPos  = TBN * eyePosition;
-    vec3 TangentFragPos  = TBN * FragPos;
-
-    vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
-    vec3 normal = texture(normalMap, TexCoord).rgb;
-    vec3 normal = normalize(Normal*2.0 -1.0);
-    vec3 diffuse = diff
-
 
     vec4 finalColor = CalcDirectionalLight();
     
