@@ -16,33 +16,33 @@ void LightConstructor::createMainLight(){
 
 void LightConstructor::createPointLight(){  
 
-    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-                                0.4f, 1.0f,
+    pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 
+                                1.0f, 1.0f,
                                 10.0f,4.0f, 10.0f,
                                 0.3f, 0.2f, 0.1f);
     pointLightCount++; 
     
-    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
-                                0.4f, 1.0f,
-                                -10.0f,5.0f, 10.0f,
-                                0.3f, 0.1f, 0.1f);
+//     pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
+//                                 0.4f, 1.0f,
+//                                 -10.0f,5.0f, 10.0f,
+//                                 0.3f, 0.1f, 0.1f);
 
-    pointLightCount++; 
+//     pointLightCount++; 
 
     
-    pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
-                                0.4f, 1.0f,
-                                -10.0f,5.0f, -10.0f,
-                                0.3f, 0.2f, 0.1f);
+//     pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
+//                                 0.4f, 1.0f,
+//                                 -10.0f,5.0f, -10.0f,
+//                                 0.3f, 0.2f, 0.1f);
 
-    pointLightCount++;
+//     pointLightCount++;
 
-	pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
-                                0.4f, 1.0f,
-                                10.0f,5.0f, -10.0f,
-                                0.3f, 0.2f, 0.1f);
+// 	pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
+//                                 0.4f, 1.0f,
+//                                 10.0f,5.0f, -10.0f,
+//                                 0.3f, 0.2f, 0.1f);
 
-    pointLightCount++;
+//     pointLightCount++;
 }
 
 void LightConstructor::createSpotLight(){

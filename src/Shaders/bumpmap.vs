@@ -1,49 +1,39 @@
 #version 330
 layout (location=0) in vec3 pos;
 layout (location=1) in vec2 tex; 
-layout (location=2) in vec3 norm; // normal of the vertex we are looking at, it as a direction
-// we will define the normals as an average of each vertex. 
+layout (location=2) in vec3 norm; 
 layout (location=3) in vec3 tangent;
 layout (location=4) in vec2 bitangent; 
 
-out vec4 vertexColor;
-out vec2 TexCoord; 
-out vec3 Normal; 
-out vec3 FragPos;
-out vec4 DirectionalLightSpacePos; // position of the fragment is relative to the light
-out mat3 TBN;
 
-uniform mat4 directionalLightTransform; //to know where in space the fragment is relative to the light and the camera => the camera will tell where it is to the light and light will check if it is closer on the shadowMap or not
+out vec2 TexCoord; 
+out vec3 FragPos;
+out vec3 TangentLightPos;
+out vec3 TangentViewPos;
+out vec3 TangentFragPos;
+
 uniform mat4 model;
 uniform mat4 projection;
 uniform mat4 view; 
 
+uniform vec3 lightPos;
+uniform vec3 eyePosition;
 
 void main(){
     gl_Position = projection * view * model * vec4(pos, 1.0);
-    DirectionalLightSpacePos = directionalLightTransform * model * vec4(pos, 1.0); // model * vec(pos, 1.0) : point that the camera can see, and light may not see, and here we are saying where it is relative to the light
-
-
-    vertexColor = vec4(clamp(pos, 0.0, 1.0), 1.0);
 
     TexCoord = tex; 
 
     mat3 normalMatrix = mat3(transpose(inverse(model)));
-    Normal = normalize(normalMatrix * norm); 
-    // Normal is in relation to where the model is, because if we move the light around we are lihghting objects in different ways. 
-    // If we rotate the object the normal doe not move, or if we scale an object the normal will bend so we need to multiply norm by 
-    // the transform of the model. 
-    // if we scale in only one direction it will also create some problems: the normal will start to point upwards
-    // so if we scale the object uniformly the normals stay in the same direction but if we scale in one dir. the normals start to change dir. 
-    // to solve this we take the inverse and take the transpose => invert scaling process
-
-    vec3 Tangent = normalize(normalMatrix * tangent);
-    Tangent = normalize(Tangent - dot(Tangent, Normal));
-    vec3 Bitangent = cross(Normal, Tangent);
-
-    mat3 TBN = transpose(mat3(Tangent, Bitangent, Normal));
+    vec3 N = normalize(normalMatrix * norm);
+    vec3 T = normalize(normalMatrix * tangent);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = cross(N, T);
     
+    mat3 TBN = transpose(mat3(T, B, N));    
+    TangentLightPos = TBN * lightPos;
+    TangentViewPos  = TBN * eyePosition;
+    TangentFragPos  = TBN * FragPos;
 
-    FragPos =  (model * vec4(pos, 1.0)).xyz; // we only need to know where it is in the world for the light. 
-    // we want vec3 not vec4 we take .xyz
+    FragPos =  (model * vec4(pos, 1.0)).xyz; 
 }

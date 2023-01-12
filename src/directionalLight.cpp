@@ -21,7 +21,7 @@ DirectionalLight::DirectionalLight( GLfloat shadowWidth, GLfloat shadowHeight,
     lightProj = glm::ortho(-x_size, x_size, -y_size, y_size, -z_size, z_size); 
 }
 
-void DirectionalLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation,  GLfloat diffuseIntensityLocation, GLfloat directionLocation){
+void DirectionalLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation,  GLuint diffuseIntensityLocation, GLuint directionLocation){
     // Color and intensity rendering (empirique values)
     glUniform3f(ambientColorLocation, 1+color::OrangeRed.x*pow(x,20), 1+color::OrangeRed.y*pow(x,20), 1+color::OrangeRed.z*pow(x,20)); // in the shader we will have a vec3 and it will be bound to ambientColorLocation
     glUniform1f(ambientIntensityLocation, 0.5-y*0.25); 

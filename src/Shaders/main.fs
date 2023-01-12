@@ -1,6 +1,5 @@
 #version 330
 
-in vec4 vertexColor;
 in vec2 TexCoord; // will be interpollated if the points are not exactly on the expected points. 
 in vec3 Normal; 
 in vec3 FragPos; 

@@ -94,7 +94,6 @@ private:
         GLuint uniformColor; 
         GLuint uniformAmbientIntensity; 
         GLuint uniformDiffuseIntensity; 
-
         GLuint uniformDirection; 
     } uniformDirectionalLight; // struct calls uniformDirectionalLight, it is an instance of the struct (which does not have a name)
 

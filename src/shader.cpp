@@ -41,6 +41,12 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
 
+
+    GLuint lightpos = glGetUniformLocation(shaderID, "lightPos");
+    glm::vec3 pos = glm::vec3(0.0, 1.0, 0.0);
+    glUniform3f(lightpos, pos.x, pos.y, pos.z); // tochange later on
+
+
     
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -61,15 +67,16 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     // shadowMap is going to be bound to GL_TEXTURE1
 
     SetTexture(0); // bound to texture unit 0 
+    SetNormalMap(1);
     SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
-    SetNormalMap(2);
+    
 
     // --------------------------------------------------------- // 
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
-    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    // spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
     RenderScene();
 }
@@ -320,7 +327,6 @@ void Shader::SetPointLights(PointLight * pLight, int lightCount){
     glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
 
     for(int i=0; i < lightCount; i++){
-
         pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, 
                            uniformPointLight[i].uniformColor, 
                            uniformPointLight[i].uniformDiffuseIntensity, 
@@ -328,7 +334,7 @@ void Shader::SetPointLights(PointLight * pLight, int lightCount){
                            uniformPointLight[i].uniformConstant, 
                            uniformPointLight[i].uniformLinear, 
                            uniformPointLight[i].uniformExponent); 
-
+        
     }
 }
 

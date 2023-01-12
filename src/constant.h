@@ -35,6 +35,7 @@ namespace geometry
     static constexpr char sphere[128] = "../../objects/sphere.obj";
 	static constexpr char cube[128] = "../../objects/cube.obj";
 	static constexpr char plane[128] = "../../objects/plane.obj";
+	static constexpr char plane2[128] = "../../objects/plane2.obj";
     static constexpr char domino[128] = "../../objects/domino.obj";
     static constexpr char bunny[128] = "../../objects/bunny_big.obj";
 

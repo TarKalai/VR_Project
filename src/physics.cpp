@@ -34,7 +34,7 @@ void PhysicalWorld::createGround(Object *obj){
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0,-obj->scale.y,0));
+    groundTransform.setOrigin(btVector3(0,-obj->scale.y,0)); 
 
     btScalar mass(0.);
 
@@ -45,7 +45,7 @@ void PhysicalWorld::createGround(Object *obj){
     if (isDynamic)
         groundShape->calculateLocalInertia(mass, localInertia);
 
-    groundTransform.setOrigin(btVector3(obj->position.x, obj->position.y, obj->position.z)); // Initial Position
+    // groundTransform.setOrigin(btVector3(obj->position.x, obj->position.y, obj->position.z)); // Initial Position
     
     // Initial Rotation with quaternion
     float roll = obj->rotation.x; // roll = x-axis rotation

@@ -4,7 +4,7 @@ layout (location=1) in vec2 tex;
 layout (location=2) in vec3 norm; // normal of the vertex we are looking at, it as a direction
 // we will define the normals as an average of each vertex. 
 
-out vec4 vertexColor;
+
 out vec2 TexCoord; 
 out vec3 Normal; 
 out vec3 FragPos;
@@ -19,9 +19,6 @@ uniform mat4 view;
 void main(){
     gl_Position = projection * view * model * vec4(pos, 1.0);
     DirectionalLightSpacePos = directionalLightTransform * model * vec4(pos, 1.0); // model * vec(pos, 1.0) : point that the camera can see, and light may not see, and here we are saying where it is relative to the light
-
-
-    vertexColor = vec4(clamp(pos, 0.0, 1.0), 1.0);
 
     TexCoord = tex; 
 

@@ -215,13 +215,13 @@ float* Object::getData(){
             data[i * 14 + 6] = v.Normal.y;
             data[i * 14 + 7] = v.Normal.z;
 
-            data[i * 14 + 5] = v.Tangent.x;
-            data[i * 14 + 6] = v.Tangent.y;
-            data[i * 14 + 7] = v.Tangent.z;
+            data[i * 14 + 8] = v.Tangent.x;
+            data[i * 14 + 9] = v.Tangent.y;
+            data[i * 14 + 10] = v.Tangent.z;
 
-            data[i * 14 + 5] = v.Bitangent.x;
-            data[i * 14 + 6] = v.Bitangent.y;
-            data[i * 14 + 7] = v.Bitangent.z;
+            data[i * 14 + 11] = v.Bitangent.x;
+            data[i * 14 + 12] = v.Bitangent.y;
+            data[i * 14 + 13] = v.Bitangent.z;
         }
     }
     else{

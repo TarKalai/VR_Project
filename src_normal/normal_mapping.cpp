@@ -124,7 +124,8 @@ int main()
         shader.setMat4("view", view);
         // render normal-mapped quad
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
+        lightPos = glm::vec3(0.5f, glm::cos(glfwGetTime()), 0.3f);
+        // model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
         shader.setMat4("model", model);
         shader.setVec3("viewPos", camera.Position);
         shader.setVec3("lightPos", lightPos);
@@ -136,6 +137,8 @@ int main()
 
         // render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
         model = glm::mat4(1.0f);
+        // model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
+
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.1f));
         shader.setMat4("model", model);

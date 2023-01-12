@@ -20,6 +20,8 @@ public:
                 GLuint diffuseIntensityLocation, GLuint positionLocation,
                 GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation); 
 
+    void setPosition(glm::vec3 Position){position=Position;}
+
 
     ~PointLight(); 
 
