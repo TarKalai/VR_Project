@@ -19,6 +19,7 @@ void GUI::update() {
     displaySpeedAnimation();
     displayDominoInfo();
     displaySaveLoad();
+    dominoModify();
     shortcutList();
 
     ImGui::Render();
@@ -119,6 +120,48 @@ void GUI::displayDominoInfo() {
 
     ImGui::End();
 }
+
+void GUI::dominoModify() {
+    if (!display->cursor_disabled) {
+        Object* domino = process->selectedDomino;
+        if (domino != nullptr) {
+
+            Point size = Point({200, 275});
+            ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 225));
+            ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+            ImGui::Begin("Modify current domino", NULL, ImGuiWindowFlags_NoSavedSettings);
+
+            float scale = domino->scale.x;
+            ImGui::InputFloat("scale", &(scale));
+            domino->scale = glm::vec3(scale);
+
+            float color[3] = {domino->color.x, domino->color.y, domino->color.z};
+            ImGui::ColorPicker3("color", color);
+            domino->color = glm::vec3(color[0], color[1], color[2]);
+
+            if (ImGui::BeginMenu("Texture", !texturePicked)) {
+                texturePicked = true;
+                if (ImGui::Button("White")) {domino->texture = Textures::White();}
+                else if (ImGui::Button("Brick")) {domino->texture = Textures::Brick();}
+                else if (ImGui::Button("Dirt")) {domino->texture = Textures::Dirt();}
+                else if (ImGui::Button("Wood")) {domino->texture = Textures::Wood();}
+                else { texturePicked = false; }
+                ImGui::EndMenu();
+            } else { texturePicked = false; }
+            if (ImGui::BeginMenu("Material", !materialPicked)) {
+                materialPicked = true;
+                if (ImGui::Button("Shiny")) {domino->material = Materials::Shiny();}
+                else if (ImGui::Button("Dull")) {domino->material = Materials::Dull();}
+                else if (ImGui::Button("Empty")) {domino->material = Materials::Empty();}
+                else { materialPicked = false; }
+                ImGui::EndMenu();
+            } else { materialPicked = false; }
+
+            ImGui::End();
+        }
+    }
+}
+
 
 void GUI::displaySaveLoad() {
     if (!display->cursor_disabled) {

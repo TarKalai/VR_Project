@@ -45,5 +45,6 @@ private:
     void displaySpeedAnimation();
     void displayDominoInfo();
     void displaySaveLoad();
+    void dominoModify();
     void shortcutList();
 };

@@ -122,10 +122,16 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
     dynamicsWorld->addRigidBody(body);
 }
 
+Object* PhysicalWorld::RayCastObj(glm::vec3 from, glm::vec3 to, int type) {
+    btRigidBody* body = RayCastBody(from, to, type);
+    if (body!=nullptr) { return glObjects.at(body->getUserIndex()); }
+    else { return nullptr; }
+
+}
+
 void PhysicalWorld::DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type) {
     btRigidBody* body = RayCastBody(from, to, type);
     if (body != nullptr) {
-        printf("in\n");
         Object* glObj = glObjects.at(body->getUserIndex());
         glObj->visible = false;
         dynamicsWorld->removeRigidBody(body);
@@ -148,9 +154,7 @@ btRigidBody* PhysicalWorld::RayCastBody(glm::vec3 from, glm::vec3 to, int type) 
             if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
             {
                 hitRigidbody = btRigidBody::upcast(object);
-                printf("%d %d\n", getType(hitRigidbody), type);
                 if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
-                    printf("lol\n");
                     //btVector3 hitPoint = callback.m_hitPointWorld[i];
                     //btVector3 hitNormal = callback.m_hitNormalWorld[i];
                     return hitRigidbody;

@@ -32,6 +32,7 @@ public:
     Shader* shadow;
     float sliderSpeedAnimation = 1.;
     float scaleDomino = 1.;
+    Object* selectedDomino;
     glm::vec3 colorDomino = glm::vec3(1.);
     Texture* textureDomino = Textures::White();
     Material* materialDomino = Materials::Shiny();
@@ -40,11 +41,13 @@ public:
     void initMousePosition();
     void processInput(); 
     void HandleMouse(); 
-    void deleteDominos();
+    void DeleteDominos();
+    void ModifyDomino();
     void PutDominos();
 	void AnimationSpeed();
     ~Process(); 
 private: 
+    bool modifyPressed = false;
     bool menuPressed = false;
     double oldCursorX = 0, oldCursorY = 0;
     int oldWindowX = 0, oldWindowY = 0;

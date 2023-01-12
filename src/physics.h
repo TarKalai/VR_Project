@@ -39,7 +39,7 @@ public:
     int getLifeTime(btRigidBody* body) { return body->getUserIndex3(); }
     void setLifeTime(btRigidBody* body, int lifetime) { body->setUserIndex3(lifetime); }
     
-    
+    Object* RayCastObj(glm::vec3 from, glm::vec3 to, int type);
     btRigidBody* RayCastBody(glm::vec3 from, glm::vec3 to, int type);
     glm::vec3 RayCastPos(glm::vec3 from, glm::vec3 to, int type);
     void DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type);

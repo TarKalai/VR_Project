@@ -16,8 +16,9 @@ void Process::processInput() {
 	AnimationSpeed();
 	if (!Time::pause()) {
 		PlacingParameter();
-		deleteDominos();
+		DeleteDominos();
 		PlacingDomino();
+		ModifyDomino();
 		Pushing();
 		Deplacement();
 		HandleMouse();
@@ -239,13 +240,25 @@ void Process::HandleMouse(){
 
 }
 
-void Process::deleteDominos() {
+void Process::ModifyDomino() {
+	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS) {
+		glm::vec3 dir = camera->getDirection(); 
+		glm::vec3 pos = camera->getPosition();
+
+		double dist = 200; // Distance to delete object (May vary depending of the farplane)
+		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
+
+		selectedDomino = world->RayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT); // See GUI for next step
+	} else { selectedDomino = nullptr; }
+}
+
+void Process::DeleteDominos() {
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 		glm::vec3 dir = camera->getDirection(); 
 		glm::vec3 pos = camera->getPosition();
 
-		double ratio = -pos.y/dir.y; // ONLY TOWARDS GROUND !!
-		glm::vec3 to = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
+		double dist = 200; // Distance to delete object (May vary depending of the farplane)
+		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
 		world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT);
 	}
 }
