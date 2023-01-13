@@ -123,32 +123,40 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
 void PhysicalWorld::RayCastPush(glm::vec3 from, glm::vec3 to, int type, int power) {
     btVector3 rayFrom = btVector3(from.x, from.y, from.z);
     btVector3 rayTo = btVector3(to.x, to.y, to.z);
-    btRigidBody* hitRigidbody;
     btCollisionWorld::AllHitsRayResultCallback callback(rayFrom, rayTo);
     dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+
+    btRigidBody* hitRigidbody = nullptr;
+    btScalar closestHitFraction = 1;
+    int closestIdx = -1;
 
     if (callback.hasHit())
     {
         for (int i = 0; i < callback.m_collisionObjects.size(); i++)
         {
             btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[i]);
-            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
-            {
+            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY) {
                 hitRigidbody = btRigidBody::upcast(object);
-                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
-                    btVector3 hitPoint = callback.m_hitPointWorld[i];
-                    //btVector3 hitNormal = callback.m_hitNormalWorld[i];
-
-                    btVector3 dir = rayTo-rayFrom;
-                    btVector3 impulse = (dir/dir.length()) * power; // impulse vector
-                    btVector3 relativePosition = hitPoint - hitRigidbody->getCenterOfMassPosition(); // relative position
-
-                    hitRigidbody->activate(true);
-                    hitRigidbody->applyImpulse(impulse, relativePosition);
-                    //hitRigidbody->applyForce(impulse, relativePosition);
-                    break; // Push only the first object
+                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) { // Check for object type
+                    if (callback.m_hitFractions[i] < closestHitFraction) {
+                        closestHitFraction = callback.m_hitFractions[i];
+                        closestIdx = i;
+                    }
                 }
             }
+        }
+
+        if (closestIdx != -1) {
+            btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[closestIdx]);
+            hitRigidbody = btRigidBody::upcast(object);
+            btVector3 hitPoint = callback.m_hitPointWorld[closestIdx];
+            btVector3 dir = rayTo-rayFrom;
+            btVector3 impulse = (dir/dir.length()) * power; // impulse vector
+            btVector3 relativePosition = hitPoint - hitRigidbody->getCenterOfMassPosition(); // relative position
+
+            hitRigidbody->activate(true);
+            hitRigidbody->applyImpulse(impulse, relativePosition);
+            //hitRigidbody->applyForce(impulse, relativePosition);
         }
     }
 }
@@ -174,48 +182,66 @@ void PhysicalWorld::DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type) {
 btRigidBody* PhysicalWorld::RayCastBody(glm::vec3 from, glm::vec3 to, int type) {
     btVector3 rayFrom = btVector3(from.x, from.y, from.z);
     btVector3 rayTo = btVector3(to.x, to.y, to.z);
-    btRigidBody* hitRigidbody;
     btCollisionWorld::AllHitsRayResultCallback callback(rayFrom, rayTo);
     dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+
+    btRigidBody* hitRigidbody = nullptr;
+    btScalar closestHitFraction = 1;
+    int closestIdx = -1;
 
     if (callback.hasHit())
     {
         for (int i = 0; i < callback.m_collisionObjects.size(); i++)
         {
             btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[i]);
-            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
-            {
+            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY) {
                 hitRigidbody = btRigidBody::upcast(object);
-                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
-                    return hitRigidbody;
+                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) { // Check for object type
+                    if (callback.m_hitFractions[i] < closestHitFraction) {
+                        closestHitFraction = callback.m_hitFractions[i];
+                        closestIdx = i;
+                    }
                 }
             }
         }
+        if (closestIdx != -1) {
+            btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[closestIdx]);
+            return btRigidBody::upcast(object);
+        }
     }
-    return nullptr;
+    return nullptr;   
 }
 
 
 glm::vec3 PhysicalWorld::RayCastPos(glm::vec3 from, glm::vec3 to, int type) {
     btVector3 rayFrom = btVector3(from.x, from.y, from.z);
     btVector3 rayTo = btVector3(to.x, to.y, to.z);
-    btRigidBody* hitRigidbody;
     btCollisionWorld::AllHitsRayResultCallback callback(rayFrom, rayTo);
     dynamicsWorld->rayTest(rayFrom, rayTo, callback);
+
+    btRigidBody* hitRigidbody = nullptr;
+    btScalar closestHitFraction = 1;
+    int closestIdx = -1;
 
     if (callback.hasHit())
     {
         for (int i = 0; i < callback.m_collisionObjects.size(); i++)
         {
             btCollisionObject* object = const_cast<btCollisionObject*>(callback.m_collisionObjects[i]);
-            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY)
-            {
+            if (object->getInternalType() == btCollisionObject::CO_RIGID_BODY) {
                 hitRigidbody = btRigidBody::upcast(object);
-                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
-                    btVector3 hitPoint = callback.m_hitPointWorld[i];
-                    return glm::vec3(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
+                if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) { // Check for object type
+                    if (callback.m_hitFractions[i] < closestHitFraction) {
+                        closestHitFraction = callback.m_hitFractions[i];
+                        closestIdx = i;
+                    }
                 }
             }
+        }
+
+        if (closestIdx != -1) {
+            btVector3 hitPoint = callback.m_hitPointWorld[closestIdx];
+            return glm::vec3(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
         }
     }
     return glm::vec3(-1);

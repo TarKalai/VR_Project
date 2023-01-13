@@ -275,9 +275,6 @@ void Process::PutDominos(){
 	glm::vec3 dir = camera->getDirection(); 
 	glm::vec3 pos = camera->getPosition();
 
-	std::cout << "pos: " << glm::to_string(pos) << std::endl;
-	std::cout << "dir: " << glm::to_string(dir) << std::endl;
-
 	if (dir.y < 0) {
 		double ratio = -pos.y/dir.y;
 		glm::vec3 to = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
