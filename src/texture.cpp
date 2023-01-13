@@ -11,21 +11,21 @@ Texture::Texture(){
     nrComponents=0;
 }
 
-Texture::Texture(const char* FileLocation, const char* _name, const char * NormalLocation){
+Texture::Texture(const char* FileLocation, const char* _name, bool mirrored_x, bool mirrored_y, const char * NormalLocation){
     name = _name;
     textureID = 0; 
     width = 0; 
     height = 0; 
     nrComponents=0;
     if (NormalLocation != nullptr){
-        textureID = LoadTexture(FileLocation, true);
-        normalID = LoadTexture(NormalLocation, true);
+        textureID = LoadTexture(FileLocation, true, mirrored_x, mirrored_y);
+        normalID = LoadTexture(NormalLocation, true, mirrored_x, mirrored_y);
     }else{
-        textureID = LoadTexture(FileLocation);
+        textureID = LoadTexture(FileLocation, true, mirrored_x, mirrored_y);
     }
 }
 
-GLuint Texture::LoadTexture(const char* fileLoc, bool flip){
+GLuint Texture::LoadTexture(const char* fileLoc, bool flip, bool mirrored_x, bool mirrored_y){
     GLuint id;
     std::cout << fileLoc << std::endl;
     stbi_set_flip_vertically_on_load(flip);
@@ -51,8 +51,16 @@ GLuint Texture::LoadTexture(const char* fileLoc, bool flip){
     glGenerateMipmap(GL_TEXTURE_2D); // generate MipMap automatically. 
 
     //3. Define the parameters for the texture
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);  // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // The S and T axis corresponds to the u,v coordinates. (x and y)
+    printf("%d %d %s\n", mirrored_x, mirrored_y, fileLoc);
+    if (mirrored_x)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);  // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);  // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
+    if (mirrored_y)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);  // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);  // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // With GL_LINEAR it will blend the pixels together (the other type: GL_NEAREST we will have a more pixalated look) 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_TEXTURE_MAG_FILTER: when we are closer to the image. 
     

@@ -16,10 +16,8 @@ uniform mat4 projection;
 uniform mat4 view; 
 
 void main(){
-    FragPos =  vec3(model * vec4(pos, 1.0)); 
+    FragPos = vec3(model * vec4(pos, 1.0)); 
     DirectionalLightSpacePos = directionalLightTransform * model * vec4(pos, 1.0);
-    TexCoord = tex; 
-    
 
     mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 N = normalize(normalMatrix * norm);
@@ -27,7 +25,11 @@ void main(){
     T = normalize(T - dot(T, N) * N);
     vec3 B = cross(N, T);
     
-    TBN = transpose(mat3(T, B, N));    
+    TBN = transpose(mat3(T, B, N));  
+
+
+    vec3 scale = vec3(length(normalMatrix[0]), length(normalMatrix[1]), length(normalMatrix[2]));
+    TexCoord = tex*(scale.x, scale.y)/(scale.x*scale.y);  // Resize texture with object scaling 
     
 
     gl_Position = projection * view * model * vec4(pos, 1.0);

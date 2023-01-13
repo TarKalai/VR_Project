@@ -107,6 +107,7 @@ void GUI::displayDominoInfo() {
         else if (ImGui::Button("Brick")) {process->textureDomino = Textures::Brick();}
         else if (ImGui::Button("Dirt")) {process->textureDomino = Textures::Dirt();}
         else if (ImGui::Button("Wood")) {process->textureDomino = Textures::Wood();}
+        else if (ImGui::Button("Anubis")) {process->textureDomino = Textures::Anubis();}
         else { texturePicked = false; }
         ImGui::EndMenu();
     } else { texturePicked = false; }

@@ -20,8 +20,6 @@ void main(){
     gl_Position = projection * view * model * vec4(pos, 1.0);
     DirectionalLightSpacePos = directionalLightTransform * model * vec4(pos, 1.0); // model * vec(pos, 1.0) : point that the camera can see, and light may not see, and here we are saying where it is relative to the light
 
-    TexCoord = tex; 
-
     mat3 normalMatrix = mat3(transpose(inverse(model)));
     Normal = normalize(normalMatrix * norm); 
     // Normal is in relation to where the model is, because if we move the light around we are lihghting objects in different ways. 
@@ -31,6 +29,9 @@ void main(){
     // so if we scale the object uniformly the normals stay in the same direction but if we scale in one dir. the normals start to change dir. 
     // to solve this we take the inverse and take the transpose => invert scaling process
 
+    vec3 scale = vec3(length(normalMatrix[0]), length(normalMatrix[1]), length(normalMatrix[2]));
+    TexCoord = tex*(scale.x, scale.y)/(scale.x*scale.y);  // Resize texture with object scaling 
+    
     FragPos =  (model * vec4(pos, 1.0)).xyz; // we only need to know where it is in the world for the light. 
     // we want vec3 not vec4 we take .xyz
 }

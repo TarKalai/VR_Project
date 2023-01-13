@@ -108,7 +108,7 @@ void PhysicalWorld::RayCastPush(glm::vec3 from, glm::vec3 to, int type, int powe
             hitRigidbody = btRigidBody::upcast(object);
             btVector3 hitPoint = callback.m_hitPointWorld[closestIdx];
             btVector3 dir = rayTo-rayFrom;
-            btVector3 impulse = (dir/dir.length()) * pow(power, general::pushingExponent); // impulse vector
+            btVector3 impulse = (dir/dir.length()) * (power * pow(hitRigidbody->getMass(),.5));//pow(power, general::pushingExponent); // impulse vector
             btVector3 relativePosition = hitPoint - hitRigidbody->getCenterOfMassPosition(); // relative position
 
             hitRigidbody->activate(true);

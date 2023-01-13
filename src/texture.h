@@ -9,8 +9,8 @@ class Texture{
 public: 
     const char* name;
     Texture(); 
-    Texture(const char* FileLocation, const char* _name, const char * NormalLocation=nullptr);
-    GLuint LoadTexture(const char* FileLoc, bool flip=true);
+    Texture(const char* FileLocation, const char* _name, bool mirrored_x, bool mirrored_y, const char * NormalLocation=nullptr);
+    GLuint LoadTexture(const char* FileLoc, bool flip, bool mirrored_x, bool mirrored_y);
     void UseTexture(); 
     void ClearTexture(); 
     int getWidth(){return width;}

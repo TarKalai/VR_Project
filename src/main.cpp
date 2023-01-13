@@ -60,7 +60,7 @@ void CreateObjects(){
     bumpMapShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
 
-    Object* ground2 = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
+    Object* ground2 = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/50., general::floorThickness, general::sceneSize.z/50), glm::vec3(1.), true);
     physicalWorld.addObject(ground2, PHYSIC::GROUND_OBJECT);
     bumpMapShader.addObject(ground2);
     directionalShadowShader.addObject(ground2);

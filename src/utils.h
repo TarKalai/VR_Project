@@ -61,6 +61,7 @@ class Textures {
 		static Texture* Get(std::string name){
 			if (name == "brick") {return Get().IBrick();}
 			else if (name == "dirt") {return Get().IDirt();}
+			else if (name == "anubis") {return Get().IDirt();}
 			else if (name == "white") {return Get().IWhite();}
 			else if (name == "wood") {return Get().IWood();}
 			else if (name == "hulk") {return Get().IHulk();}
@@ -70,6 +71,7 @@ class Textures {
 
 		static Texture* Brick(){return Get().IBrick();}
 		static Texture* Dirt(){return Get().IDirt();}
+		static Texture* Anubis(){return Get().IAnubis();}
 		static Texture* White(){return Get().IWhite();}
 		static Texture* Wood(){return Get().IWood();}
 		static Texture* Hulk(){return Get().IHulk();}
@@ -87,6 +89,7 @@ class Textures {
 
 		Texture* IBrick(){return &brick;}
 		Texture* IDirt(){return &dirt;}
+		Texture* IAnubis(){return &anubis;}
 		Texture* IWhite(){return &white;}
 		Texture* IWood(){return &wood;}
 		Texture* IHulk(){return &hulk;}
@@ -94,13 +97,14 @@ class Textures {
 		Texture* IBrickwall(){return &brickwall;}
 
 
-		Texture brick = Texture(image::brick, "brick"); 
-		Texture dirt  = Texture(image::dirt, "dirt"); 
-		Texture white = Texture(image::white, "white");
-		Texture wood  = Texture(image::wood, "wood");
-		Texture hulk  = Texture(image::hulk, "hulk");
-		Texture bird  = Texture(image::bird, "bird");
-		Texture brickwall  = Texture(image::brickwall, "brickwall", image::brickwalln);
+		Texture brick = Texture(image::brick, "brick", true, false); 
+		Texture dirt  = Texture(image::dirt, "dirt", false, false); 
+		Texture anubis  = Texture(image::dirt, "anubis", true, true); 
+		Texture white = Texture(image::white, "white", false, false);
+		Texture wood  = Texture(image::wood, "wood", false, false);
+		Texture hulk  = Texture(image::hulk, "hulk", false, false);
+		Texture bird  = Texture(image::bird, "bird", false, false);
+		Texture brickwall  = Texture(image::brickwall, "brickwall", false, false, image::brickwalln);
 
 };
 
