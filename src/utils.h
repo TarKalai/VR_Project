@@ -74,6 +74,8 @@ class Textures {
 		static Texture* Wood(){return Get().IWood();}
 		static Texture* Hulk(){return Get().IHulk();}
 		static Texture* Bird(){return Get().IBird();}
+		static Texture* Brickwall(){return Get().IBrickwall();}
+
 
 	private:
 		Textures(){}
@@ -89,6 +91,8 @@ class Textures {
 		Texture* IWood(){return &wood;}
 		Texture* IHulk(){return &hulk;}
 		Texture* IBird(){return &bird;}
+		Texture* IBrickwall(){return &brickwall;}
+
 
 		Texture brick = Texture(image::brick, "brick"); 
 		Texture dirt  = Texture(image::dirt, "dirt"); 
@@ -96,6 +100,7 @@ class Textures {
 		Texture wood  = Texture(image::wood, "wood");
 		Texture hulk  = Texture(image::hulk, "hulk");
 		Texture bird  = Texture(image::bird, "bird");
+		Texture brickwall  = Texture(image::brickwall, "brickwall", image::brickwalln);
 
 };
 

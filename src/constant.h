@@ -4,9 +4,9 @@
 
 namespace values
 {
-    static constexpr int MAX_POINT_LIGHTS = 4;
-    static constexpr int MAX_SPOT_LIGHTS = 3;
-    static constexpr int MAX_AREA_LIGHTS = 100;
+    static constexpr int MAX_POINT_LIGHTS = 5;
+    static constexpr int MAX_SPOT_LIGHTS = 5;
+    static constexpr int MAX_AREA_LIGHTS = 5;
 }
 
 namespace image
@@ -25,6 +25,9 @@ namespace image
     static constexpr char dirt[128] = "../../image/dirt.png";
     static constexpr char bird[128] = "../../image/bird.png";
     static constexpr char hulk[128] = "../../image/hulk.png";
+    static constexpr char brickwall[128] = "../../image/brickwall.jpg";
+    static constexpr char brickwalln[128] = "../../image/brickwall_normal.jpg";
+
 }
 
 namespace geometry
@@ -32,7 +35,10 @@ namespace geometry
     static constexpr char sphere[128] = "../../objects/sphere.obj";
 	static constexpr char cube[128] = "../../objects/cube.obj";
 	static constexpr char plane[128] = "../../objects/plane.obj";
+	static constexpr char plane2[128] = "../../objects/plane2.obj";
     static constexpr char domino[128] = "../../objects/domino.obj";
+    static constexpr char bunny[128] = "../../objects/bunny_big.obj";
+
 }
 
 namespace shaderfiles
@@ -43,6 +49,8 @@ namespace shaderfiles
     static constexpr char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
     static constexpr char shadowMapVertex[128] = "../../src/Shaders/directional_shadow_map.vs";
     static constexpr char shadowMapFrag[128] = "../../src/Shaders/directional_shadow_map.fs";
+    static constexpr char bumpMapVertex[128] = "../../src/Shaders/bumpmap.vs";
+    static constexpr char bumpMapFrag[128] = "../../src/Shaders/bumpmap.fs";
 } 
 
 namespace general

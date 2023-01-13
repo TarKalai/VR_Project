@@ -16,16 +16,11 @@
 #include "texture.h"
 #include "material.h"
 
-// Material shinyMaterial; 
-// Material dullMaterial; 
-
-// shinyMaterial = Material(4.0f, 256); 
-// dullMaterial = Material(0.3f, 4); 
-// shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec2 Texture;
 	glm::vec3 Normal;
+	glm::vec3 Tangent;
 };
 
 class Object
@@ -33,6 +28,7 @@ class Object
 public:
 	static int objectCounter;
 	bool visible;
+	bool bumpmap;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
@@ -60,11 +56,16 @@ public:
 
 	Object();
 	
-	Object(const char* geometryPath, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true, glm::vec3 Color=glm::vec3(1.0));
+	Object(const char* geometryPath, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true, glm::vec3 Color=glm::vec3(1.0), bool Bumpmap=false);
 	
 	void MakeObject();
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
+    void AssignPoNoTe(Vertex* vertex, std::string f);
+	void AssignTangent(Vertex *v1, Vertex *v2, Vertex *v3);
+	float * getData();
+	void LoadVertices(const char* geometryPath);
+
 
 	void draw();
 	std::vector<glm::vec3> getVertexPosition();

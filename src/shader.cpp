@@ -22,6 +22,45 @@ void Shader::addObjects(std::vector<Object*> objects){
     }
 }
 
+void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, 
+                         DirectionalLight* mainLight,
+                         PointLight* pointLights, 
+                         int pointLightCount, 
+                         SpotLight* spotLights, 
+                         int spotLightCount){
+    UseShader(); 
+
+    uniformModel = GetModelLocation(); 
+    uniformProjection = GetProjectionLocation(); 
+    uniformView = GetViewLocation(); 
+    uniformEyePosition = GetEyePositionLocation(); 
+
+    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
+
+    SetDirectionalLight(mainLight);
+    SetPointLights(pointLights, pointLightCount);
+    SetSpotLights(spotLights, spotLightCount); 
+
+    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
+    SetDirectionalLightTransform(&resmainLight); 
+
+
+    mainLight->GetShadowMap()->Read(GL_TEXTURE2);
+
+
+    SetTexture(0);
+    SetNormalMap(1);
+    SetDirectionalShadowMap(2);
+
+    glm::vec3 lowerLight = camera.getPosition(); 
+    lowerLight.y -= 0.3f;
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+
+
+    RenderScene();
+}
 
 void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,  
                          DirectionalLight* mainLight,
@@ -40,12 +79,8 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformEyePosition = GetEyePositionLocation(); 
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
-
-    glEnable(GL_CULL_FACE);
-    //glViewport(0, 0, 960, 540); 
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
-    //glClear is also clearing the depth buffer bit.
+    
+    
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
@@ -67,12 +102,14 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
 
     SetTexture(0); // bound to texture unit 0 
     SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
+    
+
     // --------------------------------------------------------- // 
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
-    // spotLights[0].SetFlash(lowerLight, camera.getCameraDirection()); 
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
     RenderScene();
 }
@@ -281,6 +318,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     }
 
     uniformTexture = glGetUniformLocation(shaderID, "theTexture");
+    uniformNormalMap = glGetUniformLocation(shaderID, "normalMap");
     uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform"); // it will bind for vertex a AND frag because it is the same name
     uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 
@@ -322,7 +360,6 @@ void Shader::SetPointLights(PointLight * pLight, int lightCount){
     glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
 
     for(int i=0; i < lightCount; i++){
-
         pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, 
                            uniformPointLight[i].uniformColor, 
                            uniformPointLight[i].uniformDiffuseIntensity, 
@@ -330,7 +367,7 @@ void Shader::SetPointLights(PointLight * pLight, int lightCount){
                            uniformPointLight[i].uniformConstant, 
                            uniformPointLight[i].uniformLinear, 
                            uniformPointLight[i].uniformExponent); 
-
+        
     }
 }
 
@@ -363,8 +400,8 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     glUniform1i(uniformAreaLightCount, lightCount); // make sure it is an int ! to go through the loop
     
     glUniform1i(uniformMaterialDiffuse, 0);
-    glUniform1i(uniformLTC1, 1);
-    glUniform1i(uniformLTC2, 2); 
+    glUniform1i(uniformLTC1, 3);
+    glUniform1i(uniformLTC2, 4); 
 
     for(int i=0; i < lightCount; i++){
 
@@ -384,6 +421,10 @@ void Shader::SetTexture(GLuint textureUnit){
     glUniform1i(uniformTexture, textureUnit);
 }
 
+void Shader::SetNormalMap(GLuint textureUnit){
+    glUniform1i(uniformNormalMap, textureUnit);
+}
+
 
 void Shader::SetDirectionalShadowMap(GLuint textureUnit){
     glUniform1i(uniformDirectionalShadowMap, textureUnit);
@@ -391,7 +432,6 @@ void Shader::SetDirectionalShadowMap(GLuint textureUnit){
 
 
 void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
-
     glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
 }
 

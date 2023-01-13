@@ -51,6 +51,7 @@ public:
     void SetSpotLights(SpotLight * sLight, int lightCount);
     
     void SetTexture(GLuint textureUnit); 
+    void SetNormalMap(GLuint textureUnit); 
     void SetDirectionalShadowMap(GLuint textureUnit);
     void SetDirectionalLightTransform(glm::mat4* ltransform);  
 
@@ -66,6 +67,13 @@ public:
                          int spotLightCount, 
                          AreaLight * areaLights, 
                          int areaLightCount); // RenderPass
+
+    void RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, 
+                    DirectionalLight* mainLight,
+                    PointLight* pointLights, 
+                    int pointLightCount, 
+                    SpotLight* spotLights, 
+                    int spotLightCount);           
     void DirectionalShadowMapPass(DirectionalLight* light); // DirectionalShadowMapPass
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
     void RenderScene(); // RenderScene
@@ -86,13 +94,13 @@ private:
     GLuint uniformProjection, uniformModel, uniformView, uniformEyePosition, 
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
-    uniformDirectionalLightTransform, uniformDirectionalShadowMap;
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
+    uniformNormalMap;
 
     struct {
         GLuint uniformColor; 
         GLuint uniformAmbientIntensity; 
         GLuint uniformDiffuseIntensity; 
-
         GLuint uniformDirection; 
     } uniformDirectionalLight; // struct calls uniformDirectionalLight, it is an instance of the struct (which does not have a name)
 

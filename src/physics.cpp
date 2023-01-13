@@ -34,7 +34,7 @@ void PhysicalWorld::createGround(Object *obj){
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0,obj->position.y,0));
+    groundTransform.setOrigin(btVector3(0,-obj->scale.y,0)); 
 
     btScalar mass(0.);
 
@@ -44,6 +44,18 @@ void PhysicalWorld::createGround(Object *obj){
     btVector3 localInertia(0, 0, 0);
     if (isDynamic)
         groundShape->calculateLocalInertia(mass, localInertia);
+
+    // groundTransform.setOrigin(btVector3(obj->position.x, obj->position.y, obj->position.z)); // Initial Position
+    
+    // Initial Rotation with quaternion
+    float roll = obj->rotation.x; // roll = x-axis rotation
+    float pitch = obj->rotation.y; // pitch = y-axis rotation
+    float yaw = obj->rotation.z; // yaw = z-axis rotation
+    float qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
+    float qy = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
+    float qz = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
+    float qw = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
+    groundTransform.setRotation(btQuaternion(qx,qy,qz,qw)); 
 
     //using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
     btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
