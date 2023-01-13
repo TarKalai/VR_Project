@@ -40,7 +40,7 @@ void Object::AssignPoNoTe(Vertex* vertex, std::string f){
     vertex->Texture = vt_textures.at(std::stof(t) - 1);
 }
 
-void Object::AssignTaBiTa(Vertex *v1, Vertex *v2, Vertex *v3){
+void Object::AssignTangent(Vertex *v1, Vertex *v2, Vertex *v3){
     glm::vec3 Edge1 = v2->Position - v1->Position;
     glm::vec3 Edge2 = v3->Position - v1->Position;
 
@@ -51,23 +51,15 @@ void Object::AssignTaBiTa(Vertex *v1, Vertex *v2, Vertex *v3){
 
     float f = 1.0f / (DeltaU1 * DeltaV2 - DeltaU2 * DeltaV1);
 
-    glm::vec3 tangent, bitangent;
+    glm::vec3 tangent;
 
     tangent.x = f * (DeltaV2 * Edge1.x - DeltaV1 * Edge2.x);
     tangent.y = f * (DeltaV2 * Edge1.y - DeltaV1 * Edge2.y);
     tangent.z = f * (DeltaV2 * Edge1.z - DeltaV1 * Edge2.z);
 
-    bitangent.x = f * (-DeltaU2 * Edge1.x + DeltaU1 * Edge2.x);
-    bitangent.y = f * (-DeltaU2 * Edge1.y + DeltaU1 * Edge2.y);
-    bitangent.z = f * (-DeltaU2 * Edge1.z + DeltaU1 * Edge2.z);
-
     v1->Tangent = tangent;
     v2->Tangent = tangent;
     v3->Tangent = tangent;
-
-    v1->Bitangent = bitangent;
-    v2->Bitangent = bitangent;
-    v3->Bitangent = bitangent;
 }
 
 void Object::LoadVertices(const char* geometryPath){
@@ -110,7 +102,7 @@ void Object::LoadVertices(const char* geometryPath){
             AssignPoNoTe(&v3, f3);
 
             if (bumpmap){
-                AssignTaBiTa(&v1, &v2, &v3);
+                AssignTangent(&v1, &v2, &v3);
             }
 
             vertices.push_back(v1);
@@ -138,7 +130,7 @@ void Object::MakeObject(){
 
     float* data = getData();
     int size = 8; // pos is a vec3, tex is a vec2, normal is a vec3 (sum = 8)
-    if (bumpmap) size += 6; // bitangent are both vec3 (sum += 6)
+    if (bumpmap) size += 3; // tangent = vec3 (sum += 3)
 
 
     
@@ -170,8 +162,8 @@ void Object::MakeObject(){
     if (bumpmap){
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(8 * sizeof(float)));
         glEnableVertexAttribArray(3);
-        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(11 * sizeof(float)));
-        glEnableVertexAttribArray(4);
+        // glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(11 * sizeof(float)));
+        // glEnableVertexAttribArray(4);
     }
 
     //desactive the buffer
@@ -200,27 +192,23 @@ void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
 float* Object::getData(){
     float* data;
     if (bumpmap){
-        data = new float[14 * numVertices];
+        data = new float[11 * numVertices];
         for (int i = 0; i < numVertices; i++) {
             Vertex v = vertices.at(i);
-            data[i * 14] = v.Position.x;
-            data[i * 14 + 1] = v.Position.y;
-            data[i * 14 + 2] = v.Position.z;
+            data[i * 11] = v.Position.x;
+            data[i * 11 + 1] = v.Position.y;
+            data[i * 11 + 2] = v.Position.z;
 
-            data[i * 14 + 3] = v.Texture.x;
-            data[i * 14 + 4] = v.Texture.y;
+            data[i * 11 + 3] = v.Texture.x;
+            data[i * 11 + 4] = v.Texture.y;
 
-            data[i * 14 + 5] = v.Normal.x;
-            data[i * 14 + 6] = v.Normal.y;
-            data[i * 14 + 7] = v.Normal.z;
+            data[i * 11 + 5] = v.Normal.x;
+            data[i * 11 + 6] = v.Normal.y;
+            data[i * 11 + 7] = v.Normal.z;
 
-            data[i * 14 + 8] = v.Tangent.x;
-            data[i * 14 + 9] = v.Tangent.y;
-            data[i * 14 + 10] = v.Tangent.z;
-
-            data[i * 14 + 11] = v.Bitangent.x;
-            data[i * 14 + 12] = v.Bitangent.y;
-            data[i * 14 + 13] = v.Bitangent.z;
+            data[i * 11 + 8] = v.Tangent.x;
+            data[i * 11 + 9] = v.Tangent.y;
+            data[i * 11 + 10] = v.Tangent.z;
         }
     }
     else{

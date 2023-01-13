@@ -4,9 +4,7 @@ out vec4 color;
 
 in vec2 TexCoord; 
 in vec3 FragPos;
-in vec3 TangentLightPos;
-in vec3 TangentViewPos;
-in vec3 TangentFragPos;
+in mat3 TBN;
 
 uniform sampler2D theTexture;
 uniform sampler2D normalMap;
@@ -15,7 +13,10 @@ uniform vec3 lightPos;
 uniform vec3 eyePosition;
 
 void main()
-{           
+{       
+    vec3 TangentLightPos = TBN * lightPos;
+    vec3 TangentViewPos  = TBN * eyePosition;
+    vec3 TangentFragPos  = TBN * FragPos;    
     // obtain normal from normal map in range [0,1]
     vec3 normal = texture(normalMap, TexCoord).rgb;
     // transform normal vector to range [-1,1]

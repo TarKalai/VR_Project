@@ -27,7 +27,6 @@ struct Vertex {
 	glm::vec2 Texture;
 	glm::vec3 Normal;
 	glm::vec3 Tangent;
-	glm::vec3 Bitangent;
 };
 
 class Object
@@ -69,7 +68,7 @@ public:
 
 	void setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot);
     void AssignPoNoTe(Vertex* vertex, std::string f);
-	void AssignTaBiTa(Vertex *v1, Vertex *v2, Vertex *v3);
+	void AssignTangent(Vertex *v1, Vertex *v2, Vertex *v3);
 	float * getData();
 	void LoadVertices(const char* geometryPath);
 
