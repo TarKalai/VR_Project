@@ -82,6 +82,9 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     
     
 
+    //fog
+    SetSkyColor(0.5, 0.5, 0.5); 
+
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
@@ -260,6 +263,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     uniformShininess = glGetUniformLocation(shaderID, "material.shininess"); 
     uniformEyePosition = glGetUniformLocation(shaderID, "eyePosition");
     uniformColor = glGetUniformLocation(shaderID, "objectColor");
+    uniformSkyColor = glGetUniformLocation(shaderID, "skyColor"); 
     
 
 
@@ -424,6 +428,11 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
+
+void Shader::SetSkyColor(float r, float g, float b)
+{
+    glUniform3f(uniformSkyColor, r, g, b); 
+}
 
 void Shader::SetTexture(GLuint textureUnit){
     glUniform1i(uniformTexture, textureUnit);

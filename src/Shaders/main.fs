@@ -1,9 +1,11 @@
 #version 330
 
+in vec4 vertexColor;
 in vec2 TexCoord; // will be interpollated if the points are not exactly on the expected points. 
 in vec3 Normal; 
 in vec3 FragPos; 
 in vec4 DirectionalLightSpacePos; 
+in float visibility; 
 
 out vec4 color;
 
@@ -30,7 +32,6 @@ struct PointLight
     float constant;
     float linear; 
     float exponent; 
-
 };
 
 struct SpotLight
@@ -56,6 +57,7 @@ struct Material{
 uniform int pointLightCount; 
 uniform int spotLightCount; 
 uniform int areaLightCount;
+uniform vec3 skyColor; 
 
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS]; 
@@ -406,4 +408,5 @@ void main(){
     finalColor += CalcAreaLights();
 
     color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
+    color = mix(vec4(skyColor, 1.0), color, visibility); // 0 visibility would correspond to same color as the sky. 
 }
