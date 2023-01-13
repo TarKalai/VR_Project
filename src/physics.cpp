@@ -169,14 +169,14 @@ Object* PhysicalWorld::RayCastObj(glm::vec3 from, glm::vec3 to, int type) {
 
 }
 
-void PhysicalWorld::DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type) {
+int PhysicalWorld::DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type) {
     btRigidBody* body = RayCastBody(from, to, type);
     if (body != nullptr) {
-        Object* glObj = glObjects.at(body->getUserIndex());
-        glObj->visible = false;
         dynamicsWorld->removeRigidBody(body);
         delete body;
+        return body->getUserIndex();
     }
+    return -1;
 }
 
 btRigidBody* PhysicalWorld::RayCastBody(glm::vec3 from, glm::vec3 to, int type) {

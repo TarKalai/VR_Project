@@ -71,6 +71,7 @@ public:
     void RenderScene(); // RenderScene
 
     void UseShader(); 
+    void remove(int objID);
     void ClearShader();
 
     void SetAreaLights(AreaLight *  aLights, int lightCount);

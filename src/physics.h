@@ -40,7 +40,7 @@ public:
     Object* RayCastObj(glm::vec3 from, glm::vec3 to, int type);
     btRigidBody* RayCastBody(glm::vec3 from, glm::vec3 to, int type);
     glm::vec3 RayCastPos(glm::vec3 from, glm::vec3 to, int type);
-    void DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type);
+    int DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type);
     void RayCastPush(glm::vec3 from, glm::vec3 to, int type, int power);
     
     void animate();

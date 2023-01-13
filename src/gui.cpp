@@ -208,7 +208,7 @@ void GUI::displaySaveLoad() {
                                 glm::vec3 color = glm::vec3(colX, colY, colZ);
                                 Texture* texture = Textures::Get(tex);
                                 Material* material= Materials::Get(mat);
-                                Object* domino = new Object(geometry::domino, texture, material,  pos, rot, scale, 1, color);	
+                                Object* domino = new Object(geometry::domino, texture, material,  pos, rot, scale, color);	
                                 world->addDomino(domino);  
                                 shader->addObject(domino);
                                 shadow->addObject(domino);

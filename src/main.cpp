@@ -53,7 +53,7 @@ int spotLightCount;
 int areaLightCount = 0;
 
 void CreateObjects(){
-    Object* ground = new Object(geometry::cube, Textures::Wood(), Materials::Dull(), glm::vec3(0., -1, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1., 1., 1.));
+    Object* ground = new Object(geometry::cube, Textures::Wood(), Materials::Dull(), glm::vec3(0., -1, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1., 1., 1.));
     physicalWorld = PhysicalWorld(ground);
     objectShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
@@ -89,7 +89,7 @@ int main(){
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0), 0, 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1);
 
-		Object* plane = new Object(geometry::plane, Textures::Dirt(), Materials::Empty(), pos, rot, scale, 1, glm::vec3(1,0,0));
+		Object* plane = new Object(geometry::plane, Textures::Dirt(), Materials::Empty(), pos, rot, scale, glm::vec3(1,0,0));
 		areaLightShader.addObject(plane);
 
 		areaLights[i] = AreaLight(plane->color.x,plane->color.y, plane->color.z, 

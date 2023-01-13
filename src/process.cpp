@@ -265,7 +265,9 @@ void Process::DeleteDominos() {
 
 		double dist = 200; // Distance to delete object (May vary depending of the farplane)
 		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
-		world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT);
+		int objID = world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT);
+		shader->remove(objID);
+		shadow->remove(objID);
 	}
 }
 
@@ -296,7 +298,7 @@ void Process::PutDominos(){
 					glm::vec3 delta_dir = nextDomino-lastDomino;
 					Object* domino = new Object(geometry::domino, textureDomino, materialDomino, 
 												glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
-												true, normalize(colorDomino));	
+												normalize(colorDomino));	
 					world->addDomino(domino);
 					shader->addObject(domino);
 					shadow->addObject(domino);
@@ -306,50 +308,5 @@ void Process::PutDominos(){
 		}
 	}
 }
-
-
-/* Putting domino at cursor position (keep if we need to do something similar in the futur)
-void Process::SaveCursorPath(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader){
-
-	double xpos, ypos;
-	int width, height;
-	glfwGetCursorPos(window, &xpos, &ypos); 
-	glfwGetWindowSize(window, &width, &height);
-	xpos = (2*xpos-width)/width;
-	ypos = (height-2*ypos)/height;
-
-	float near = 0.01;
-	float far = 100.;
-	glm::mat4 view = camera->getViewMatrix();
-	glm::mat4 projection = camera->getProjectionMatrix(window, near, far);
-
-	glm::vec4 farScreen = glm::vec4(xpos*far, ypos*far, far-0.015, far);
-	glm::vec4 farModel = glm::inverse(projection*view)*farScreen;
-	glm::vec4 farCoord = glm::vec4(farModel/farModel.w);
-	std::cout << glm::to_string(farCoord) << std::endl;
-
-	// TODO with that
-	// std::cout << "cam " << glm::to_string(camera->Front) << std::endl;
-
-	
-	if (farCoord.y < 0) { // Look towards ground (not sky)
-
-		glm::vec4 nearScreen = glm::vec4(xpos*near, ypos*near, near-0.015, near);
-		glm::vec4 nearModel = glm::inverse(projection*view)*nearScreen;
-		glm::vec4 nearCoord = glm::vec4(nearModel/nearModel.w);
-		std::cout << glm::to_string(nearCoord) << std::endl;
-
-		double y = 1; // size domino
-		double ratio = 1 - (nearCoord.y-y)/(nearCoord.y-farCoord.y);
-		double x = ratio*nearCoord.x + (1-ratio)*farCoord.x;
-		double z = ratio*nearCoord.z + (1-ratio)*farCoord.z;
-		
-		char cubeGeometry[] = "../../objects/cube.obj";
-		Object* cube = new Object(cubeGeometry, glm::vec3(x, y, z), glm::vec3(0., 0, 0), glm::vec3(1.));	
-
-		world->addCube(cube);
-		shader->addObject(cube);
-	}
-}*/
 
 Process::~Process(){}
