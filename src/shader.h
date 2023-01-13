@@ -68,7 +68,12 @@ public:
                          AreaLight * areaLights, 
                          int areaLightCount); // RenderPass
 
-    void RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, DirectionalLight* mainLight);           
+    void RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, 
+                    DirectionalLight* mainLight,
+                    PointLight* pointLights, 
+                    int pointLightCount, 
+                    SpotLight* spotLights, 
+                    int spotLightCount);           
     void DirectionalShadowMapPass(DirectionalLight* light); // DirectionalShadowMapPass
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
     void RenderScene(); // RenderScene

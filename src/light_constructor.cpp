@@ -22,27 +22,27 @@ void LightConstructor::createPointLight(){
                                 0.3f, 0.2f, 0.1f);
     pointLightCount++; 
     
-    // pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
-    //                             0.4f, 1.0f,
-    //                             -10.0f,5.0f, 10.0f,
-    //                             0.3f, 0.1f, 0.1f);
+    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
+                                0.4f, 1.0f,
+                                -10.0f,5.0f, 10.0f,
+                                0.3f, 0.1f, 0.1f);
 
-    // pointLightCount++; 
+    pointLightCount++; 
 
     
-    // pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
-    //                             0.4f, 1.0f,
-    //                             -10.0f,5.0f, -10.0f,
-    //                             0.3f, 0.2f, 0.1f);
+    pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
+                                0.4f, 1.0f,
+                                -10.0f,5.0f, -10.0f,
+                                0.3f, 0.2f, 0.1f);
 
-    // pointLightCount++;
+    pointLightCount++;
 
-	// pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
-    //                             0.4f, 1.0f,
-    //                             10.0f,5.0f, -10.0f,
-    //                             0.3f, 0.2f, 0.1f);
+	pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
+                                0.4f, 1.0f,
+                                10.0f,5.0f, -10.0f,
+                                0.3f, 0.2f, 0.1f);
 
-    // pointLightCount++;
+    pointLightCount++;
 }
 
 void LightConstructor::createSpotLight(){
@@ -61,7 +61,7 @@ void LightConstructor::createSpotLight(){
 void LightConstructor::createTorch(){
     // the first one is a torch
     spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
-                                0.0f, 1.0f,
+                                1.0f, 10.0f,
                                 0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
                                 0.0f, -1.0f, 0.0f, // points straight down
                                 0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c

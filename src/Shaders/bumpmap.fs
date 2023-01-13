@@ -7,6 +7,10 @@ in vec3 FragPos;
 in mat3 TBN;
 in vec4 DirectionalLightSpacePos; 
 
+const int MAX_POINT_LIGHTS = 5;
+const int MAX_SPOT_LIGHTS = 5;
+const int MAX_AREA_LIGHTS = 5;
+
 struct Light
 {
     vec3 color; 
@@ -19,6 +23,23 @@ struct DirectionalLight{
     vec3 direction; 
 }; 
 
+struct PointLight 
+{
+    Light base; 
+    vec3 position; 
+    float constant;
+    float linear; 
+    float exponent; 
+
+};
+
+struct SpotLight
+{
+    PointLight base; 
+    vec3 direction; 
+    float edge;
+};
+
 struct Material{
     float specularIntensity; 
     float shininess;  
@@ -26,22 +47,24 @@ struct Material{
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness
 };
 
+uniform int pointLightCount; 
+uniform int spotLightCount; 
+uniform int areaLightCount;
+
+uniform DirectionalLight directionalLight;
+uniform PointLight pointLights[MAX_POINT_LIGHTS]; 
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS]; 
+
 uniform sampler2D theTexture;
 uniform sampler2D normalMap;
 uniform sampler2D directionalShadowMap; 
 
-
-uniform DirectionalLight directionalLight;
-
-
 uniform Material material; 
-
 
 uniform vec3 eyePosition;
 uniform vec3 objectColor;
 
-float CalcDirectionalShadowFactor(DirectionalLight light)
-{
+float CalcDirectionalShadowFactor(DirectionalLight light){
     vec3 projCoords = DirectionalLightSpacePos.xyz / DirectionalLightSpacePos.w; 
     projCoords = (projCoords * 0.5) + 0.5; 
     float current = projCoords.z; 
@@ -71,50 +94,20 @@ vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor) // in
     vec3 TangentLightPos = TBN * (-direction);
     vec3 TangentViewPos  = TBN * eyePosition;
     vec3 TangentFragPos  = TBN * FragPos;    
-    // obtain normal from normal map in range [0,1]
-    vec3 normal = texture(normalMap, TexCoord).rgb;
-    // transform normal vector to range [-1,1]
-    normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
-   
-    // get diffuse color
-    //vec3 fragColor = texture(theTexture, TexCoord).rgb;
-    // ambient
-    //vec3 ambient = 0.1 * fragColor;
-    // diffuse
-    //vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
-    //float diff = max(dot(lightDir, normal), 0.0);
-    //vec3 diffuse = diff * fragColor;
-    // specular
-    //vec3 viewDir = normalize(TangentViewPos - TangentFragPos);
-    //vec3 reflectDir = reflect(-lightDir, normal);
-    //vec3 halfwayDir = normalize(lightDir + viewDir);  
-    //float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
 
-    //vec3 specular = vec3(0.2) * spec;
-    //color = vec4(ambient + diffuse + specular, 1.0);//vec4(ambient + diffuse + specular, 1.0);
+    vec3 normal = texture(normalMap, TexCoord).rgb;
+    normal = normalize(normal * 2.0 - 1.0);  
     
-    
-    
-    vec4 ambientColor = vec4(light.color, 1.0f)*light.ambientIntensity; // convert the color into vec4
+    vec4 ambientColor = vec4(light.color, 1.0f)*light.ambientIntensity;
     vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
     float diffuseFactor = max(dot(normalize(normal), normalize(lightDir)), 0.0); 
-
-    // 0 if it is neg. 
-    // By taking the norm we have length of 1 for the magnitude of the vectors, so the result of 
-    // dot product is: dot(A, B) = |A||B|cos(angle) where |A| = 1 = |B|, we effectivly get the angle. 
-
-    vec4 diffuseColor = vec4(light.color, 1.0f)*light.diffuseIntensity * diffuseFactor; // diffuseFactor check if the light is at an angle that can be allowed to appear. 
+    vec4 diffuseColor = vec4(light.color, 1.0f)*light.diffuseIntensity * diffuseFactor;
     
     vec4 specularColor = vec4(0,0,0,0); 
-
     if(diffuseFactor>0.0f)
     {
-
-        vec3 fragToEye = normalize(TangentViewPos - TangentFragPos); // we just want the direction where the fragment is from the eye
-        vec3 reflectedVertex = normalize(lightDir + fragToEye);  // we want ot know where the light ray is reflected around the normal. The first argument is what we want ot reflect and the scd is what we are reflecting it around. 
-        // we are reflecting the light direction across the normal pointing out of the object. 
-        // if fragToEye is the same as reflectedVertex then we will see bright light because specular is most intance at that point. 
-
+        vec3 fragToEye = normalize(TangentViewPos - TangentFragPos); 
+        vec3 reflectedVertex = normalize(lightDir + fragToEye);  
         float specularFactor = dot(normal, reflectedVertex); 
 
         if (specularFactor >0.0){
@@ -122,21 +115,84 @@ vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor) // in
             specularColor = vec4(light.color * material.specularIntensity * specularFactor, 1.0f);  
         }
     }
-
     return (ambientColor +  (1.0 -  shadowFactor) * (diffuseColor + specularColor));
-
 }
 
 
-vec4 CalcDirectionalLight()
-{   
+vec4 CalcDirectionalLight(){   
     float shadowFactor = CalcDirectionalShadowFactor(directionalLight); 
     return CalcLightByDirection(directionalLight.base, directionalLight.direction*1000, shadowFactor); 
 }
 
-void main()
-{       
+vec4 CalcPointLight(PointLight pLight)
+// to calculate only one of the light so that if we are doing spotLight and it needs pointLight we can use this function
+{
+    vec3 direction = FragPos - pLight.position; // we get the vector from the pointLight to the fragment = direction
+    float distance = length(direction); 
+    direction = normalize(direction);
+
+    vec4 color = CalcLightByDirection(pLight.base, direction, 0.0f); 
+    float attenuation = pLight.exponent * distance * distance + pLight.linear*distance + pLight.constant;
+
+    return (color/attenuation); // get the color of the pixel 
+
+}
+
+vec4 CalcSpotLight(SpotLight sLight)
+{
+    
+    vec3 rayDirection = normalize(FragPos - sLight.base.position); 
+    // we need to know what the vector is between where we are and the fragment we are doing the calculation for
+    float slFactor = dot(rayDirection, sLight.direction); 
+    // the factor will tell is wether or not we light the fragment in question
+    // the rayDirection is where we are to the point illuminated, sLight.direction is the direction our light is facing in. 
+    // if the angle between the 2 is small enough it means it should be illuminated (in the cone)
+
+    if (slFactor > sLight.edge)
+    {
+        vec4 color = CalcPointLight(sLight.base); // we pass in the pointLight part of our spotLight
+
+        return  color*(1.0f - (1.0f- slFactor)*(1.0f/(1.0f - sLight.edge)));
+
+        // We don't have a realistic spotLight (very sharp edge) so we need to create a faded effect close to the border 
+        // for this we ant the ratio between the 2 scales (slFactor (0 to 1) and sLight.edge)
+        //  1.0f - 0.0f/1.0f - sLight.edge : this will get the ratio between the 2 scales : how much we need to multiply this 1.0f - sLight.edge to get to 1.0f - 0.0f
+        // to get the point we want (slFactor) on our new scale we multiply by (1.0f- slFactor)
+        // we take the max of our new scale which is 1.0 and we substract from that the difference of our new scale : 1.0f - (1.0f- slFactor)*(1.0f/(1.0f - sLight.edge))
+        // illustration : we have 2 scales :0-1 and 0-2 and we want 0.3 => we have 0.7 difference of difference with biggest for the 1st scale => we scale the 0.7 
+        // in the scd. scale so we get 1.4 and we take the difference with the biggest value of the range which is 2 => 2-1.4 = 0.6 which is the equivalent of 0.3 but for the 2scd scale
+    } else {
+        return vec4 (0,0,0,0); 
+    }
+
+}
+
+vec4 CalcPointLights()
+{
+    vec4 totalColor = vec4(0, 0, 0, 0);
+    for(int i=0; i < pointLightCount; i++)
+    {
+        totalColor += CalcPointLight(pointLights[i]); // compute each light then adding whathever the result is for the fragment we are currently on. 
+    }
+
+    return totalColor; 
+}
+
+vec4 CalcSpotLights()
+{
+    vec4 totalColor = vec4(0, 0, 0, 0);
+    for(int i=0; i < spotLightCount; i++)
+    {
+        totalColor += CalcSpotLight(spotLights[i]); // compute each light then adding whathever the result is for the fragment we are currently on. 
+    }
+
+    return totalColor; 
+}
+
+void main(){       
     vec4 finalColor = CalcDirectionalLight();
+    finalColor += CalcPointLights();
+    finalColor += CalcSpotLights(); 
     color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
 
 }

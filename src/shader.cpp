@@ -22,7 +22,12 @@ void Shader::addObjects(std::vector<Object*> objects){
     }
 }
 
-void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, DirectionalLight* mainLight){
+void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, 
+                         DirectionalLight* mainLight,
+                         PointLight* pointLights, 
+                         int pointLightCount, 
+                         SpotLight* spotLights, 
+                         int spotLightCount){
     UseShader(); 
 
     uniformModel = GetModelLocation(); 
@@ -30,29 +35,28 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, Dir
     uniformView = GetViewLocation(); 
     uniformEyePosition = GetEyePositionLocation(); 
 
-    // GLuint lightpos = glGetUniformLocation(shaderID, "lightPos");
-    // glm::vec3 pos = glm::vec3(glm::sin(glfwGetTime())*20, 5.0, glm::cos(glfwGetTime())*20); //
-    // glUniform3f(lightpos, pos.x, pos.y, pos.z); // tochange later on
-
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     SetDirectionalLight(mainLight);
+    SetPointLights(pointLights, pointLightCount);
+    SetSpotLights(spotLights, spotLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
-    
-
-    // printf("that is my direction %f, %f, %f\n", dir.x, dir.y, dir.z);
 
 
-    mainLight->GetShadowMap()->Read(GL_TEXTURE2); //maybe to change number !!!!!!!!!!!!!!!
+    mainLight->GetShadowMap()->Read(GL_TEXTURE2);
 
 
-    SetTexture(0); // bound to texture unit 0 
+    SetTexture(0);
     SetNormalMap(1);
-    SetDirectionalShadowMap(2); // bound to GL_TEXTURE1
+    SetDirectionalShadowMap(2);
+
+    glm::vec3 lowerLight = camera.getPosition(); 
+    lowerLight.y -= 0.3f;
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
 
     RenderScene();
@@ -104,7 +108,7 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
-    // spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
     RenderScene();
 }
