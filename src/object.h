@@ -15,6 +15,7 @@
 
 #include "texture.h"
 #include "material.h"
+#include "constant.h"
 
 struct Vertex {
 	glm::vec3 Position;
@@ -27,8 +28,10 @@ class Object
 {
 public:
 	static int objectCounter;
-	bool visible;
+
 	bool bumpmap;
+	int type;
+
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
@@ -55,8 +58,8 @@ public:
 	glm::mat4 model = glm::mat4(1.0);
 
 	Object();
-	
-	Object(const char* geometryPath, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible=true, glm::vec3 Color=glm::vec3(1.0), bool Bumpmap=false);
+	Object(int _geometry, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color=glm::vec3(1.0), bool Bumpmap=false);
+
 	
 	void MakeObject();
 
@@ -64,7 +67,7 @@ public:
     void AssignPoNoTe(Vertex* vertex, std::string f);
 	void AssignTangent(Vertex *v1, Vertex *v2, Vertex *v3);
 	float * getData();
-	void LoadVertices(const char* geometryPath);
+	void LoadVertices();
 
 
 	void draw();
@@ -73,5 +76,6 @@ public:
 	glm::vec3 getRotation();
 	glm::vec3 getScale(){return scale;}
 	glm::vec3 getColor(){return color;}
+	const char* getGeometryPath();
 	void print();
 };

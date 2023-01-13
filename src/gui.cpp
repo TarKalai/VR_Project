@@ -19,6 +19,8 @@ void GUI::update() {
     displaySpeedAnimation();
     displayDominoInfo();
     displaySaveLoad();
+    dominoModify();
+    displayPushPower();
     shortcutList();
 
     ImGui::Render();
@@ -90,7 +92,7 @@ void GUI::displaySpeedAnimation() {
 
 
 void GUI::displayDominoInfo() {
-    Point size = Point({152, 110});
+    Point size = Point({152, 130});
     ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 100));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
     ImGui::Begin("Domino Information", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
@@ -116,9 +118,60 @@ void GUI::displayDominoInfo() {
         else { materialPicked = false; }
         ImGui::EndMenu();
     } else { materialPicked = false; }
+    if (ImGui::BeginMenu("Geometry", !geometryPicked)) {
+        geometryPicked = true;
+        if (ImGui::Button("Domino")) {process->geometryDomino = geometry::domino;}
+        else if (ImGui::Button("Cube")) {process->geometryDomino = geometry::cube;}
+        else if (ImGui::Button("Sphere")) {process->geometryDomino = geometry::sphere;}
+        else if (ImGui::Button("plane")) {process->geometryDomino = geometry::plane;}
+        else { geometryPicked = false; }
+        ImGui::EndMenu();
+    } else { geometryPicked = false; }
 
     ImGui::End();
 }
+
+void GUI::dominoModify() {
+    if (!display->cursor_disabled) {
+        Object* domino = process->selectedDomino;
+        if (domino != nullptr) {
+
+            Point size = Point({200, 275});
+            ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 235));
+            ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+            ImGui::Begin("Modify current domino", NULL, ImGuiWindowFlags_NoSavedSettings);
+
+            float scale = domino->scale.x;
+            ImGui::InputFloat("scale", &(scale));
+            domino->scale = glm::vec3(scale);
+
+            float color[3] = {domino->color.x, domino->color.y, domino->color.z};
+            ImGui::ColorPicker3("color", color);
+            domino->color = glm::vec3(color[0], color[1], color[2]);
+
+            if (ImGui::BeginMenu("Texture", !texturePicked)) {
+                texturePicked = true;
+                if (ImGui::Button("White")) {domino->texture = Textures::White();}
+                else if (ImGui::Button("Brick")) {domino->texture = Textures::Brick();}
+                else if (ImGui::Button("Dirt")) {domino->texture = Textures::Dirt();}
+                else if (ImGui::Button("Wood")) {domino->texture = Textures::Wood();}
+                else { texturePicked = false; }
+                ImGui::EndMenu();
+            } else { texturePicked = false; }
+            if (ImGui::BeginMenu("Material", !materialPicked)) {
+                materialPicked = true;
+                if (ImGui::Button("Shiny")) {domino->material = Materials::Shiny();}
+                else if (ImGui::Button("Dull")) {domino->material = Materials::Dull();}
+                else if (ImGui::Button("Empty")) {domino->material = Materials::Empty();}
+                else { materialPicked = false; }
+                ImGui::EndMenu();
+            } else { materialPicked = false; }
+
+            ImGui::End();
+        }
+    }
+}
+
 
 void GUI::displaySaveLoad() {
     if (!display->cursor_disabled) {
@@ -152,23 +205,23 @@ void GUI::displaySaveLoad() {
                         while (std::getline(in, line)) {
                             std::istringstream iss(line); // Like a "split"
                             std::string indice;
-                            iss >> indice; // Go the next elem of the split (reach elem 1 by 1 separated by " ")
-                            if (indice == "d") {
-                                int idx;
-                                float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, colX, colY, colZ;
-                                std::string tex, mat;
-                                iss >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
-                                glm::vec3 pos = glm::vec3(posX, posY, posZ);
-                                glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
-                                glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
-                                glm::vec3 color = glm::vec3(colX, colY, colZ);
-                                Texture* texture = Textures::Get(tex);
-                                Material* material= Materials::Get(mat);
-                                Object* domino = new Object(geometry::domino, texture, material,  pos, rot, scale, 1, color);	
-                                world->addDomino(domino);  
-                                shader->addObject(domino);
-                                shadow->addObject(domino);
-                            }
+
+                            int type, idx;
+                            float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, colX, colY, colZ;
+                            std::string tex, mat;
+                            iss >> type >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
+                            printf("%d %f %f %f\n", idx, posX, posY, posZ);
+                            glm::vec3 pos = glm::vec3(posX, posY, posZ);
+                            glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
+                            glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
+                            glm::vec3 color = glm::vec3(colX, colY, colZ);
+                            Texture* texture = Textures::Get(tex);
+                            Material* material= Materials::Get(mat);
+                            Object* domino = new Object(type, texture, material,  pos, rot, scale, color);	
+                            world->addObject(domino);  
+                            shader->addObject(domino);
+                            shadow->addObject(domino);
+                            
                         }
                     }
                 }
@@ -187,7 +240,7 @@ void GUI::displaySaveLoad() {
                         int idx = pair.first;
                         Object* object = pair.second;
                         if (idx != 0) {
-                            out << "d " << idx << " ";
+                            out << object->type << " " << idx << " ";
                             out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
                             out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
                             out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
@@ -207,6 +260,21 @@ void GUI::displaySaveLoad() {
     }
 }
 
+void GUI::displayPushPower() {
+    if (process->enterPressed) {
+        Point size = Point({115, 100});
+        ImGui::SetNextWindowPos(ImVec2((display->getWidth()-size.x)/2, (display->getHeight()-size.y)/2 + 40));
+        ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+        ImGui::Begin("Power push", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
+        ImGui::SetCursorPos(ImVec2(0,18));
+        ImGui::PushItemWidth(115);
+        ImGui::SliderInt(" ", &(process->enterPressed), 0, 100);
+        ImGui::End();
+    }
+
+}
+
+
 void GUI::shortcutList() {
     if (!display->cursor_disabled) {
         int screenHeight = display->getHeight();
@@ -220,6 +288,7 @@ void GUI::shortcutList() {
         ImGui::Text("'Esc': Toogle menu mode");
         ImGui::Text("'Left Ctrl + Q' : Quit");
         ImGui::Text("'P' : Putting dominos (pressed)");
+        ImGui::Text("'D' : Deleting dominos (pressed)");
         ImGui::Text("'Enter' : Pushing force (proportionnal to time pressed)");
 
         ImGui::Text("'T' : Increase size of next domino (keep pressed)");
@@ -232,6 +301,7 @@ void GUI::shortcutList() {
         ImGui::Text("'G + I' : Decrease red component of following dominos");
         ImGui::Text("'B' : Increase red component of following dominos");
         ImGui::Text("'B + I' : Decrease red component of following dominos");
+        ImGui::Text("'M + Esc' : Modifying the appearance of the targeted domino");
 
         ImGui::Text("'Q | Left': Left direction");
         ImGui::Text("'D | Right': Right direction");

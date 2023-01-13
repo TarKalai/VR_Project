@@ -37,6 +37,7 @@ private:
 
     bool texturePicked = false;
     bool materialPicked = false;
+    bool geometryPicked = false;
 
     void menuTitle();
     float* getFPS();
@@ -45,5 +46,7 @@ private:
     void displaySpeedAnimation();
     void displayDominoInfo();
     void displaySaveLoad();
+    void dominoModify();
+    void displayPushPower();
     void shortcutList();
 };

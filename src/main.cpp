@@ -54,40 +54,17 @@ int spotLightCount;
 int areaLightCount = 0;
 
 void CreateObjects(){
-
-    Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0, 0, 0), glm::vec3(general::sceneSize.x/2, general::sceneSize.y/2, general::sceneSize.z/2), 1, glm::vec3(1.0), 1);
-    physicalWorld = PhysicalWorld(ground);
+    // GROUNDS
+    Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
+    physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
     bumpMapShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
 
+    Object* ground2 = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
+    physicalWorld.addObject(ground2, PHYSIC::GROUND_OBJECT);
+    bumpMapShader.addObject(ground2);
+    directionalShadowShader.addObject(ground2);
 
-
-    // Object* test = new Object(geometry::cube, Textures::Brickwall(), Materials::Shiny(), glm::vec3(10., 2., 10.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.0), 1, glm::vec3(1., 1., 1.), 1);
-    // bumpMapShader.addObject(test);
-    // directionalShadowShader.addObject(test);
-
-
-    for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(sphere);
-        directionalShadowShader.addObject(sphere);
-        physicalWorld.addSphere(sphere); 
-	}
-
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(cube);
-        directionalShadowShader.addObject(cube);
-        physicalWorld.addCube(cube); 
-	}
 }
 
 void CreateShaders()
@@ -104,6 +81,7 @@ int main(){
     mainWindow = Display(true); 
     mainWindow.Initialise(); 
     
+    physicalWorld = PhysicalWorld();
     CreateShaders();
     CreateObjects(); 
 
@@ -121,7 +99,7 @@ int main(){
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0), 0, 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1);
 
-		Object* plane = new Object(geometry::plane, Textures::Dirt(), Materials::Empty(), pos, rot, scale, 1, glm::vec3(1,0,0));
+		Object* plane = new Object(geometry::plane, Textures::Dirt(), Materials::Empty(), pos, rot, scale, glm::vec3(1,0,0));
 		areaLightShader.addObject(plane);
 
 		areaLights[i] = AreaLight(plane->color.x,plane->color.y, plane->color.z, 
@@ -141,6 +119,7 @@ int main(){
 	process.initMousePosition();
     
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
+    camera.processKeyboardMovement(LEFT, 0.1); // DO NOT REMOVE ! Fix bug updating camera position
     while(!mainWindow.getShouldClose()){
         Time::updateTime();
         process.processInput();

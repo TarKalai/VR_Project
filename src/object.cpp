@@ -7,10 +7,10 @@ int Object::objectCounter = 0;
 
 Object::Object() {}
 
-Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, bool is_visible, glm::vec3 Color, bool Bumpmap){
+Object::Object(int _geometry, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color,  bool Bumpmap){
+    type = _geometry;
     texture = tex;
     material = matos;
-    visible = is_visible;
     position = obj_pos;
     rotation = obj_rot;
     scale = obj_scale;
@@ -19,7 +19,7 @@ Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec
     bumpmap = Bumpmap;
     objectCounter++;  
 
-    LoadVertices(geometryPath);
+    LoadVertices();
     numVertices = vertices.size();
     MakeObject();
 }
@@ -62,14 +62,15 @@ void Object::AssignTangent(Vertex *v1, Vertex *v2, Vertex *v3){
     v3->Tangent = tangent;
 }
 
-void Object::LoadVertices(const char* geometryPath){
+void Object::LoadVertices(){
     // Read the file defined by the path argument 
     // open the .obj file into a text editor and see how the data are organized
     // you will see line starting by v, vt, vn and f --> what are these ?
     // Then parse it to extract the data you need
     // keep track of the number of vertices you need
 
-    std::ifstream infile(geometryPath);
+    std::ifstream infile(getGeometryPath());
+    //TODO Error management
     std::string line;
     while (std::getline(infile, line))
     {
@@ -250,6 +251,22 @@ glm::vec3 Object::getPosition(){
 glm::vec3 Object::getRotation(){
     return rotation;
 }
+
+const char* Object::getGeometryPath() {
+    if (type == geometry::domino)
+        return geometryPath::domino;
+    else if (type == geometry::plane) {
+        scale.y = general::floorThickness;
+        return geometryPath::cube;
+    }
+    else if (type == geometry::cube)
+        return geometryPath::cube;
+    else if (type == geometry::sphere)
+        return geometryPath::sphere;
+    return geometryPath::cube;
+
+}
+
 void Object::print(){
 	std::cout << "object id="<< id << " (" << round(position.x) << ", " << round(position.z) << ", " << round(position.z) << ")" << std::endl;
 }

@@ -30,20 +30,27 @@ public:
     PhysicalWorld* world;
     Shader* shader;
     Shader* shadow;
+    int enterPressed = 0;
     float sliderSpeedAnimation = 1.;
     float scaleDomino = 1.;
+    Object* selectedDomino;
     glm::vec3 colorDomino = glm::vec3(1.);
     Texture* textureDomino = Textures::White();
     Material* materialDomino = Materials::Shiny();
+    glm::vec3 dimDomino = glm::vec3();
+    int geometryDomino = geometry::domino;
 
     Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
     void initMousePosition();
     void processInput(); 
     void HandleMouse(); 
-    void PutDominoes();
+    void DeleteDominos();
+    void ModifyDomino();
+    void PutDominos();
 	void AnimationSpeed();
     ~Process(); 
 private: 
+    bool modifyPressed = false;
     bool menuPressed = false;
     double oldCursorX = 0, oldCursorY = 0;
     int oldWindowX = 0, oldWindowY = 0;
@@ -53,7 +60,6 @@ private:
     bool firstDomino = true;
     glm::vec3 lastDomino;
     bool shoot = false;
-    int pressed = 0;
     bool decreaseResolution = false;
     bool increaseResolution = false;
     bool scaleIncrease = false;
@@ -70,4 +76,5 @@ private:
 	void PlacingDomino();
 	void Pushing();
 	void Deplacement();
+    void FlashLight();
 }; 

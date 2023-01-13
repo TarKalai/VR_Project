@@ -110,23 +110,19 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
     spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
-
     RenderScene();
 }
 
 
 void Shader::RenderScene() {
     for(Object* object : objectList) {
-        if (object->visible) {
-            //material.UseMaterial(glGetUniformLocation(ID, "material.specularIntensity"), glGetUniformLocation(ID, "material.shininess")); 
-            //glUniform3f(glGetUniformLocation(shaderID, "lightColor"), object->color.x, object->color.y, object->color.z);
-            glUniform3f(uniformColor, object->color.x, object->color.y, object->color.z);
-            glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(object->model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
-            object->texture->UseTexture(); // From now on anything drawn will be using the bricktexture loaded in. 
+        glUniform3f(uniformColor, object->color.x, object->color.y, object->color.z);
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(object->model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
+        object->texture->UseTexture(); // From now on anything drawn will be using the bricktexture loaded in. 
 
-            object->material->UseMaterial(uniformSpecularIntensity, uniformShininess);  
-            object->draw();
-        }
+        object->material->UseMaterial(uniformSpecularIntensity, uniformShininess);  
+        object->draw();
+        
     }
 }
 
@@ -164,6 +160,18 @@ void Shader::DrawLightObjects(glm::mat4 projection, glm::mat4 view) {
     // RENDER SCENE
     RenderScene();
 }
+
+void Shader::remove(int objID) {
+    if (objID != -1) {
+        for (int i = 0; i < objectList.size(); i++) {
+            if (objectList[i]->id==objID) {
+                objectList.erase(objectList.begin() + i);
+                break;
+            }
+        }
+    }
+}
+
 
 
 void Shader::CreateFromString(const char* vertexCode, const char* fragmentCode){

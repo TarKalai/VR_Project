@@ -32,6 +32,14 @@ namespace image
 
 namespace geometry
 {
+	static constexpr int plane = 0;
+    static constexpr int domino = 1;
+	static constexpr int cube = 2;
+    static constexpr int sphere = 3;
+}
+
+namespace geometryPath
+{
     static constexpr char sphere[128] = "../../objects/sphere.obj";
 	static constexpr char cube[128] = "../../objects/cube.obj";
 	static constexpr char plane[128] = "../../objects/plane.obj";
@@ -40,6 +48,7 @@ namespace geometry
     static constexpr char bunny[128] = "../../objects/bunny_big.obj";
 
 }
+
 
 namespace shaderfiles
 {
@@ -56,7 +65,8 @@ namespace shaderfiles
 namespace general
 {
     static constexpr glm::vec3 sceneSize = glm::vec3(100, 100, 100); // size of the scene, the scene is a cube (where the shadow are rendered in). (shadow box)
-    static constexpr int floorThickness = 1;
+    static constexpr float floorThickness = 0.05; // If too law, do not work (0.05 is a good value)
+    static constexpr float pushingExponent = 1.5; 
 }
 
 namespace Ttime
@@ -70,6 +80,13 @@ namespace dominoDim
     static constexpr float height = 2*1.;
     static constexpr float width = 2*0.5;
     static constexpr float thick = 2*0.175;
+}
+
+namespace PHYSIC
+{
+    static constexpr int ANY_TYPE = 0;
+    static constexpr int NORMAL_OBJECT = 1;
+    static constexpr int GROUND_OBJECT = 2;
 }
 
 namespace color

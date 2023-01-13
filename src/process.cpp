@@ -16,10 +16,13 @@ void Process::processInput() {
 	AnimationSpeed();
 	if (!Time::pause()) {
 		PlacingParameter();
+		DeleteDominos();
 		PlacingDomino();
+		ModifyDomino();
 		Pushing();
 		Deplacement();
 		HandleMouse();
+		FlashLight();
 	}
 }
 
@@ -172,7 +175,7 @@ void Process::PlacingParameter() {
 void Process::PlacingDomino() {
 	// Putting Domino
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
-		PutDominoes();
+		PutDominos();
 	else
 		firstDomino = true;
 }
@@ -180,12 +183,18 @@ void Process::PlacingDomino() {
 void Process::Pushing() { 
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)  {
 		shoot = true;
-		pressed += 1;
+		enterPressed += 1;
 	} else if (shoot) {
 		shoot = false;
-		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Empty(), camera->getPosition(), glm::vec3(0.), glm::vec3(1.), false); // visible=false
-		world->addSphere(sphere, camera->getDirection()*glm::vec3(pressed), 30); // lifetime = 30
-		pressed = 0;
+
+		glm::vec3 dir = camera->getDirection(); 
+		glm::vec3 pos = camera->getPosition();
+
+		double dist = 200; // Distance to push object (May vary depending of the farplane)
+		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
+
+		world->RayCastPush(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT, enterPressed);
+		enterPressed = 0;
 	}
 }
 
@@ -202,6 +211,9 @@ void Process::Deplacement() {
 		camera->processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera->processKeyboardMovement(DOWN, 0.1);
+}
+
+void Process::FlashLight() {
 }
 
 void Process::initMousePosition(){
@@ -231,90 +243,81 @@ void Process::HandleMouse(){
 	xoffset = xpos - camera->initRunX;
 	yoffset = ypos - camera->initRunY; 
 
-	if (xoffset || yoffset)
+	if (xoffset || yoffset) 
 		camera->processMouseMovement(xoffset, yoffset, 1);
 
 	camera->CreateCallBacks(window, xoffset, yoffset); 
 
 }
 
-void Process::PutDominoes(){
+void Process::ModifyDomino() {
+	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS) {
+		glm::vec3 dir = camera->getDirection(); 
+		glm::vec3 pos = camera->getPosition();
+
+		double dist = 200; // Distance to delete object (May vary depending of the farplane)
+		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
+
+		selectedDomino = world->RayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT); // See GUI for next step
+	} else { selectedDomino = nullptr; }
+}
+
+void Process::DeleteDominos() {
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+		glm::vec3 dir = camera->getDirection(); 
+		glm::vec3 pos = camera->getPosition();
+
+		double dist = 200; // Distance to delete object (May vary depending of the farplane)
+		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
+		int objID = world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT);
+		shader->remove(objID);
+		shadow->remove(objID);
+	}
+}
+
+void Process::PutDominos(){
 	float espacement = scaleDomino*(dominoDim::height/2 + dominoDim::thick); // distance between 2 domino
 
 	glm::vec3 dir = camera->getDirection(); 
 	glm::vec3 pos = camera->getPosition();
 
 	if (dir.y < 0) {
-		double ratio = (dominoDim::height/2 - pos.y)/dir.y;
-		glm::vec3 cursorPosition = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
-		
-		if (firstDomino) {
-			firstDomino = false;
-			lastDomino = cursorPosition;
-		} 
-		else  {
-			float dist = glm::distance(lastDomino, cursorPosition);
-			if (dist > espacement) { 
-				if (scaleIncrease) { scaleDomino = glm::min(10., scaleDomino*1.1); }
-				else if (scaleDecrease) { scaleDomino = glm::max(0.2, scaleDomino*0.9); }
-				ratio = espacement/dist;
-				glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*cursorPosition; // To get dominoes at constant interval
-				glm::vec3 delta_dir = nextDomino-lastDomino;
-				Object* domino = new Object(geometry::domino, textureDomino, materialDomino, 
-											glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
-											true, normalize(colorDomino));	
-				world->addDomino(domino);
-				shader->addObject(domino);
-				shadow->addObject(domino);
-				lastDomino = nextDomino; // go to next domino
+		double ratio = -pos.y/dir.y;
+		glm::vec3 to = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
+		glm::vec3 destination = world->RayCastPos(camera->getPosition(), to, PHYSIC::GROUND_OBJECT);
+
+		if (destination.y != -1) {
+			if (firstDomino) {
+				firstDomino = false;
+				lastDomino = destination;
+			} 
+			else  {
+				float dist = glm::distance(lastDomino, destination);
+				if (dist > espacement) { 
+					if (scaleIncrease) { scaleDomino = glm::min(10., scaleDomino*1.1); }
+					else if (scaleDecrease) { scaleDomino = glm::max(0.3, scaleDomino*0.9); }
+					
+					ratio = espacement/dist;
+					glm::vec3 nextDomino;
+					nextDomino.x = (1-ratio)*lastDomino.x + ratio*destination.x;
+					nextDomino.z = (1-ratio)*lastDomino.z + ratio*destination.z;
+					nextDomino.y = destination.y;
+					glm::vec3 delta_dir = nextDomino-lastDomino;
+					if (abs(nextDomino.y - lastDomino.y) < 0.1){
+						Object* domino = new Object(geometryDomino, textureDomino, materialDomino, 
+													glm::vec3(lastDomino.x, lastDomino.y+scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
+													normalize(colorDomino));			
+						world->addObject(domino);
+						shader->addObject(domino);
+						shadow->addObject(domino);
+					}
+					else 
+						firstDomino = true;
+					lastDomino = nextDomino; // go to next domino
+				}
 			}
 		}
 	}
 }
-
-
-/* Putting domino at cursor position (keep if we need to do something similar in the futur)
-void Process::SaveCursorPath(GLFWwindow* window, Camera &camera, PhysicalWorld &world, Shader &shader){
-
-	double xpos, ypos;
-	int width, height;
-	glfwGetCursorPos(window, &xpos, &ypos); 
-	glfwGetWindowSize(window, &width, &height);
-	xpos = (2*xpos-width)/width;
-	ypos = (height-2*ypos)/height;
-
-	float near = 0.01;
-	float far = 100.;
-	glm::mat4 view = camera->getViewMatrix();
-	glm::mat4 projection = camera->getProjectionMatrix(window, near, far);
-
-	glm::vec4 farScreen = glm::vec4(xpos*far, ypos*far, far-0.015, far);
-	glm::vec4 farModel = glm::inverse(projection*view)*farScreen;
-	glm::vec4 farCoord = glm::vec4(farModel/farModel.w);
-	std::cout << glm::to_string(farCoord) << std::endl;
-
-	// TODO with that
-	// std::cout << "cam " << glm::to_string(camera->Front) << std::endl;
-
-	
-	if (farCoord.y < 0) { // Look towards ground (not sky)
-
-		glm::vec4 nearScreen = glm::vec4(xpos*near, ypos*near, near-0.015, near);
-		glm::vec4 nearModel = glm::inverse(projection*view)*nearScreen;
-		glm::vec4 nearCoord = glm::vec4(nearModel/nearModel.w);
-		std::cout << glm::to_string(nearCoord) << std::endl;
-
-		double y = 1; // size domino
-		double ratio = 1 - (nearCoord.y-y)/(nearCoord.y-farCoord.y);
-		double x = ratio*nearCoord.x + (1-ratio)*farCoord.x;
-		double z = ratio*nearCoord.z + (1-ratio)*farCoord.z;
-		
-		char cubeGeometry[] = "../../objects/cube.obj";
-		Object* cube = new Object(cubeGeometry, glm::vec3(x, y, z), glm::vec3(0., 0, 0), glm::vec3(1.));	
-
-		world->addCube(cube);
-		shader->addObject(cube);
-	}
-}*/
 
 Process::~Process(){}
