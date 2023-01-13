@@ -294,14 +294,21 @@ void Process::PutDominos(){
 					else if (scaleDecrease) { scaleDomino = glm::max(0.3, scaleDomino*0.9); }
 					
 					ratio = espacement/dist;
-					glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*destination;
+					glm::vec3 nextDomino;
+					nextDomino.x = (1-ratio)*lastDomino.x + ratio*destination.x;
+					nextDomino.z = (1-ratio)*lastDomino.z + ratio*destination.z;
+					nextDomino.y = destination.y;
 					glm::vec3 delta_dir = nextDomino-lastDomino;
-					Object* domino = new Object(geometryDomino, textureDomino, materialDomino, 
-												glm::vec3(lastDomino.x, lastDomino.y+scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
-												normalize(colorDomino));	
-					world->addObject(domino);
-					shader->addObject(domino);
-					shadow->addObject(domino);
+					if (abs(nextDomino.y - lastDomino.y) < 0.1){
+						Object* domino = new Object(geometryDomino, textureDomino, materialDomino, 
+													glm::vec3(lastDomino.x, lastDomino.y+scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
+													normalize(colorDomino));			
+						world->addObject(domino);
+						shader->addObject(domino);
+						shadow->addObject(domino);
+					}
+					else 
+						firstDomino = true;
 					lastDomino = nextDomino; // go to next domino
 				}
 			}

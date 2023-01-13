@@ -3,6 +3,7 @@
 
 
 ObjectConstructor::ObjectConstructor(PhysicalWorld *physicalWorld){
+	
     for (int i=0; i<10; i++) {
 		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
 		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));

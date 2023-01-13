@@ -28,7 +28,7 @@ public:
     float YAW; // = -90.0f;
     float PITCH; //= 0.0f;
     float SPEED = 2.0f;
-    float SENSITIVITY = 0.1f;
+    float SENSITIVITY = 0.05f;
     float ZOOM = 60.0f;
    
     // camera Attributes

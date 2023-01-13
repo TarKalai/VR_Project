@@ -19,7 +19,7 @@ btCollisionShape* PhysicalWorld::getShape(Object *obj) {
     if (obj->type==geometry::domino)
         return new btBoxShape(btVector3((dominoDim::thick/2)*obj->scale.x, (dominoDim::height/2)*obj->scale.y, (dominoDim::width/2)*obj->scale.z));
     else if (obj->type==geometry::plane)
-        return new btBoxShape(btVector3(obj->scale.x, 0.1, obj->scale.z));
+        return new btBoxShape(btVector3(obj->scale.x, general::floorThickness, obj->scale.z));
     else if (obj->type==geometry::cube)
         return new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
     else if (obj->type==geometry::sphere)
@@ -197,7 +197,6 @@ glm::vec3 PhysicalWorld::RayCastPos(glm::vec3 from, glm::vec3 to, int type) {
         }
 
         if (closestIdx != -1) {
-            printf("idx: %d\n", closestIdx);
             btVector3 hitPoint = callback.m_hitPointWorld[closestIdx];
             return glm::vec3(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
         }
