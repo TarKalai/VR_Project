@@ -53,6 +53,20 @@ bool Texture::LoadTexture(){
     glTexImage2D(GL_TEXTURE_2D, 0, dataFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D); // generate MipMap automatically. 
 
+    if(glfwExtensionSupported("GL_ARB_texture_filter_anisotropic"))
+    {
+        GLfloat value, max_anisotropy = 16.0f; /* don't exceed this value...*/
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, & value);
+
+        value = (value > max_anisotropy) ? max_anisotropy : value; 
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, value);
+    }
+    else
+    {
+        printf("Anisotropic Filtering is not supported."); 
+        return false; 
+    }
+
     glBindTexture(GL_TEXTURE_2D, 0); 
     stbi_image_free(data);
     return true;

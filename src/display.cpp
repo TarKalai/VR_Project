@@ -38,6 +38,7 @@ int Display::Initialise()
 
     mainWindow = glfwCreateWindow(width, height, "Project", NULL, NULL); 
 
+
     // glfwSetWindowMonitor(mainWindow, 0,  0, 0, width, height, GLFW_DONT_CARE);
     // 1st NULL: which monitor want to use  
     // 2scd NULL If we want to share the window across systems.  
