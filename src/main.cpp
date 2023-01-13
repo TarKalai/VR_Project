@@ -38,7 +38,7 @@ PhysicalWorld physicalWorld;
 
 Shader objectShader; 
 Shader directionalShadowShader; 
-Shader areaLightShader; 
+Shader objectLightShader; 
 Shader2D shader2D;
 Shader bumpMapShader;
 
@@ -48,6 +48,8 @@ DirectionalLight* mainLight;
 PointLight *pointLights; 
 SpotLight *spotLights; 
 AreaLight areaLights[values::MAX_AREA_LIGHTS]; 
+
+std::vector<Object*> pointLightObjects;
 
 int pointLightCount; 
 int spotLightCount;
@@ -71,7 +73,7 @@ void CreateShaders()
 {
     objectShader.CreateFromFiles(shaderfiles::mainVertex, shaderfiles::mainFrag); 
     directionalShadowShader.CreateFromFiles(shaderfiles::shadowMapVertex, shaderfiles::shadowMapFrag); 
-    areaLightShader.CreateFromFiles(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag); 
+    objectLightShader.CreateFromFiles(shaderfiles::lightObjectVertex, shaderfiles::lightObjectFrag); 
     shader2D = Shader2D(true);
     bumpMapShader.CreateFromFiles(shaderfiles::bumpMapVertex, shaderfiles::bumpMapFrag); 
 }
@@ -89,10 +91,16 @@ int main(){
 
     LightConstructor lightConstructor = LightConstructor();
     mainLight = lightConstructor.getMainLight();
+    
     pointLights = lightConstructor.getPointLight();
     pointLightCount = lightConstructor.getPointLightCount();
+    pointLightObjects = lightConstructor.getPointLightObjects();
+    objectLightShader.addObjects(pointLightObjects);
+
     spotLights = lightConstructor.getSpotLight();
     spotLightCount = lightConstructor.getSpotLightCount();
+    
+
     
 	for (int i=0; i<1; i++) {
 		glm::vec3 pos = glm::vec3(-10,1,0);
@@ -100,7 +108,7 @@ int main(){
 		glm::vec3 scale = glm::vec3(1);
 
 		Object* plane = new Object(geometry::plane, Textures::Dirt(), Materials::Empty(), pos, rot, scale, glm::vec3(1,0,0));
-		areaLightShader.addObject(plane);
+		objectLightShader.addObject(plane);
 
 		areaLights[i] = AreaLight(plane->color.x,plane->color.y, plane->color.z, 
 							  0.9f, 10.,
@@ -147,7 +155,7 @@ int main(){
         bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
 
-        areaLightShader.DrawLightObjects(projection, view);
+        objectLightShader.DrawLightObjects(projection, view);
         shader2D.drawObject();
              
         gui.update();

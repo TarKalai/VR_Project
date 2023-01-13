@@ -7,7 +7,7 @@ in vec3 FragPos;
 in mat3 TBN;
 in vec4 DirectionalLightSpacePos; 
 
-const int MAX_POINT_LIGHTS = 5;
+const int MAX_POINT_LIGHTS = 10;
 const int MAX_SPOT_LIGHTS = 5;
 const int MAX_AREA_LIGHTS = 5;
 

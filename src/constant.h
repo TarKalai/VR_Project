@@ -4,7 +4,7 @@
 
 namespace values
 {
-    static constexpr int MAX_POINT_LIGHTS = 5;
+    static constexpr int MAX_POINT_LIGHTS = 10;
     static constexpr int MAX_SPOT_LIGHTS = 5;
     static constexpr int MAX_AREA_LIGHTS = 5;
 }
@@ -54,8 +54,8 @@ namespace shaderfiles
 {
     static constexpr char mainVertex[128] = "../../src/Shaders/main.vs";
     static constexpr char mainFrag[128] = "../../src/Shaders/main.fs";
-    static constexpr char lightPlaneVertex[128] = "../../src/Shaders/light_plane.vs";
-    static constexpr char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
+    static constexpr char lightObjectVertex[128] = "../../src/Shaders/light_object.vs";
+    static constexpr char lightObjectFrag[128] = "../../src/Shaders/light_object.fs";
     static constexpr char shadowMapVertex[128] = "../../src/Shaders/directional_shadow_map.vs";
     static constexpr char shadowMapFrag[128] = "../../src/Shaders/directional_shadow_map.fs";
     static constexpr char bumpMapVertex[128] = "../../src/Shaders/bumpmap.vs";

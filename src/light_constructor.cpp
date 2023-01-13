@@ -15,34 +15,21 @@ void LightConstructor::createMainLight(){
 }
 
 void LightConstructor::createPointLight(){  
+    for (int i=0; i<10; i++) {
+		glm::vec3 pos = glm::vec3(Utils::getRandom(-30.0, 30.0),Utils::getRandom(1.0, 5.0),Utils::getRandom(-30.0, 30.0));
+		glm::vec3 rot = glm::vec3(0.0, 0.0, 0.0);
+		glm::vec3 scale = glm::vec3(0.25);
+        glm::vec3 color = glm::vec3(Utils::getRandom(0,1),Utils::getRandom(0,1),Utils::getRandom(0,1));
 
-    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f, 
-                                1.0f, 1.0f,
-                                10.0f,4.0f, 10.0f,
-                                0.3f, 0.2f, 0.1f);
-    pointLightCount++; 
-    
-    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f, 
-                                0.4f, 1.0f,
-                                -10.0f,5.0f, 10.0f,
-                                0.3f, 0.1f, 0.1f);
+		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Empty(), pos, rot, scale, color);
+		pointLightObjects.push_back(sphere);
 
-    pointLightCount++; 
-
-    
-    pointLights[2] = PointLight(1.0f, 0.0f, 0.0f, 
-                                0.4f, 1.0f,
-                                -10.0f,5.0f, -10.0f,
-                                0.3f, 0.2f, 0.1f);
-
-    pointLightCount++;
-
-	pointLights[3] = PointLight(1.0f, 0.0f, 1.0f, 
-                                0.4f, 1.0f,
-                                10.0f,5.0f, -10.0f,
-                                0.3f, 0.2f, 0.1f);
-
-    pointLightCount++;
+		pointLights[i] = PointLight(color.x,color.y, color.z, 
+                                    1.0f, 2.0,
+                                    pos.x,pos.y,pos.z,
+                                    0.3f, 0.2f, 0.1f); //0.003f, 0.002f, 0.001f
+    	pointLightCount++; 
+    }
 }
 
 void LightConstructor::createSpotLight(){
