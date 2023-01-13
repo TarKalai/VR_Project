@@ -214,7 +214,6 @@ void Process::Deplacement() {
 }
 
 void Process::FlashLight() {
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)
 }
 
 void Process::initMousePosition(){
