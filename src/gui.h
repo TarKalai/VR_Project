@@ -37,6 +37,7 @@ private:
 
     bool texturePicked = false;
     bool materialPicked = false;
+    bool geometryPicked = false;
 
     void menuTitle();
     float* getFPS();

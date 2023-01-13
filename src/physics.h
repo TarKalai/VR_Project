@@ -26,14 +26,10 @@ public:
 
     // constructor
     PhysicalWorld();
-    PhysicalWorld(Object *obj);
 
-    void initializeEngine();
-    void createGround(Object *obj);
-    void addSphere(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0));
-    void addCube(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0));
-    void addDomino(Object *obj, glm::vec3 velocity=glm::vec3(0,0,0));
-    void addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity);
+    btCollisionShape* getShape(Object *obj);
+
+    void addObject(Object *obj, int type=PHYSIC::NORMAL_OBJECT);
     int getType(btRigidBody* body) { return body->getUserIndex2(); }
     void setType(btRigidBody* body, int type) { body->setUserIndex2(type); }
     

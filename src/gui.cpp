@@ -92,7 +92,7 @@ void GUI::displaySpeedAnimation() {
 
 
 void GUI::displayDominoInfo() {
-    Point size = Point({152, 110});
+    Point size = Point({152, 130});
     ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 100));
     ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
     ImGui::Begin("Domino Information", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
@@ -118,6 +118,15 @@ void GUI::displayDominoInfo() {
         else { materialPicked = false; }
         ImGui::EndMenu();
     } else { materialPicked = false; }
+    if (ImGui::BeginMenu("Geometry", !geometryPicked)) {
+        geometryPicked = true;
+        if (ImGui::Button("Domino")) {process->geometryDomino = geometry::domino;}
+        else if (ImGui::Button("Cube")) {process->geometryDomino = geometry::cube;}
+        else if (ImGui::Button("Sphere")) {process->geometryDomino = geometry::sphere;}
+        else if (ImGui::Button("plane")) {process->geometryDomino = geometry::plane;}
+        else { geometryPicked = false; }
+        ImGui::EndMenu();
+    } else { geometryPicked = false; }
 
     ImGui::End();
 }
@@ -128,7 +137,7 @@ void GUI::dominoModify() {
         if (domino != nullptr) {
 
             Point size = Point({200, 275});
-            ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 225));
+            ImGui::SetNextWindowPos(ImVec2(display->getWidth()-size.x, 235));
             ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
             ImGui::Begin("Modify current domino", NULL, ImGuiWindowFlags_NoSavedSettings);
 
@@ -209,7 +218,7 @@ void GUI::displaySaveLoad() {
                                 Texture* texture = Textures::Get(tex);
                                 Material* material= Materials::Get(mat);
                                 Object* domino = new Object(geometry::domino, texture, material,  pos, rot, scale, color);	
-                                world->addDomino(domino);  
+                                world->addObject(domino);  
                                 shader->addObject(domino);
                                 shadow->addObject(domino);
                             }

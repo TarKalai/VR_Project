@@ -37,6 +37,8 @@ public:
     glm::vec3 colorDomino = glm::vec3(1.);
     Texture* textureDomino = Textures::White();
     Material* materialDomino = Materials::Shiny();
+    glm::vec3 dimDomino = glm::vec3();
+    int geometryDomino = geometry::domino;
 
     Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
     void initMousePosition();

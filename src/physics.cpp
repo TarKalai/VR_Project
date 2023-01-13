@@ -1,16 +1,7 @@
 #include "physics.h"
 
-PhysicalWorld::PhysicalWorld(){}
-
-PhysicalWorld::PhysicalWorld(Object *obj)
+PhysicalWorld::PhysicalWorld()
 {
-    initializeEngine();
-    createGround(obj);
-}
-
-// An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
-
-void PhysicalWorld::initializeEngine(){
     ///-----initialization_start-----
     ///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
     collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -24,61 +15,21 @@ void PhysicalWorld::initializeEngine(){
     dynamicsWorld->setGravity(btVector3(0, -10, 0));
 }
 
-void PhysicalWorld::createGround(Object *obj){
-
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(obj->scale.x), btScalar(obj->scale.y), btScalar(obj->scale.z)));
-
-    collisionShapes.push_back(groundShape);
-    glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
-
-    btTransform groundTransform;
-    groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0,obj->position.y,0));
-
-    btScalar mass(0.);
-
-    //rigidbody is dynamic if and only if mass is non zero, otherwise static
-    bool isDynamic = (mass != 0.f);
-
-    btVector3 localInertia(0, 0, 0);
-    if (isDynamic)
-        groundShape->calculateLocalInertia(mass, localInertia);
-
-    //using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
-    btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
-    btRigidBody* body = new btRigidBody(rbInfo);
-
-    body->setUserIndex(obj->id);
-    setType(body, PHYSIC::GROUND_OBJECT);
-    //add the body to the dynamics world
-    dynamicsWorld -> addRigidBody(body);
+btCollisionShape* PhysicalWorld::getShape(Object *obj) {
+    if (obj->type==geometry::domino)
+        return new btBoxShape(btVector3((dominoDim::thick/2)*obj->scale.x, (dominoDim::height/2)*obj->scale.y, (dominoDim::width/2)*obj->scale.z));
+    else if (obj->type==geometry::plane)
+        return new btBoxShape(btVector3(obj->scale.x, 0.1, obj->scale.z));
+    else if (obj->type==geometry::cube)
+        return new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
+    else if (obj->type==geometry::sphere)
+        return new btSphereShape(btScalar(obj->scale.x));
+    return new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
 }
 
-void PhysicalWorld::addSphere(Object *obj, glm::vec3 velocity){
-    //create a dynamic rigidbody
-    if (obj->scale.x!=obj->scale.y || obj->scale.y!=obj->scale.z) { // Check if it's a sphere
-        std::cout << "The sphere has not spherical dimensions !" << std::endl;
-        exit(-1);
-    }
-    btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale.x));
-    addObject(obj, colShape, velocity);
-}
-
-void PhysicalWorld::addCube(Object *obj, glm::vec3 velocity){
-    //create a dynamic rigidbody
-    btCollisionShape* colShape = new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
-    addObject(obj, colShape, velocity);
-}
-
-void PhysicalWorld::addDomino(Object *obj, glm::vec3 velocity){
-    //create a dynamic rigidbody
-    btCollisionShape* colShape = new btBoxShape(btVector3((dominoDim::thick/2)*obj->scale.x, (dominoDim::height/2)*obj->scale.y, (dominoDim::width/2)*obj->scale.z));
-    addObject(obj, colShape, velocity);
-}
-
-void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3 velocity){
-    //btCollisionShape* colShape = new btSphereShape(btScalar(obj->scale));
+void PhysicalWorld::addObject(Object *obj, int type){
+    btCollisionShape* colShape = getShape(obj);
+    
     collisionShapes.push_back(colShape);
     glObjects.insert({obj->id, obj}); // Generalize (link to openGL)
 
@@ -86,9 +37,12 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
     btTransform startTransform;
     startTransform.setIdentity();
 
-    btScalar mass(obj->scale.x * obj->scale.y * obj->scale.z);
-
     //rigidbody is dynamic if and only if mass is non zero, otherwise static
+    btScalar mass;
+    if (type==PHYSIC::GROUND_OBJECT) 
+        mass = btScalar(0.);
+    else
+        mass = btScalar(obj->scale.x * obj->scale.y * obj->scale.z);
     bool isDynamic = (mass != 0.f);
 
     btVector3 localInertia(0,0,0);
@@ -115,8 +69,11 @@ void PhysicalWorld::addObject(Object *obj, btCollisionShape* colShape, glm::vec3
 
     btRigidBody* body = new btRigidBody(rbInfo);
     body->setUserIndex(obj->id); // >0 used for classical collisionable object with openGL display (e.g. dominos)
-    setType(body, PHYSIC::NORMAL_OBJECT);
-    body->setLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
+    if (type==PHYSIC::GROUND_OBJECT) 
+        setType(body, PHYSIC::GROUND_OBJECT);
+    else
+        setType(body, PHYSIC::NORMAL_OBJECT);
+    //body->setLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
     dynamicsWorld->addRigidBody(body);
 }
 
@@ -240,6 +197,7 @@ glm::vec3 PhysicalWorld::RayCastPos(glm::vec3 from, glm::vec3 to, int type) {
         }
 
         if (closestIdx != -1) {
+            printf("idx: %d\n", closestIdx);
             btVector3 hitPoint = callback.m_hitPointWorld[closestIdx];
             return glm::vec3(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
         }
@@ -269,7 +227,7 @@ void PhysicalWorld::animate()
             trans = obj->getWorldTransform();
         }
 
-        if (body->getUserIndex() != 0){ // not ground
+        if (getType(body) != PHYSIC::GROUND_OBJECT){ // not ground
             Object* glObj = glObjects.at(body->getUserIndex());
             btScalar roll, pitch, yaw;
             trans.getRotation().getEulerZYX(yaw,pitch,roll);

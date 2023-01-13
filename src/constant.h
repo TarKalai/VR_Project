@@ -29,11 +29,20 @@ namespace image
 
 namespace geometry
 {
+	static constexpr int plane = 0;
+    static constexpr int domino = 1;
+	static constexpr int cube = 2;
+    static constexpr int sphere = 3;
+}
+
+namespace geometryPath
+{
     static constexpr char sphere[128] = "../../objects/sphere.obj";
 	static constexpr char cube[128] = "../../objects/cube.obj";
 	static constexpr char plane[128] = "../../objects/plane.obj";
     static constexpr char domino[128] = "../../objects/domino.obj";
 }
+
 
 namespace shaderfiles
 {

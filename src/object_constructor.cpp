@@ -10,7 +10,7 @@ ObjectConstructor::ObjectConstructor(PhysicalWorld *physicalWorld){
 		glm::vec3 color = glm::vec3(1.0);
 		Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, color);
         objects.push_back(sphere);
-		physicalWorld->addSphere(sphere);
+		physicalWorld->addObject(sphere);
 	}
 
 	for (int i=0; i<10; i++) {
@@ -20,7 +20,7 @@ ObjectConstructor::ObjectConstructor(PhysicalWorld *physicalWorld){
 		glm::vec3 color = glm::vec3(1.0);
 		Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, color);
         objects.push_back(cube);
-		physicalWorld->addCube(cube);
+		physicalWorld->addObject(cube);
 	}
 }
 

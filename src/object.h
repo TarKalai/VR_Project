@@ -15,13 +15,8 @@
 
 #include "texture.h"
 #include "material.h"
+#include "constant.h"
 
-// Material shinyMaterial; 
-// Material dullMaterial; 
-
-// shinyMaterial = Material(4.0f, 256); 
-// dullMaterial = Material(0.3f, 4); 
-// shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec2 Texture;
@@ -32,7 +27,7 @@ class Object
 {
 public:
 	static int objectCounter;
-	bool visible;
+	int type;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
@@ -60,7 +55,7 @@ public:
 
 	Object();
 	
-	Object(const char* geometryPath, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color=glm::vec3(1.0));
+	Object(int _geometry, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color=glm::vec3(1.0));
 	
 	void MakeObject();
 
@@ -72,5 +67,6 @@ public:
 	glm::vec3 getRotation();
 	glm::vec3 getScale(){return scale;}
 	glm::vec3 getColor(){return color;}
+	const char* getGeometryPath();
 	void print();
 };

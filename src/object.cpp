@@ -7,7 +7,8 @@ int Object::objectCounter = 0;
 
 Object::Object() {}
 
-Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color){
+Object::Object(int _geometry, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color){
+    type = _geometry;
     texture = tex;
     material = matos;
     position = obj_pos;
@@ -23,7 +24,7 @@ Object::Object(const char* geometryPath, Texture* tex, Material* matos, glm::vec
     // Then parse it to extract the data you need
     // keep track of the number of vertices you need
 
-    std::ifstream infile(geometryPath);
+    std::ifstream infile(getGeometryPath());
     //TODO Error management
     std::string line;
     while (std::getline(infile, line))
@@ -207,6 +208,20 @@ glm::vec3 Object::getPosition(){
 glm::vec3 Object::getRotation(){
     return rotation;
 }
+
+const char* Object::getGeometryPath() {
+    if (type == geometry::domino)
+        return geometryPath::domino;
+    else if (type == geometry::plane)
+        return geometryPath::plane;
+    else if (type == geometry::cube)
+        return geometryPath::cube;
+    else if (type == geometry::sphere)
+        return geometryPath::sphere;
+    return geometryPath::cube;
+
+}
+
 void Object::print(){
 	std::cout << "object id="<< id << " (" << round(position.x) << ", " << round(position.z) << ", " << round(position.z) << ")" << std::endl;
 }

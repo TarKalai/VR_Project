@@ -296,10 +296,10 @@ void Process::PutDominos(){
 					ratio = espacement/dist;
 					glm::vec3 nextDomino = glm::vec3(1-ratio)*lastDomino + glm::vec3(ratio)*destination;
 					glm::vec3 delta_dir = nextDomino-lastDomino;
-					Object* domino = new Object(geometry::domino, textureDomino, materialDomino, 
-												glm::vec3(lastDomino.x, scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
+					Object* domino = new Object(geometryDomino, textureDomino, materialDomino, 
+												glm::vec3(lastDomino.x, lastDomino.y+scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
 												normalize(colorDomino));	
-					world->addDomino(domino);
+					world->addObject(domino);
 					shader->addObject(domino);
 					shadow->addObject(domino);
 					lastDomino = nextDomino; // go to next domino
