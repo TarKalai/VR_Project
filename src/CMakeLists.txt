@@ -20,6 +20,7 @@ set(SOURCES_REFACTOR "main.cpp"
 "display.cpp" "display.h"
 "physics.cpp" "physics.h"
 "gui.cpp" "gui.h"
+"particle.cpp" "particle.h"
 "shader2D.cpp" "shader2D.h"
 "debug.h"
 "constant.h")
