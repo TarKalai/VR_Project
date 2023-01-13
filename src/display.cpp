@@ -27,6 +27,7 @@ int Display::Initialise()
     // Set the version of glfw to use to 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_SAMPLES, general::samples);
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want it to be backwards compatible.
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // We want it to be forward compatible
@@ -76,6 +77,8 @@ int Display::Initialise()
 	}
 
     glEnable(GL_DEPTH_TEST); //Enable depth testing to determine which trangle is deeper into the image. 
+
+    glEnable(GL_MULTISAMPLE); 
 
     glViewport(0, 0, bufferWidth, bufferHeight);
 
