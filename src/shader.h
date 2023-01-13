@@ -83,6 +83,8 @@ public:
     void ClearShader();
 
     void SetAreaLights(AreaLight *  aLights, int lightCount);
+
+    void SetSkyColor(float r, float g, float b); 
  
 
 
@@ -96,7 +98,7 @@ private:
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
-    uniformNormalMap;
+    uniformNormalMap, uniformSkyColor;
 
     struct {
         GLuint uniformColor; 

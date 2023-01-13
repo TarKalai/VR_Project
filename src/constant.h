@@ -2,6 +2,14 @@
 
 #include <glm/glm.hpp>
 
+namespace skycolor
+{
+    static constexpr float RED = 0.5f; 
+    static constexpr float GREEN = 0.5f; 
+    static constexpr float BLUE = 0.5f; 
+
+}
+
 namespace values
 {
     static constexpr int MAX_POINT_LIGHTS = 5;
