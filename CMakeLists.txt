@@ -37,14 +37,14 @@ option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TESTS OFF)
 
-option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
-option(ASSIMP_BUILD_SAMPLES OFF)
-option(ASSIMP_BUILD_TESTS OFF)
+# option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+# option(ASSIMP_BUILD_SAMPLES OFF)
+# option(ASSIMP_BUILD_TESTS OFF)
 
 
 add_subdirectory(3rdParty/glfw)
 add_subdirectory(3rdParty/bullet3)
-add_subdirectory(3rdParty/assimp)
+#add_subdirectory(3rdParty/assimp)
 
 FetchContent_Declare(
     imgui
@@ -81,14 +81,10 @@ include_directories(3rdParty/glad/include/
                     3rdParty/glfw/include/
                     3rdParty/glm/
                     3rdParty/stb/
-                    3rdParty/bullet3/src/
-                    3rdParty/assimp/include/)
+                    3rdParty/bullet3/src/)
+                    #3rdParty/assimp/include/)
 
 
 if(COMPILE_SRC)
 	add_subdirectory(src)
-endif()
-
-if(COMPILE_SRC2)
-	add_subdirectory(src_normal)
 endif()

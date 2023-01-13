@@ -101,7 +101,7 @@ void CreateShaders()
 
 int main(){
 
-    mainWindow = Display(false); 
+    mainWindow = Display(true); 
     mainWindow.Initialise(); 
     
     CreateShaders();
