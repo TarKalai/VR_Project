@@ -9,7 +9,7 @@ class Texture{
 public: 
     const char* name;
     Texture(); 
-    Texture(const char* FileLocation, const char* _name, const char * NormalLocation=nullptr) 
+    Texture(const char* FileLocation, const char* _name, const char * NormalLocation=nullptr);
     GLuint LoadTexture(const char* FileLoc, bool flip=true);
     void UseTexture(); 
     void ClearTexture(); 
