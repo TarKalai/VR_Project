@@ -54,12 +54,12 @@ int areaLightCount = 0;
 
 void CreateObjects(){
     // GROUNDS
-    Object* ground = new Object(geometry::cube, Textures::Wood(), Materials::Dull(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.));
+    Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Dull(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.));
     physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
     objectShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
 
-    Object* ground2 = new Object(geometry::cube, Textures::Brick(), Materials::Dull(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.));
+    Object* ground2 = new Object(geometry::plane, Textures::Brick(), Materials::Dull(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.));
     physicalWorld.addObject(ground2, PHYSIC::GROUND_OBJECT);
     objectShader.addObject(ground2);
     directionalShadowShader.addObject(ground2);

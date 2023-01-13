@@ -212,8 +212,10 @@ glm::vec3 Object::getRotation(){
 const char* Object::getGeometryPath() {
     if (type == geometry::domino)
         return geometryPath::domino;
-    else if (type == geometry::plane)
-        return geometryPath::plane;
+    else if (type == geometry::plane) {
+        scale.y = general::floorThickness;
+        return geometryPath::cube;
+    }
     else if (type == geometry::cube)
         return geometryPath::cube;
     else if (type == geometry::sphere)

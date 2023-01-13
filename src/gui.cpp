@@ -205,23 +205,23 @@ void GUI::displaySaveLoad() {
                         while (std::getline(in, line)) {
                             std::istringstream iss(line); // Like a "split"
                             std::string indice;
-                            iss >> indice; // Go the next elem of the split (reach elem 1 by 1 separated by " ")
-                            if (indice == "d") {
-                                int idx;
-                                float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, colX, colY, colZ;
-                                std::string tex, mat;
-                                iss >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
-                                glm::vec3 pos = glm::vec3(posX, posY, posZ);
-                                glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
-                                glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
-                                glm::vec3 color = glm::vec3(colX, colY, colZ);
-                                Texture* texture = Textures::Get(tex);
-                                Material* material= Materials::Get(mat);
-                                Object* domino = new Object(geometry::domino, texture, material,  pos, rot, scale, color);	
-                                world->addObject(domino);  
-                                shader->addObject(domino);
-                                shadow->addObject(domino);
-                            }
+
+                            int type, idx;
+                            float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, colX, colY, colZ;
+                            std::string tex, mat;
+                            iss >> type >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
+                            printf("%d %f %f %f\n", idx, posX, posY, posZ);
+                            glm::vec3 pos = glm::vec3(posX, posY, posZ);
+                            glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
+                            glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
+                            glm::vec3 color = glm::vec3(colX, colY, colZ);
+                            Texture* texture = Textures::Get(tex);
+                            Material* material= Materials::Get(mat);
+                            Object* domino = new Object(type, texture, material,  pos, rot, scale, color);	
+                            world->addObject(domino);  
+                            shader->addObject(domino);
+                            shadow->addObject(domino);
+                            
                         }
                     }
                 }
@@ -240,7 +240,7 @@ void GUI::displaySaveLoad() {
                         int idx = pair.first;
                         Object* object = pair.second;
                         if (idx != 0) {
-                            out << "d " << idx << " ";
+                            out << object->type << " " << idx << " ";
                             out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
                             out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
                             out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
@@ -288,6 +288,7 @@ void GUI::shortcutList() {
         ImGui::Text("'Esc': Toogle menu mode");
         ImGui::Text("'Left Ctrl + Q' : Quit");
         ImGui::Text("'P' : Putting dominos (pressed)");
+        ImGui::Text("'D' : Deleting dominos (pressed)");
         ImGui::Text("'Enter' : Pushing force (proportionnal to time pressed)");
 
         ImGui::Text("'T' : Increase size of next domino (keep pressed)");
@@ -300,6 +301,7 @@ void GUI::shortcutList() {
         ImGui::Text("'G + I' : Decrease red component of following dominos");
         ImGui::Text("'B' : Increase red component of following dominos");
         ImGui::Text("'B + I' : Decrease red component of following dominos");
+        ImGui::Text("'M + Esc' : Modifying the appearance of the targeted domino");
 
         ImGui::Text("'Q | Left': Left direction");
         ImGui::Text("'D | Right': Right direction");
