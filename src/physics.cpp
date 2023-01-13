@@ -137,7 +137,7 @@ void PhysicalWorld::RayCastPush(glm::vec3 from, glm::vec3 to, int type, int powe
                 hitRigidbody = btRigidBody::upcast(object);
                 if (getType(hitRigidbody) == PHYSIC::ANY_TYPE || getType(hitRigidbody) == type) {
                     btVector3 hitPoint = callback.m_hitPointWorld[i];
-                    btVector3 hitNormal = callback.m_hitNormalWorld[i];
+                    //btVector3 hitNormal = callback.m_hitNormalWorld[i];
 
                     btVector3 dir = rayTo-rayFrom;
                     btVector3 impulse = (dir/dir.length()) * power; // impulse vector
