@@ -20,6 +20,7 @@ void GUI::update() {
     displayDominoInfo();
     displaySaveLoad();
     dominoModify();
+    displayPushPower();
     shortcutList();
 
     ImGui::Render();
@@ -249,6 +250,21 @@ void GUI::displaySaveLoad() {
         ImGui::End();
     }
 }
+
+void GUI::displayPushPower() {
+    if (process->enterPressed) {
+        Point size = Point({115, 100});
+        ImGui::SetNextWindowPos(ImVec2((display->getWidth()-size.x)/2, (display->getHeight()-size.y)/2 + 40));
+        ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+        ImGui::Begin("Power push", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground);
+        ImGui::SetCursorPos(ImVec2(0,18));
+        ImGui::PushItemWidth(115);
+        ImGui::SliderInt(" ", &(process->enterPressed), 0, 100);
+        ImGui::End();
+    }
+
+}
+
 
 void GUI::shortcutList() {
     if (!display->cursor_disabled) {

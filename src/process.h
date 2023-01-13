@@ -30,6 +30,7 @@ public:
     PhysicalWorld* world;
     Shader* shader;
     Shader* shadow;
+    int enterPressed = 0;
     float sliderSpeedAnimation = 1.;
     float scaleDomino = 1.;
     Object* selectedDomino;
@@ -57,7 +58,6 @@ private:
     bool firstDomino = true;
     glm::vec3 lastDomino;
     bool shoot = false;
-    int pressed = 0;
     bool decreaseResolution = false;
     bool increaseResolution = false;
     bool scaleIncrease = false;

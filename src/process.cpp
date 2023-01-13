@@ -182,7 +182,7 @@ void Process::PlacingDomino() {
 void Process::Pushing() { 
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)  {
 		shoot = true;
-		pressed += 1;
+		enterPressed += 1;
 	} else if (shoot) {
 		shoot = false;
 
@@ -192,8 +192,8 @@ void Process::Pushing() {
 		double dist = 200; // Distance to push object (May vary depending of the farplane)
 		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
 
-		world->RayCastPush(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT, pressed);
-		pressed = 0;
+		world->RayCastPush(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT, enterPressed);
+		enterPressed = 0;
 	}
 }
 

@@ -73,7 +73,7 @@ void PhysicalWorld::addCube(Object *obj, glm::vec3 velocity){
 
 void PhysicalWorld::addDomino(Object *obj, glm::vec3 velocity){
     //create a dynamic rigidbody
-    btCollisionShape* colShape = new btBoxShape(btVector3(0.175*obj->scale.x, 1.*obj->scale.y, 0.5*obj->scale.z));
+    btCollisionShape* colShape = new btBoxShape(btVector3((dominoDim::thick/2)*obj->scale.x, (dominoDim::height/2)*obj->scale.y, (dominoDim::width/2)*obj->scale.z));
     addObject(obj, colShape, velocity);
 }
 
@@ -151,7 +151,7 @@ void PhysicalWorld::RayCastPush(glm::vec3 from, glm::vec3 to, int type, int powe
             hitRigidbody = btRigidBody::upcast(object);
             btVector3 hitPoint = callback.m_hitPointWorld[closestIdx];
             btVector3 dir = rayTo-rayFrom;
-            btVector3 impulse = (dir/dir.length()) * power; // impulse vector
+            btVector3 impulse = (dir/dir.length()) * pow(power, general::pushingExponent); // impulse vector
             btVector3 relativePosition = hitPoint - hitRigidbody->getCenterOfMassPosition(); // relative position
 
             hitRigidbody->activate(true);
