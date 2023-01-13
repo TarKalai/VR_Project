@@ -289,7 +289,7 @@ void GUI::shortcutList() {
         ImGui::Text("'Esc': Toogle menu mode");
         ImGui::Text("'Left Ctrl + Q' : Quit");
         ImGui::Text("'P' : Putting dominos (pressed)");
-        ImGui::Text("'D' : Deleting dominos (pressed)");
+        ImGui::Text("'X' : Deleting dominos (pressed)");
         ImGui::Text("'Enter' : Pushing force (proportionnal to time pressed)");
 
         ImGui::Text("'T' : Increase size of next domino (keep pressed)");
