@@ -53,39 +53,39 @@ int areaLightCount = 0;
 
 void CreateObjects(){
 
-    Object* ground = new Object(geometry::plane2, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0, 0, 0), glm::vec3(general::sceneSize.x/2, general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1.0), 1);
+    Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0, 0, 0), glm::vec3(general::sceneSize.x/2, general::sceneSize.y/2, general::sceneSize.z/2), 1, glm::vec3(1.0), 1);
     physicalWorld = PhysicalWorld(ground);
     bumpMapShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
 
 
 
-    Object* test = new Object(geometry::cube, Textures::Brickwall(), Materials::Shiny(), glm::vec3(10., 2., 10.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.0), 1, glm::vec3(1., 1., 1.), 1);
-    bumpMapShader.addObject(test);
-    directionalShadowShader.addObject(test);
+    // Object* test = new Object(geometry::cube, Textures::Brickwall(), Materials::Shiny(), glm::vec3(10., 2., 10.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.0), 1, glm::vec3(1., 1., 1.), 1);
+    // bumpMapShader.addObject(test);
+    // directionalShadowShader.addObject(test);
 
 
-    for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(sphere);
-        directionalShadowShader.addObject(sphere);
-        physicalWorld.addSphere(sphere); 
-	}
+    // for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
+	// 	glm::vec3 color = glm::vec3(1.0);
+	// 	Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
+    //     objectShader.addObject(sphere);
+    //     directionalShadowShader.addObject(sphere);
+    //     physicalWorld.addSphere(sphere); 
+	// }
 
-	for (int i=0; i<10; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
-		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
-		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
-		glm::vec3 color = glm::vec3(1.0);
-		Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, 1, color);
-        objectShader.addObject(cube);
-        directionalShadowShader.addObject(cube);
-        physicalWorld.addCube(cube); 
-	}
+	// for (int i=0; i<10; i++) {
+	// 	glm::vec3 pos = glm::vec3(Utils::getRandom(), 2.+5*i, Utils::getRandom());
+	// 	glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
+	// 	glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.), Utils::getRandom(0.5,2.));
+	// 	glm::vec3 color = glm::vec3(1.0);
+	// 	Object* cube = new Object(geometry::cube, Textures::Brick(), Materials::Shiny(), pos, rot, scale, 1, color);
+    //     objectShader.addObject(cube);
+    //     directionalShadowShader.addObject(cube);
+    //     physicalWorld.addCube(cube); 
+	// }
 }
 
 void CreateShaders()
@@ -143,7 +143,7 @@ int main(){
         process.processInput();
 
         glm::mat4 view = camera.getViewMatrix();
-        glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.001, 200.0);
+        glm::mat4 projection = camera.getProjectionMatrix(mainWindow.getWindow(), 0.1, 200.0);
         // we want the perspective projection instead of orthographic (made for 2D)
         // 1st: Field of view : how wide the view is (top to bottom) , 
         //2scd : width of the window/height, 3rd; Near plane: how near can you see an object (we don't want to see through it)
@@ -162,10 +162,10 @@ int main(){
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        bumpMapShader.RenderBump(camera, projection, view); 
-        objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
+        bumpMapShader.RenderBump(camera, projection, view, mainLight); 
+        // objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
 
-        areaLightShader.DrawLightObjects(projection, view);
+        // areaLightShader.DrawLightObjects(projection, view);
              
         gui.update();
         mainWindow.swapBuffers(); // There are 2 scenes going on at once, we are drawing to the one that can't be seen, and we call swapBuffers to swap them around: so then the one we are drawing to is the one that can be seen and the one which could be seen originaly is the one we are drawing to. 

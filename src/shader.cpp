@@ -22,7 +22,7 @@ void Shader::addObjects(std::vector<Object*> objects){
     }
 }
 
-void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view){
+void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, DirectionalLight* mainLight){
     UseShader(); 
 
     uniformModel = GetModelLocation(); 
@@ -30,16 +30,30 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view){
     uniformView = GetViewLocation(); 
     uniformEyePosition = GetEyePositionLocation(); 
 
-    GLuint lightpos = glGetUniformLocation(shaderID, "lightPos");
-    glm::vec3 pos = glm::vec3(glm::sin(glfwGetTime())*20, 5.0, glm::cos(glfwGetTime())*20); //
-    glUniform3f(lightpos, pos.x, pos.y, pos.z); // tochange later on
+    // GLuint lightpos = glGetUniformLocation(shaderID, "lightPos");
+    // glm::vec3 pos = glm::vec3(glm::sin(glfwGetTime())*20, 5.0, glm::cos(glfwGetTime())*20); //
+    // glUniform3f(lightpos, pos.x, pos.y, pos.z); // tochange later on
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
+    SetDirectionalLight(mainLight);
+
+    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
+    SetDirectionalLightTransform(&resmainLight); 
+    
+
+    // printf("that is my direction %f, %f, %f\n", dir.x, dir.y, dir.z);
+
+
+    mainLight->GetShadowMap()->Read(GL_TEXTURE2); //maybe to change number !!!!!!!!!!!!!!!
+
+
     SetTexture(0); // bound to texture unit 0 
     SetNormalMap(1);
+    SetDirectionalShadowMap(2); // bound to GL_TEXTURE1
+
 
     RenderScene();
 }
@@ -413,7 +427,6 @@ void Shader::SetDirectionalShadowMap(GLuint textureUnit){
 
 
 void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
-
     glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
 }
 

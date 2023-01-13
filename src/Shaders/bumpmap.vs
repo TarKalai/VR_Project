@@ -8,13 +8,16 @@ layout (location=3) in vec3 tangent;
 out vec2 TexCoord; 
 out vec3 FragPos;
 out mat3 TBN;
+out vec4 DirectionalLightSpacePos; // position of the fragment is relative to the light
 
+uniform mat4 directionalLightTransform;
 uniform mat4 model;
 uniform mat4 projection;
 uniform mat4 view; 
 
 void main(){
     FragPos =  vec3(model * vec4(pos, 1.0)); 
+    DirectionalLightSpacePos = directionalLightTransform * model * vec4(pos, 1.0);
     TexCoord = tex; 
     
 

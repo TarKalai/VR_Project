@@ -16,12 +16,6 @@
 #include "texture.h"
 #include "material.h"
 
-// Material shinyMaterial; 
-// Material dullMaterial; 
-
-// shinyMaterial = Material(4.0f, 256); 
-// dullMaterial = Material(0.3f, 4); 
-// shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec2 Texture;
