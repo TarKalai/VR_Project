@@ -6,6 +6,7 @@ in vec2 TexCoord;
 in vec3 FragPos;
 in mat3 TBN;
 in vec4 DirectionalLightSpacePos; 
+in float visibility; 
 
 const int MAX_POINT_LIGHTS = 10;
 const int MAX_SPOT_LIGHTS = 5;
@@ -50,6 +51,7 @@ struct Material{
 uniform int pointLightCount; 
 uniform int spotLightCount; 
 uniform int areaLightCount;
+uniform vec3 skyColor; 
 
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS]; 
@@ -194,5 +196,5 @@ void main(){
     finalColor += CalcPointLights();
     finalColor += CalcSpotLights(); 
     color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
-
+    color = mix(vec4(skyColor, 1.0), color, visibility); // 0 visibility would correspond to same color as the sky. 
 }

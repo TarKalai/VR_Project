@@ -35,6 +35,9 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformView = GetViewLocation(); 
     uniformEyePosition = GetEyePositionLocation(); 
 
+    //fog
+    SetSkyColor(0.5, 0.5, 0.5); 
+
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
