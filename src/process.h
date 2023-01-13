@@ -76,4 +76,5 @@ private:
 	void PlacingDomino();
 	void Pushing();
 	void Deplacement();
+    void FlashLight();
 }; 

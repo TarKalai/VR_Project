@@ -22,6 +22,7 @@ void Process::processInput() {
 		Pushing();
 		Deplacement();
 		HandleMouse();
+		FlashLight();
 	}
 }
 
@@ -210,6 +211,10 @@ void Process::Deplacement() {
 		camera->processKeyboardMovement(UP, 0.1);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera->processKeyboardMovement(DOWN, 0.1);
+}
+
+void Process::FlashLight() {
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)
 }
 
 void Process::initMousePosition(){
