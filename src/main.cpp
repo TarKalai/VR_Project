@@ -53,11 +53,11 @@ int areaLightCount = 0;
 
 void CreateObjects(){
 
-    Object* ground = new Object(geometry::plane2, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0, 0, 0), glm::vec3(1.0), 1, glm::vec3(1., 1., 1.), 1);
+    Object* ground = new Object(geometry::plane2, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0, 0, 0), glm::vec3(general::sceneSize.x/2, general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1.0), 1);
     physicalWorld = PhysicalWorld(ground);
     // objectShader.addObject(ground);
     bumpMapShader.addObject(ground);
-    // directionalShadowShader.addObject(ground); 
+    directionalShadowShader.addObject(ground); 
 
     // Object* test = new Object(geometry::plane2, Textures::Brickwall(), Materials::Shiny(), glm::vec3(10., 2., 10.), glm::vec3(glm::radians(-90.0), 0, 0), glm::vec3(1.0), 1, glm::vec3(1., 1., 1.));
     // objectShader.addObject(test);
@@ -155,7 +155,7 @@ int main(){
         physicalWorld.animate();
         
         // Order is really important : order = shadow, object, objectLight
-        // directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
+        directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
         mainWindow.resetViewport();
 
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);

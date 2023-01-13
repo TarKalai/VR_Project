@@ -139,7 +139,6 @@ void Object::MakeObject(){
     float* data = getData();
     int size = 8; // pos is a vec3, tex is a vec2, normal is a vec3 (sum = 8)
     if (bumpmap) size += 6; // bitangent are both vec3 (sum += 6)
-    printf("this is my size %i\n", size);
 
 
     

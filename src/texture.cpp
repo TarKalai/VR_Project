@@ -64,7 +64,6 @@ void Texture::UseTexture(){
     glActiveTexture(GL_TEXTURE0); // GL_TEXTURE0: texture unit => when the texture is run in the fragment shader, there will be a sampler that will have access to the data for the texture and it accesses it throught the texture unit. 
     glBindTexture(GL_TEXTURE_2D, textureID); // bind to the texture unit. 
     if (normalID != 0){
-        printf("i have a normal id of %u\n", normalID);
         glActiveTexture(GL_TEXTURE1); // the normal texture
         glBindTexture(GL_TEXTURE_2D, normalID);
     }
