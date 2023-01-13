@@ -47,6 +47,9 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
     //glClear is also clearing the depth buffer bit.
 
+    //fog
+    SetSkyColor(0.5, 0.5, 0.5); 
+
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
@@ -215,6 +218,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     uniformShininess = glGetUniformLocation(shaderID, "material.shininess"); 
     uniformEyePosition = glGetUniformLocation(shaderID, "eyePosition");
     uniformColor = glGetUniformLocation(shaderID, "objectColor");
+    uniformSkyColor = glGetUniformLocation(shaderID, "skyColor"); 
     
 
 
@@ -379,6 +383,11 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
+
+void Shader::SetSkyColor(float r, float g, float b)
+{
+    glUniform3f(uniformSkyColor, r, g, b); 
+}
 
 void Shader::SetTexture(GLuint textureUnit){
     glUniform1i(uniformTexture, textureUnit);
