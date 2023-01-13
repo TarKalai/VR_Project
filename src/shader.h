@@ -74,7 +74,7 @@ public:
     void ClearShader();
 
     void SetAreaLights(AreaLight *  aLights, int lightCount);
- 
+    // void SetTime(); 
 
 
     ~Shader(); 
@@ -86,7 +86,8 @@ private:
     GLuint uniformProjection, uniformModel, uniformView, uniformEyePosition, 
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
-    uniformDirectionalLightTransform, uniformDirectionalShadowMap;
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap; 
+    // uniformTime;
 
     struct {
         GLuint uniformColor; 

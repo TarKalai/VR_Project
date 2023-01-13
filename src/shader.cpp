@@ -284,6 +284,8 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform"); // it will bind for vertex a AND frag because it is the same name
     uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 
+    // uniformTime = glGetUniformLocation(shaderID, "time");
+
 
     uniformAreaLightCount = glGetUniformLocation(shaderID, "areaLightCount");
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
@@ -378,7 +380,9 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
 
     }
 }
-
+// void Shader::SetTime(){
+//     glUniform1f(uniformTime, glfwGetTime());
+// }
 
 void Shader::SetTexture(GLuint textureUnit){
     glUniform1i(uniformTexture, textureUnit);
