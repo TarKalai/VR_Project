@@ -48,10 +48,11 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
 
+    printf("%f %f %f\n", optic::reflectivity, optic::refractivity, optic::coefRefraction);
     glUniform1i(uniformskybox, 3);
-    glUniform1f(GetReflectivityLocation(), optic::reflectivity);
-    glUniform1f(GetRefractivityLocation(), optic::refractivity);
-    glUniform1f(GetCoefRefractionLocation(), optic::coefRefraction);
+    glUniform1f(GetReflectivityLocation(), Optic::getReflectivity());
+    glUniform1f(GetRefractivityLocation(), Optic::getRefractivity());
+    glUniform1f(GetCoefRefractionLocation(), Optic::getCoefRefractivity());
     
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));

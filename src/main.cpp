@@ -65,7 +65,7 @@ void CreateObjects(){
 		glm::vec3 rot = glm::vec3(Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14), Utils::getRandom(0.,3.14));
 		glm::vec3 scale = glm::vec3(Utils::getRandom(0.5,2.));
 		glm::vec3 color = glm::vec3(1.0);
-		Object* sphere = new Object(geometry::sphere, Textures::Dirt(), Materials::Shiny(), pos, rot, scale, 1, color);
+		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Shiny(), pos, rot, scale, 1, color);
         objectShader.addObject(sphere);
         directionalShadowShader.addObject(sphere);
         physicalWorld.addSphere(sphere); 

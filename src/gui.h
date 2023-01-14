@@ -36,6 +36,7 @@ private:
     float fps = 0;
 
     void menuTitle();
+    void reflectionRefraction();
     void shortcutList();
     float* getFPS();
     void displayFPS();
