@@ -98,7 +98,7 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
-    glActiveTexture(GL_TEXTURE0); // we can do GL_TEXTURE0 because this shader is used independently from the other shaders 
+    glActiveTexture(GL_TEXTURE3); // we can do GL_TEXTURE0 because this shader is used independently from the other shaders 
     // the cube map is set to texture0
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); 

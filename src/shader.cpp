@@ -48,6 +48,8 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
 
+    
+    glUniform1i(uniformskybox, 3);
     //glEnable(GL_CULL_FACE);
     
 
@@ -289,6 +291,8 @@ void Shader::CompileProgram()
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
     uniformLTC2 = glGetUniformLocation(shaderID, "LTC2");
     uniformMaterialDiffuse = glGetUniformLocation(shaderID, "material.diffuse");
+    uniformskybox = glGetUniformLocation(shaderID, "skybox");
+
 
     for (int i = 0; i < values::MAX_AREA_LIGHTS; i++){
 

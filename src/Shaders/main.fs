@@ -410,9 +410,21 @@ void main(){
 
     finalColor += CalcAreaLights();
 
-    vec3 Refract = refract(-fragToEye,normal,0.9);
-    vec3 Reflect = reflect(-fragToEye,normal);
-    color = texture(skybox, Reflect);
+    /* Refraction indices:
+	Air:      1.0
+	Water:    1.33
+	Ice:      1.309
+	Glass:    1.52
+	Diamond:  2.42
+    */
 
+    // vec3 Refract = refract(-fragToEye,normal,1/1.52);
+    // color = texture(skybox, Refract);
+    vec3 Reflect = reflect(-fragToEye, normal);
+    vec4 envColor = normalize(texture(skybox, Reflect));
+    // color = texture(skybox, Reflect) * .3; // plus sombre (vitre teinté)
+    // color = texture(skybox, Reflect) * vec4(1.,0.,0., 1.0); // rouge
+
+    color = envColor*texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
     //color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
 }
