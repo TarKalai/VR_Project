@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
@@ -31,6 +30,7 @@
 #include "gui.h"
 #include "utils.h"
 #include "shader2D.h"
+#include "skybox.h"
 
 Display mainWindow; 
 
@@ -99,6 +99,7 @@ int main(){
     physicalWorld = PhysicalWorld();
     CreateShaders();
     CreateObjects(); 
+    Skybox skybox = Skybox();
 
     camera = Camera(glm::vec3(0.0f, 15.0f, -25.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, -30.0f);
 
@@ -140,6 +141,7 @@ int main(){
 	process.initMousePosition();
     
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
+    
     camera.processKeyboardMovement(LEFT, 0.1); // DO NOT REMOVE ! Fix bug updating camera position
     while(!mainWindow.getShouldClose()){
         Time::updateTime();
@@ -165,8 +167,11 @@ int main(){
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        skybox.DrawSkyBox(view, projection);
+
         bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
         paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
+        
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
 
         objectLightShader.DrawLightObjects(projection, view);

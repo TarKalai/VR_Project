@@ -117,6 +117,11 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
                          int spotLightCount, 
                          AreaLight* areaLights, 
                          int areaLightCount) {
+
+    // glViewport(0, 0, 960, 540); 
+    // glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
+    // //glClear is also clearing the depth buffer bit.
     
     UseShader(); 
 
@@ -261,18 +266,26 @@ std::string Shader::ReadFile(const char* fileLocation){
 
 }
 
+void Shader::Validate()
+{
+    // Validate Program
 
-void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
-    shaderID = glCreateProgram(); // Outputs the Ids of the shaders. 
+    GLint result = 0; 
+    GLchar eLog[1024] = { 0 };
 
-    if (!shaderID){
-        printf("Error Creating shader program");
+    glValidateProgram(shaderID);
+    glGetProgramiv(shaderID, GL_VALIDATE_STATUS, &result);//2scd arg: what kind of info we want, 3rd arg: where do we put the info 
+
+    if(!result){
+        glGetProgramInfoLog(shaderID, sizeof(eLog), NULL, eLog); 
+        printf("Error validating program : %s\n", eLog);
         return; 
     }
 
-    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER); //GL_VERTEX_SHADER is the type of shader, it needs to know what type the shaders are. 
-    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
+}
 
+void Shader::CompileProgram()
+{
     GLint result = 0; 
     GLchar eLog[1024] = { 0 };
 
@@ -288,17 +301,6 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
         return; 
     }
 
-    // Validate Program
-
-    glValidateProgram(shaderID);
-    glGetProgramiv(shaderID, GL_VALIDATE_STATUS, &result);//2scd arg: what kind of info we want, 3rd arg: where do we put the info 
-
-    if(!result){
-        glGetProgramInfoLog(shaderID, sizeof(eLog), NULL, eLog); 
-        printf("Error validating program : %s\n", eLog);
-        return; 
-    }
-
     uniformProjection = glGetUniformLocation(shaderID, "projection");  // UniformProjection will be the location of the uniformProjection
     uniformModel = glGetUniformLocation(shaderID, "model");  // UniformModel will be the location of the uniformMatrix
     uniformView = glGetUniformLocation(shaderID, "view");
@@ -310,7 +312,12 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     uniformShininess = glGetUniformLocation(shaderID, "material.shininess"); 
     uniformEyePosition = glGetUniformLocation(shaderID, "eyePosition");
     uniformColor = glGetUniformLocation(shaderID, "objectColor");
-    uniformSkyColor = glGetUniformLocation(shaderID, "skyColor"); 
+    
+    uniformSkyColor = glGetUniformLocation(shaderID, "skyColor"); // fog
+    uniformSkyboxDay = glGetUniformLocation(shaderID, "skyboxDay"); 
+    uniformSkyboxNight = glGetUniformLocation(shaderID, "skyboxNight"); 
+    uniformBlendFactor = glGetUniformLocation(shaderID, "blendFactor"); 
+    
     
 
 
@@ -407,6 +414,20 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     } 
 }
 
+void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
+    shaderID = glCreateProgram(); // Outputs the Ids of the shaders. 
+
+    if (!shaderID){
+        printf("Error Creating shader program");
+        return; 
+    }
+
+    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER); //GL_VERTEX_SHADER is the type of shader, it needs to know what type the shaders are. 
+    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
+
+    CompileProgram(); 
+}
+
 void Shader::SetDirectionalLight(DirectionalLight * dLight){
     dLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformColor, 
     uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
@@ -476,6 +497,16 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
+void Shader::SetBlendFactor(float blend)
+{
+    glUniform1f(uniformBlendFactor, blend); 
+}
+
+void Shader::ConnectSkyboxes()
+{
+    glUniform1i(uniformSkyboxDay, 11);
+    glUniform1i(uniformSkyboxNight, 12); 
+}
 
 void Shader::SetSkyColor(float r, float g, float b)
 {
@@ -498,16 +529,13 @@ void Shader::SetDirectionalShadowMap(GLuint textureUnit){
     glUniform1i(uniformDirectionalShadowMap, textureUnit);
 }
 
-
 void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
     glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
 }
 
-
 void Shader::UseShader(){
     glUseProgram(shaderID); 
 }
-
 
 void Shader::ClearShader(){
     if(shaderID != 0){
@@ -518,7 +546,6 @@ void Shader::ClearShader(){
     uniformModel = 0; 
     uniformProjection = 0; 
 }
-
 
 void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_type){
     GLuint the_shader = glCreateShader(shader_type); // create empty shader and pass the id into "the_shader"
@@ -543,7 +570,6 @@ void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_ty
         printf("Error compiling the %d shader : %s\n", shader_type, eLog);
         return; 
     }
-
     glAttachShader(program, the_shader);
 }
 
@@ -551,51 +577,53 @@ GLuint Shader::GetProjectionLocation(){
     return uniformProjection; 
 }
 
-
 GLuint Shader::GetModelLocation(){
     return uniformModel; 
 }
 
+GLuint Shader::GetUniformSkyboxDay(){
+    return uniformSkyboxDay; 
+}
+
+GLuint Shader::GetUniformSkyboxNight(){
+    return uniformSkyboxNight; 
+}
+
+GLuint Shader::GetUniformBlendFactor(){
+    return uniformBlendFactor; 
+}
 
 GLuint Shader::GetViewLocation(){
     return uniformView; 
 }
 
-
 GLuint Shader::GetAmbientColorLocation(){
     return uniformDirectionalLight.uniformColor; 
 }
-
 
 GLuint Shader::GetAmbientIntensityLocation(){
     return uniformDirectionalLight.uniformAmbientIntensity;     
 }
 
-
 GLuint Shader::GetDiffuseIntensityLocation(){
     return uniformDirectionalLight.uniformDiffuseIntensity; 
 }
-
 
 GLuint Shader::GetDirectionLocation(){
     return uniformDirectionalLight.uniformDirection; 
 }
 
-
 GLuint Shader::GetSpecularIntensityLocation(){
     return uniformSpecularIntensity; 
 }
-
 
 GLuint Shader::GetShininessLocation(){
     return uniformShininess; 
 }
 
-
 GLuint Shader::GetEyePositionLocation(){
     return uniformEyePosition; 
 }
-
 
 Shader::~Shader(){
     ClearShader(); 

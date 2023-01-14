@@ -24,9 +24,11 @@
 
 class Shader
 {
-public: 
+public:
+
     std::vector<Object*> objectList;
     GLuint shaderID;
+
     Shader(); 
 
     void CreateFromString(const char* vertexCode, const char* fragmentCode); //Create the shader from a string we pass into it without reading a file. 
@@ -36,7 +38,8 @@ public:
 
     GLuint GetProjectionLocation(); 
     GLuint GetModelLocation(); 
-    GLuint GetViewLocation(); 
+    GLuint GetViewLocation();
+    // GLuint GetFogColorLocation();  
     GLuint GetAmbientIntensityLocation(); 
     GLuint GetAmbientColorLocation(); 
 
@@ -44,7 +47,10 @@ public:
     GLuint GetDirectionLocation(); 
     GLuint GetSpecularIntensityLocation(); 
     GLuint GetShininessLocation(); 
-    GLuint GetEyePositionLocation(); 
+    GLuint GetEyePositionLocation();
+    GLuint GetUniformSkyboxDay(); 
+    GLuint GetUniformSkyboxNight(); 
+    GLuint GetUniformBlendFactor(); 
 
     void SetDirectionalLight(DirectionalLight * dLight);
     void SetPointLights(PointLight * pLight,int lightCount); 
@@ -55,6 +61,9 @@ public:
     void SetDepthMap(GLuint textureUnit); 
     void SetDirectionalShadowMap(GLuint textureUnit);
     void SetDirectionalLightTransform(glm::mat4* ltransform);  
+
+    void ConnectSkyboxes(); 
+    void SetBlendFactor(float blend); 
 
     void addObject(Object *obj);
     void addObjects(std::vector<Object*> objects);
@@ -87,6 +96,10 @@ public:
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
     void RenderScene(); // RenderScene
 
+    void Validate(); 
+
+    void CompileProgram(); 
+
     void UseShader(); 
     void remove(int objID);
     void ClearShader();
@@ -99,6 +112,7 @@ public:
 
     ~Shader(); 
 private: 
+
     int pointLightCount;
     int spotLightCount; 
     int areaLightCount;
@@ -107,7 +121,8 @@ private:
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
-    uniformNormalMap, uniformSkyColor, uniformDepthMap;
+    uniformNormalMap, uniformSkyColor, uniformDepthMap,
+    uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor;  
 
     struct {
         GLuint uniformColor; 
