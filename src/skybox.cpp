@@ -2,7 +2,7 @@
 
 Skybox::Skybox(){}
 
-Skybox::Skybox(std::vector<std::string> faceLocations){
+Skybox::Skybox(std::vector<std::string> faceLocations, bool day){
 
     // Shader Setup
     skyShader = new Shader(); 
@@ -16,10 +16,13 @@ Skybox::Skybox(std::vector<std::string> faceLocations){
     // glGenTextures(1, &textureId); 
     // glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); // generate the texture and bind it to thz cubemap.
 
-    glGenTextures(1, &textureDay); 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay);
-    glGenTextures(1, &textureNight); 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight);
+    if (day) {
+        glGenTextures(1, &textureDay); 
+        glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay);
+    } else {
+        glGenTextures(1, &textureNight); 
+        glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight);
+    }
 
     int width, height, bitDepth; 
 
@@ -46,43 +49,6 @@ Skybox::Skybox(std::vector<std::string> faceLocations){
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_TEXTURE_MAG_FILTER: when we are closer to the image. 
 
 
-    // // Mesh Setup
-
-    // unsigned int skyboxIndices[] = {
-    //     //front
-    //     0,1,2,
-    //     2,1,3,
-    //     // right
-    //     2,3,5, // anti-clock wise fashion to detect which side 
-    //     5,3,7,
-    //     //back
-    //     5,7,4,
-    //     4,7,6,
-    //     //left
-    //     4,6,0,
-    //     0,6,1,
-    //     //top
-    //     4,0,5,
-    //     5,0,2,
-    //     // bottom
-    //     1,6,3,
-    //     3,6,7
-    // };
-
-    // float skyboxVertices[] = {
-    //     -1.0f, 1.0f, -1.0,         0.0f, 0.0f,          0.0f, 0.0f, 0.0f, // corners  at the back of the cube
-    //     -1.0f, -1.0f, -1.0f,         0.0f, 0.0f,        0.0f, 0.0f, 0.0f, // we can have all the normals at 0 as we don't have any lighting effect on it
-    //     1.0f, 1.0f, -1.0f,         0.0f, 0.0f,          0.0f, 0.0f, 0.0f, // we don't do texture values based on u-v we do it based on where the camera is , we don't need to set any coordinates for the u v 
-    //     1.0f, -1.0f, -1.0f,         0.0f, 0.0f,        0.0f, 0.0f, 0.0f, // as we use a vector to point where on teh cubemap we are. 
-
-    //     -1.0f, 1.0f, 1.0f,         0.0f, 0.0f,          0.0f, 0.0f, 0.0f, // coreners at the front
-    //     1.0f, 1.0f, 1.0f,         0.0f, 0.0f,        0.0f, 0.0f, 0.0f,
-    //     -1.0f, -1.0f, 1.0f,         0.0f, 0.0f,          0.0f, 0.0f, 0.0f,
-    //     1.0f, -1.0f, 1.0f,         0.0f, 0.0f,        0.0f, 0.0f, 0.0f,
-    // };
-
-    // Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Dull(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), 1, glm::vec3(1., 1., 1.));
-    // physicalWorld = PhysicalWorld(ground);
     skyMesh = new Object(geometry::cube, NULL, Materials::Empty(), glm::vec3(0.), glm::vec3(1.), glm::vec3(1.), false, glm::vec3(1.));
     skyMesh->MakeObject(); 
 
@@ -122,6 +88,7 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     glDepthMask(GL_FALSE); // so that the sky box is infinitely far away, no depth perception
 
     skyShader->UseShader(); 
+    BindTextures();
     skyShader->ConnectSkyboxes();
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -133,7 +100,7 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 
     // glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); 
 
-    BindTextures(); 
+     
 
 
     // we don't need to set the uniforms because by default it is set to 0

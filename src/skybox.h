@@ -24,7 +24,7 @@ public:
     
     Skybox(); 
 
-    Skybox(std::vector<std::string> faceLocations); // vector of all the locations of our faces
+    Skybox(std::vector<std::string> faceLocations, bool day); // vector of all the locations of our faces
 
     void DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix); 
 

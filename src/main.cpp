@@ -152,8 +152,8 @@ int main(){
     skyboxFacesDay.push_back("../../image/Skyboxes/sky_posz.jpg"); 
     skyboxFacesDay.push_back("../../image/Skyboxes/sky_negz.jpg");
 
-    skyboxNight = Skybox(skyboxFacesNight); 
-    skyboxDay = Skybox(skyboxFacesDay);
+    skyboxNight = Skybox(skyboxFacesNight, false); 
+    skyboxDay = Skybox(skyboxFacesDay, true);
     
 
     while(!mainWindow.getShouldClose()){
