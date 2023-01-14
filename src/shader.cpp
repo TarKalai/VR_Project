@@ -22,6 +22,50 @@ void Shader::addObjects(std::vector<Object*> objects){
     }
 }
 
+void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, 
+                         DirectionalLight* mainLight,
+                         PointLight* pointLights, 
+                         int pointLightCount, 
+                         SpotLight* spotLights, 
+                         int spotLightCount){
+    UseShader(); 
+
+    uniformModel = GetModelLocation(); 
+    uniformProjection = GetProjectionLocation(); 
+    uniformView = GetViewLocation(); 
+    uniformEyePosition = GetEyePositionLocation(); 
+
+    //fog
+    SetSkyColor(0.5, 0.5, 0.5); 
+
+    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
+
+    SetDirectionalLight(mainLight);
+    SetPointLights(pointLights, pointLightCount);
+    SetSpotLights(spotLights, spotLightCount); 
+
+    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
+    SetDirectionalLightTransform(&resmainLight); 
+
+
+    mainLight->GetShadowMap()->Read(GL_TEXTURE3);
+
+
+    SetTexture(0);
+    SetNormalMap(1);
+    SetDepthMap(2);
+    SetDirectionalShadowMap(3);
+
+    glm::vec3 lowerLight = camera.getPosition(); 
+    lowerLight.y -= 0.3f;
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+
+
+    RenderScene();
+}
+
 void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, 
                          DirectionalLight* mainLight,
                          PointLight* pointLights, 
@@ -334,6 +378,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
 
     uniformTexture = glGetUniformLocation(shaderID, "theTexture");
     uniformNormalMap = glGetUniformLocation(shaderID, "normalMap");
+    uniformDepthMap = glGetUniformLocation(shaderID, "depthMap");
     uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform"); // it will bind for vertex a AND frag because it is the same name
     uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 
@@ -445,6 +490,9 @@ void Shader::SetNormalMap(GLuint textureUnit){
     glUniform1i(uniformNormalMap, textureUnit);
 }
 
+void Shader::SetDepthMap(GLuint textureUnit){
+    glUniform1i(uniformDepthMap, textureUnit);
+}
 
 void Shader::SetDirectionalShadowMap(GLuint textureUnit){
     glUniform1i(uniformDirectionalShadowMap, textureUnit);

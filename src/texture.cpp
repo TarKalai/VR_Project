@@ -5,24 +5,25 @@
 
 Texture::Texture(){
     name = "";
-    textureID = normalID = 0;
+    textureID = normalID = dispID = 0;
     width = 0; 
     height = 0; 
     nrComponents=0;
 }
 
-Texture::Texture(const char* FileLocation, const char* _name, bool mirrored_x, bool mirrored_y, const char * NormalLocation){
+Texture::Texture(const char* FileLocation, const char* _name, bool mirrored_x, bool mirrored_y, const char * NormalLocation, const char * DispLocation){
     name = _name;
     textureID = 0; 
     width = 0; 
     height = 0; 
     nrComponents=0;
+    textureID = LoadTexture(FileLocation, true, mirrored_x, mirrored_y);
     if (NormalLocation != nullptr){
-        textureID = LoadTexture(FileLocation, true, mirrored_x, mirrored_y);
         normalID = LoadTexture(NormalLocation, true, mirrored_x, mirrored_y);
-    }else{
-        textureID = LoadTexture(FileLocation, true, mirrored_x, mirrored_y);
     }
+    if (DispLocation != nullptr){
+        dispID = LoadTexture(DispLocation, true, mirrored_x, mirrored_y);
+    } 
 }
 
 GLuint Texture::LoadTexture(const char* fileLoc, bool flip, bool mirrored_x, bool mirrored_y){
@@ -94,18 +95,20 @@ void Texture::UseTexture(){
         glActiveTexture(GL_TEXTURE1); // the normal texture
         glBindTexture(GL_TEXTURE_2D, normalID);
     }
+    if (dispID != 0){
+        glActiveTexture(GL_TEXTURE2); // the normal texture
+        glBindTexture(GL_TEXTURE_2D, dispID);
+    }
 }
 
 
 void Texture::ClearTexture() {
     glDeleteTextures(1, &textureID); 
     glDeleteTextures(1, &normalID); 
-    textureID = 0; 
-    normalID = 0; 
+    textureID = normalID = dispID = 0;
     width=0; 
     height=0; 
     nrComponents=0;
-
 }
 
 Texture::~Texture(){

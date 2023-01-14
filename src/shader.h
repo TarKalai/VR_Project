@@ -52,6 +52,7 @@ public:
     
     void SetTexture(GLuint textureUnit); 
     void SetNormalMap(GLuint textureUnit); 
+    void SetDepthMap(GLuint textureUnit); 
     void SetDirectionalShadowMap(GLuint textureUnit);
     void SetDirectionalLightTransform(glm::mat4* ltransform);  
 
@@ -73,7 +74,15 @@ public:
                     PointLight* pointLights, 
                     int pointLightCount, 
                     SpotLight* spotLights, 
-                    int spotLightCount);           
+                    int spotLightCount);      
+
+    void RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, 
+                         DirectionalLight* mainLight,
+                         PointLight* pointLights, 
+                         int pointLightCount, 
+                         SpotLight* spotLights, 
+                         int spotLightCount);
+
     void DirectionalShadowMapPass(DirectionalLight* light); // DirectionalShadowMapPass
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
     void RenderScene(); // RenderScene
@@ -98,7 +107,7 @@ private:
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
-    uniformNormalMap, uniformSkyColor;
+    uniformNormalMap, uniformSkyColor, uniformDepthMap;
 
     struct {
         GLuint uniformColor; 

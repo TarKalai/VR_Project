@@ -36,6 +36,9 @@ namespace image
     static constexpr char brickwall[128] = "../../image/brickwall.jpg";
     static constexpr char brickwalln[128] = "../../image/brickwall_normal.jpg";
 
+    static constexpr char brick2[128] = "../../image/bricks2.jpg";
+    static constexpr char brick2n[128] = "../../image/bricks2_normal.jpg";
+    static constexpr char brick2d[128] = "../../image/bricks2_disp.jpg";
 }
 
 namespace geometry
@@ -68,6 +71,8 @@ namespace shaderfiles
     static constexpr char shadowMapFrag[128] = "../../src/Shaders/directional_shadow_map.fs";
     static constexpr char bumpMapVertex[128] = "../../src/Shaders/bumpmap.vs";
     static constexpr char bumpMapFrag[128] = "../../src/Shaders/bumpmap.fs";
+    static constexpr char paralaxMapVertex[128] = "../../src/Shaders/paralax.vs";
+    static constexpr char paralaxMapFrag[128] = "../../src/Shaders/paralax.fs";
 } 
 
 namespace general

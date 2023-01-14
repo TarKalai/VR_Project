@@ -66,6 +66,7 @@ class Textures {
 			else if (name == "wood") {return Get().IWood();}
 			else if (name == "hulk") {return Get().IHulk();}
 			else if (name == "bird") {return Get().IBird();}
+			else if (name == "brick2") {return Get().IBrick2();}
 			else {return Get().IWhite();}
 		} 
 
@@ -77,6 +78,7 @@ class Textures {
 		static Texture* Hulk(){return Get().IHulk();}
 		static Texture* Bird(){return Get().IBird();}
 		static Texture* Brickwall(){return Get().IBrickwall();}
+		static Texture* Brick2(){return Get().IBrick2();}
 
 
 	private:
@@ -95,6 +97,7 @@ class Textures {
 		Texture* IHulk(){return &hulk;}
 		Texture* IBird(){return &bird;}
 		Texture* IBrickwall(){return &brickwall;}
+		Texture* IBrick2(){return &brick2;}
 
 
 		Texture brick = Texture(image::brick, "brick", true, false); 
@@ -105,7 +108,7 @@ class Textures {
 		Texture hulk  = Texture(image::hulk, "hulk", false, false);
 		Texture bird  = Texture(image::bird, "bird", false, false);
 		Texture brickwall  = Texture(image::brickwall, "brickwall", false, false, image::brickwalln);
-
+		Texture brick2  = Texture(image::brick2, "brick2", false, false, image::brick2n, image::brick2d); // paralax
 };
 
 class Materials {

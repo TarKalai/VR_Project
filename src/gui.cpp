@@ -105,6 +105,7 @@ void GUI::displayDominoInfo() {
         texturePicked = true;
         if (ImGui::Button("White")) {process->textureDomino = Textures::White();}
         else if (ImGui::Button("Brick")) {process->textureDomino = Textures::Brick();}
+        else if (ImGui::Button("Brick2")) {process->textureDomino = Textures::Brick2();}
         else if (ImGui::Button("Dirt")) {process->textureDomino = Textures::Dirt();}
         else if (ImGui::Button("Wood")) {process->textureDomino = Textures::Wood();}
         else if (ImGui::Button("Anubis")) {process->textureDomino = Textures::Anubis();}
@@ -154,6 +155,7 @@ void GUI::dominoModify() {
                 texturePicked = true;
                 if (ImGui::Button("White")) {domino->texture = Textures::White();}
                 else if (ImGui::Button("Brick")) {domino->texture = Textures::Brick();}
+                else if (ImGui::Button("Brick2")) {domino->texture = Textures::Brick2();}
                 else if (ImGui::Button("Dirt")) {domino->texture = Textures::Dirt();}
                 else if (ImGui::Button("Wood")) {domino->texture = Textures::Wood();}
                 else { texturePicked = false; }

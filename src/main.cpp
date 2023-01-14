@@ -41,6 +41,7 @@ Shader directionalShadowShader;
 Shader objectLightShader; 
 Shader2D shader2D;
 Shader bumpMapShader;
+Shader paralaxMapShader;
 
 Camera camera; 
 
@@ -67,6 +68,12 @@ void CreateObjects(){
     bumpMapShader.addObject(ground2);
     directionalShadowShader.addObject(ground2);
 
+
+    Object* ground3 = new Object(geometry::plane, Textures::Brick2(), Materials::Shiny(), glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
+    physicalWorld.addObject(ground3, PHYSIC::GROUND_OBJECT);
+    paralaxMapShader.addObject(ground3);
+    directionalShadowShader.addObject(ground3);
+
 }
 
 void CreateShaders()
@@ -76,6 +83,7 @@ void CreateShaders()
     objectLightShader.CreateFromFiles(shaderfiles::lightObjectVertex, shaderfiles::lightObjectFrag); 
     shader2D = Shader2D(true);
     bumpMapShader.CreateFromFiles(shaderfiles::bumpMapVertex, shaderfiles::bumpMapFrag); 
+    paralaxMapShader.CreateFromFiles(shaderfiles::paralaxMapVertex, shaderfiles::paralaxMapFrag);
 }
 
 int main(){
@@ -153,6 +161,7 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
+        paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
 
         objectLightShader.DrawLightObjects(projection, view);

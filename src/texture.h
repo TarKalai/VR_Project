@@ -9,7 +9,7 @@ class Texture{
 public: 
     const char* name;
     Texture(); 
-    Texture(const char* FileLocation, const char* _name, bool mirrored_x, bool mirrored_y, const char * NormalLocation=nullptr);
+    Texture(const char* FileLocation, const char* _name, bool mirrored_x, bool mirrored_y, const char * NormalLocation=nullptr, const char * DispLocation=nullptr);
     GLuint LoadTexture(const char* FileLoc, bool flip, bool mirrored_x, bool mirrored_y);
     void UseTexture(); 
     void ClearTexture(); 
@@ -19,6 +19,6 @@ public:
 
 private: 
 
-    GLuint textureID, normalID; 
+    GLuint textureID, normalID, dispID; 
     int width, height, nrComponents; 
 };
