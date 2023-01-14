@@ -122,10 +122,22 @@ void GUI::displayDominoInfo() {
     } else { materialPicked = false; }
     if (ImGui::BeginMenu("Geometry", !geometryPicked)) {
         geometryPicked = true;
-        if (ImGui::Button("Domino")) {process->geometryDomino = geometry::domino;}
-        else if (ImGui::Button("Cube")) {process->geometryDomino = geometry::cube;}
-        else if (ImGui::Button("Sphere")) {process->geometryDomino = geometry::sphere;}
-        else if (ImGui::Button("plane")) {process->geometryDomino = geometry::plane;}
+        if (ImGui::Button("Domino")) {
+            process->geometryDomino = geometry::domino;
+            process->dimDomino = glm::vec3(dominoDim::width, dominoDim::height, dominoDim::thick);
+        }
+        else if (ImGui::Button("Cube")) {
+            process->geometryDomino = geometry::cube;
+            process->dimDomino = glm::vec3(2); 
+        }
+        else if (ImGui::Button("Sphere")) {
+            process->geometryDomino = geometry::sphere; 
+            process->dimDomino = glm::vec3(2); // rayon of 1 = diameter (size) of 2
+            }
+        else if (ImGui::Button("plane")) {
+            process->geometryDomino = geometry::plane;
+            process->dimDomino = glm::vec3(2,0,2);
+            }
         else { geometryPicked = false; }
         ImGui::EndMenu();
     } else { geometryPicked = false; }

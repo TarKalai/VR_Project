@@ -276,7 +276,7 @@ void Process::DeleteDominos() {
 }
 
 void Process::PutDominos(){
-	float espacement = scaleDomino*(dominoDim::height/2 + dominoDim::thick); // distance between 2 domino
+	float espacement = scaleDomino*(dimDomino.y/2 + dimDomino.z);//dominoDim::height/2 + dominoDim::thick); // distance between 2 domino
 
 	glm::vec3 dir = camera->getDirection(); 
 	glm::vec3 pos = camera->getPosition();
