@@ -263,6 +263,8 @@ const char* Object::getGeometryPath() {
         return geometryPath::cube;
     else if (type == geometry::sphere)
         return geometryPath::sphere;
+    else if (type == geometry::bunny)
+        return geometryPath::bunny;
     return geometryPath::cube;
 
 }

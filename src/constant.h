@@ -55,6 +55,7 @@ namespace geometry
     static constexpr int domino = 1;
 	static constexpr int cube = 2;
     static constexpr int sphere = 3;
+    static constexpr int bunny = 4;
 }
 
 namespace geometryPath
@@ -101,6 +102,12 @@ namespace dominoDim
     static constexpr float height = 2*1.;
     static constexpr float width = 2*0.5;
     static constexpr float thick = 2*0.175;
+}
+namespace bunnyDim
+{
+    static constexpr float height = 5;
+    static constexpr float width = 3;
+    static constexpr float thick = 4;
 }
 
 namespace PHYSIC

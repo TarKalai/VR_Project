@@ -138,6 +138,10 @@ void GUI::displayDominoInfo() {
             process->geometryDomino = geometry::plane;
             process->dimDomino = glm::vec3(2,0,2);
             }
+        else if (ImGui::Button("bunny")) {
+            process->geometryDomino = geometry::bunny;
+            process->dimDomino = glm::vec3(bunnyDim::width, bunnyDim::height, bunnyDim::thick);
+            }
         else { geometryPicked = false; }
         ImGui::EndMenu();
     } else { geometryPicked = false; }
