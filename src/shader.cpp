@@ -217,6 +217,10 @@ void Shader::CompileProgram()
     uniformColor = glGetUniformLocation(shaderID, "objectColor");
 
     // uniformFogColor = glGetUniformLocation(shaderID, "fogColor"); 
+    uniformSkyboxDay = glGetUniformLocation(shaderID, "skyboxDay"); 
+    uniformSkyboxNight = glGetUniformLocation(shaderID, "skyboxNight"); 
+    uniformBlendFactor = glGetUniformLocation(shaderID, "blendFactor"); 
+    
     
 
 
@@ -395,6 +399,16 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
+void Shader::SetBlendFactor(float blend)
+{
+    glUniform1f(uniformBlendFactor, blend); 
+}
+
+void Shader::ConnectSkyboxes()
+{
+    glUniform1i(uniformSkyboxDay, 1);
+    glUniform1i(uniformSkyboxNight, 2); 
+}
 
 // void Shader::SetFogColor(float r, float g, float b)
 // {
@@ -472,6 +486,18 @@ GLuint Shader::GetModelLocation(){
 // GLuint Shader::GetFogColorLocation(){
 //     return uniformFogColor; 
 // }
+
+GLuint Shader::GetUniformSkyboxDay(){
+    return uniformSkyboxDay; 
+}
+
+GLuint Shader::GetUniformSkyboxNight(){
+    return uniformSkyboxNight; 
+}
+
+GLuint Shader::GetUniformBlendFactor(){
+    return uniformBlendFactor; 
+}
 
 GLuint Shader::GetViewLocation(){
     return uniformView; 

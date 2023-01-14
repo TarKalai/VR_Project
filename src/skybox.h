@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <glad/glad.h>
-
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp> //use type_ptr to pass the values to the shaders
@@ -30,9 +30,13 @@ public:
 
    // void LoadFogColor(float r, float g, float b); 
 
+   void BindTextures(); 
+
     ~Skybox();
 
 private:
+
+    GLuint textureDay, textureNight;
 
     float rotation =0; 
 

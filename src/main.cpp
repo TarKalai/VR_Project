@@ -40,7 +40,8 @@ Shader objectShader;
 Shader directionalShadowShader; 
 Shader areaLightShader; 
 
-Skybox skybox; 
+Skybox skyboxDay; 
+Skybox skyboxNight; 
 
 Camera camera; 
 
@@ -134,17 +135,26 @@ int main(){
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
 
     
-    std::vector<std::string> skyboxFaces; 
+    std::vector<std::string> skyboxFacesDay; 
+    std::vector<std::string> skyboxFacesNight; 
 
-    skyboxFaces.push_back("../../image/Skyboxes/lake_posx.jpg"); 
-    skyboxFaces.push_back("../../image/Skyboxes/lake_negx.jpg"); 
-    skyboxFaces.push_back("../../image/Skyboxes/lake_posy.jpg"); 
-    skyboxFaces.push_back("../../image/Skyboxes/lake_negy.jpg"); 
-    skyboxFaces.push_back("../../image/Skyboxes/lake_posz.jpg"); 
-    skyboxFaces.push_back("../../image/Skyboxes/lake_negz.jpg");
+    skyboxFacesNight.push_back("../../image/Skyboxes/night_posx.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/night_negx.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/night_posy.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/night_negy.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/night_posz.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/night_negz.jpg");
 
-    skybox = Skybox(skyboxFaces);
-     
+    skyboxFacesDay.push_back("../../image/Skyboxes/sky_posx.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/sky_negx.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/sky_posy.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/sky_negy.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/sky_posz.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/sky_negz.jpg");
+
+    skyboxNight = Skybox(skyboxFacesNight); 
+    skyboxDay = Skybox(skyboxFacesDay);
+    
 
     while(!mainWindow.getShouldClose()){
         Time::updateTime();
@@ -172,7 +182,8 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
         //glClear is also clearing the depth buffer bit.
 
-        skybox.DrawSkyBox(view, projection);
+        skyboxDay.DrawSkyBox(view, projection);
+        skyboxNight.DrawSkyBox(view, projection); 
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         areaLightShader.DrawLightObjects(projection, view);
              

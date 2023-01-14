@@ -4,7 +4,11 @@ in vec3 TexCoords;
 
 out vec4 color; 
 
-uniform samplerCube skybox; 
+uniform samplerCube skyboxDay;
+uniform samplerCube skyboxNight;
+
+uniform float blendFactor; // how much of each texture to render, if 0 : just the first texture.
+
 // uniform vec3 fogColor; 
 
 // const float lowerLimit = 0.0; // center of the skybox
@@ -12,8 +16,11 @@ uniform samplerCube skybox;
 
 void main(void)
 {
+    vec4 textureDay = texture(skyboxDay, TexCoords);
+    vec4 textureNight = texture(skyboxNight, TexCoords);
     // vec4 finalColor  = texture(skybox, TexCoords); // the color is the texture of the skybox at the coordinates: TexCoords.
-    color  = texture(skybox, TexCoords);
+    vec4 finalColor = mix(textureDay, textureNight, blendFactor); 
+    color  = finalColor;
 
     // float factor  = (TexCoords.y - lowerLimit) / (upperLimit - lowerLimit); // represents the visibility : if the factor = 0 => fragment
     // below the lower limit and is fog Color, factor of 1 => fragment above upperlimit use skybox texture color

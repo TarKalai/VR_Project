@@ -47,7 +47,10 @@ public:
     GLuint GetDirectionLocation(); 
     GLuint GetSpecularIntensityLocation(); 
     GLuint GetShininessLocation(); 
-    GLuint GetEyePositionLocation(); 
+    GLuint GetEyePositionLocation();
+    GLuint GetUniformSkyboxDay(); 
+    GLuint GetUniformSkyboxNight(); 
+    GLuint GetUniformBlendFactor(); 
 
     void SetDirectionalLight(DirectionalLight * dLight);
     void SetPointLights(PointLight * pLight,int lightCount); 
@@ -57,6 +60,9 @@ public:
     // void SetFogColor(float r, float g, float b); 
     void SetDirectionalShadowMap(GLuint textureUnit);
     void SetDirectionalLightTransform(glm::mat4* ltransform);  
+
+    void ConnectSkyboxes(); 
+    void SetBlendFactor(float blend); 
 
     void addObject(Object *obj);
     void addObjects(std::vector<Object*> objects);
@@ -95,7 +101,8 @@ private:
     GLuint uniformProjection, uniformModel, uniformView, uniformEyePosition, 
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
-    uniformDirectionalLightTransform, uniformDirectionalShadowMap;  
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
+    uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor;  
     // uniformFogColor;
 
     struct {

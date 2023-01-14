@@ -13,8 +13,13 @@ Skybox::Skybox(std::vector<std::string> faceLocations){
     // uniformFogColor = skyShader->GetFogColorLocation(); 
 
     // Texture Setup
-    glGenTextures(1, &textureId); 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); // generate the texture and bind it to thz cubemap.
+    // glGenTextures(1, &textureId); 
+    // glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); // generate the texture and bind it to thz cubemap.
+
+    glGenTextures(1, &textureDay); 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay);
+    glGenTextures(1, &textureNight); 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight);
 
     int width, height, bitDepth; 
 
@@ -88,6 +93,16 @@ Skybox::Skybox(std::vector<std::string> faceLocations){
 //     skyShader->SetFogColor(r, g, b); 
 // }
 
+void Skybox::BindTextures()
+{
+    glActiveTexture(GL_TEXTURE1); 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay); 
+    glActiveTexture(GL_TEXTURE2); 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight); 
+    skyShader->SetBlendFactor(0.5f); // blend = 0.5 equal mix of day and night textures 
+
+}
+
 void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
 
@@ -107,15 +122,19 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     glDepthMask(GL_FALSE); // so that the sky box is infinitely far away, no depth perception
 
     skyShader->UseShader(); 
+    skyShader->ConnectSkyboxes();
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
     // LoadFogColor(0.5, 0.5, 0.5); 
 
-    glActiveTexture(GL_TEXTURE0); // we can do GL_TEXTURE0 because this shader is used independently from the other shaders 
-    // the cube map is set to texture0
+    // glActiveTexture(GL_TEXTURE0); // we can do GL_TEXTURE0 because this shader is used independently from the other shaders 
+    // // the cube map is set to texture0
 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); 
+    // glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); 
+
+    BindTextures(); 
+
 
     // we don't need to set the uniforms because by default it is set to 0
 
