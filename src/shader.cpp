@@ -36,8 +36,6 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     // glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
     // //glClear is also clearing the depth buffer bit.
-
-    // skybox.DrawSkyBox(view, projection); 
     
     UseShader(); 
 
@@ -410,31 +408,22 @@ void Shader::ConnectSkyboxes()
     glUniform1i(uniformSkyboxNight, 2); 
 }
 
-// void Shader::SetFogColor(float r, float g, float b)
-// {
-//     glUniform3f(uniformFogColor, r, g, b); 
-// }
-
 void Shader::SetTexture(GLuint textureUnit){
     glUniform1i(uniformTexture, textureUnit);
 }
 
-
 void Shader::SetDirectionalShadowMap(GLuint textureUnit){
     glUniform1i(uniformDirectionalShadowMap, textureUnit);
 }
-
 
 void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
 
     glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
 }
 
-
 void Shader::UseShader(){
     glUseProgram(shaderID); 
 }
-
 
 void Shader::ClearShader(){
     if(shaderID != 0){
@@ -445,7 +434,6 @@ void Shader::ClearShader(){
     uniformModel = 0; 
     uniformProjection = 0; 
 }
-
 
 void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_type){
     GLuint the_shader = glCreateShader(shader_type); // create empty shader and pass the id into "the_shader"
@@ -470,7 +458,6 @@ void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_ty
         printf("Error compiling the %d shader : %s\n", shader_type, eLog);
         return; 
     }
-
     glAttachShader(program, the_shader);
 }
 
@@ -478,14 +465,9 @@ GLuint Shader::GetProjectionLocation(){
     return uniformProjection; 
 }
 
-
 GLuint Shader::GetModelLocation(){
     return uniformModel; 
 }
-
-// GLuint Shader::GetFogColorLocation(){
-//     return uniformFogColor; 
-// }
 
 GLuint Shader::GetUniformSkyboxDay(){
     return uniformSkyboxDay; 
@@ -503,41 +485,33 @@ GLuint Shader::GetViewLocation(){
     return uniformView; 
 }
 
-
 GLuint Shader::GetAmbientColorLocation(){
     return uniformDirectionalLight.uniformColor; 
 }
-
 
 GLuint Shader::GetAmbientIntensityLocation(){
     return uniformDirectionalLight.uniformAmbientIntensity;     
 }
 
-
 GLuint Shader::GetDiffuseIntensityLocation(){
     return uniformDirectionalLight.uniformDiffuseIntensity; 
 }
-
 
 GLuint Shader::GetDirectionLocation(){
     return uniformDirectionalLight.uniformDirection; 
 }
 
-
 GLuint Shader::GetSpecularIntensityLocation(){
     return uniformSpecularIntensity; 
 }
-
 
 GLuint Shader::GetShininessLocation(){
     return uniformShininess; 
 }
 
-
 GLuint Shader::GetEyePositionLocation(){
     return uniformEyePosition; 
 }
-
 
 Shader::~Shader(){
     ClearShader(); 
