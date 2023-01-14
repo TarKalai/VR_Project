@@ -10,6 +10,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations){
 
     uniformProjection = skyShader->GetProjectionLocation(); 
     uniformView = skyShader->GetViewLocation(); 
+    // uniformFogColor = skyShader->GetFogColorLocation(); 
 
     // Texture Setup
     glGenTextures(1, &textureId); 
@@ -82,12 +83,24 @@ Skybox::Skybox(std::vector<std::string> faceLocations){
 
 }
 
+// void Skybox::LoadFogColor(float r, float g, float b)
+// { 
+//     skyShader->SetFogColor(r, g, b); 
+// }
 
 void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
 
     // we don't want to take into account the translation part of the camera => we get rid of the last column of the transformation matrix
     // which deal with translations
+    
+    viewMatrix = glm::mat3(viewMatrix); 
+    rotation += 0.05; 
+    if(rotation > 360.0f)
+    {
+        rotation = 0.1f; 
+    }
+    viewMatrix = glm::rotate(viewMatrix, glm::radians(rotation), glm::vec3(0., 1., 0.)); 
     viewMatrix = glm::mat4(glm::mat3(viewMatrix));
     // first we convert into 3x3 matrix then to a 4x4 matrix , we will get a blank 4th col.
 
@@ -97,6 +110,7 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+    // LoadFogColor(0.5, 0.5, 0.5); 
 
     glActiveTexture(GL_TEXTURE0); // we can do GL_TEXTURE0 because this shader is used independently from the other shaders 
     // the cube map is set to texture0

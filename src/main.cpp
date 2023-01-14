@@ -136,12 +136,12 @@ int main(){
     
     std::vector<std::string> skyboxFaces; 
 
-    skyboxFaces.push_back("../../image/posx.jpg"); 
-    skyboxFaces.push_back("../../image/negx.jpg"); 
-    skyboxFaces.push_back("../../image/posy.jpg"); 
-    skyboxFaces.push_back("../../image/negy.jpg"); 
-    skyboxFaces.push_back("../../image/posz.jpg"); 
-    skyboxFaces.push_back("../../image/negz.jpg");
+    skyboxFaces.push_back("../../image/Skyboxes/lake_posx.jpg"); 
+    skyboxFaces.push_back("../../image/Skyboxes/lake_negx.jpg"); 
+    skyboxFaces.push_back("../../image/Skyboxes/lake_posy.jpg"); 
+    skyboxFaces.push_back("../../image/Skyboxes/lake_negy.jpg"); 
+    skyboxFaces.push_back("../../image/Skyboxes/lake_posz.jpg"); 
+    skyboxFaces.push_back("../../image/Skyboxes/lake_negz.jpg");
 
     skybox = Skybox(skyboxFaces);
      

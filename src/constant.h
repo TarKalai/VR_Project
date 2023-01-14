@@ -50,6 +50,7 @@ namespace general
 {
     static constexpr glm::vec3 sceneSize = glm::vec3(100, 100, 100); // size of the scene, the scene is a cube (where the shadow are rendered in). (shadow box)
     static constexpr int floorThickness = 1;
+    // static constexpr float rotateSpeed = 2.0f; 
 }
 
 namespace Ttime

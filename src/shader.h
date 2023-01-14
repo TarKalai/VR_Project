@@ -38,7 +38,8 @@ public:
 
     GLuint GetProjectionLocation(); 
     GLuint GetModelLocation(); 
-    GLuint GetViewLocation(); 
+    GLuint GetViewLocation();
+    // GLuint GetFogColorLocation();  
     GLuint GetAmbientIntensityLocation(); 
     GLuint GetAmbientColorLocation(); 
 
@@ -52,7 +53,8 @@ public:
     void SetPointLights(PointLight * pLight,int lightCount); 
     void SetSpotLights(SpotLight * sLight, int lightCount);
     
-    void SetTexture(GLuint textureUnit); 
+    void SetTexture(GLuint textureUnit);
+    // void SetFogColor(float r, float g, float b); 
     void SetDirectionalShadowMap(GLuint textureUnit);
     void SetDirectionalLightTransform(glm::mat4* ltransform);  
 
@@ -93,7 +95,8 @@ private:
     GLuint uniformProjection, uniformModel, uniformView, uniformEyePosition, 
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
-    uniformDirectionalLightTransform, uniformDirectionalShadowMap;
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap;  
+    // uniformFogColor;
 
     struct {
         GLuint uniformColor; 

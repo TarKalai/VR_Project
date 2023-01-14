@@ -28,14 +28,18 @@ public:
 
     void DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix); 
 
+   // void LoadFogColor(float r, float g, float b); 
+
     ~Skybox();
 
-private: 
+private:
+
+    float rotation =0; 
 
     Shader* skyShader; 
 
     Object* skyMesh; 
 
     GLuint textureId; 
-    GLuint uniformProjection, uniformView;  
+    GLuint uniformProjection, uniformView; //, uniformFogColor;  
 };

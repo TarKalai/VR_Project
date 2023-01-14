@@ -215,6 +215,8 @@ void Shader::CompileProgram()
     uniformShininess = glGetUniformLocation(shaderID, "material.shininess"); 
     uniformEyePosition = glGetUniformLocation(shaderID, "eyePosition");
     uniformColor = glGetUniformLocation(shaderID, "objectColor");
+
+    // uniformFogColor = glGetUniformLocation(shaderID, "fogColor"); 
     
 
 
@@ -394,6 +396,11 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
 }
 
 
+// void Shader::SetFogColor(float r, float g, float b)
+// {
+//     glUniform3f(uniformFogColor, r, g, b); 
+// }
+
 void Shader::SetTexture(GLuint textureUnit){
     glUniform1i(uniformTexture, textureUnit);
 }
@@ -462,6 +469,9 @@ GLuint Shader::GetModelLocation(){
     return uniformModel; 
 }
 
+// GLuint Shader::GetFogColorLocation(){
+//     return uniformFogColor; 
+// }
 
 GLuint Shader::GetViewLocation(){
     return uniformView; 
