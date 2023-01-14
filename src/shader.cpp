@@ -133,6 +133,10 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformShininess = GetShininessLocation();
 
     
+    // glm::vec3 rot = glm::vec3(1.);
+    // rot.y = 2*3.14*Time::getTime()/Ttime::maxTime;
+    // view = glm::rotate(view, rot.y, glm::vec3(0., 1., 0.)); 
+    // view = glm::mat4(glm::mat3(view));
     glUniform1i(uniformSkyboxDay, 11); 
     glUniform1i(uniformSkyboxNight, 12); 
     SetBlendFactor();
