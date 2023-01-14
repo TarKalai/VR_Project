@@ -116,7 +116,7 @@ int main(){
     
 
     
-	for (int i=0; i<1; i++) {
+	for (int i=0; i<0; i++) {
 		glm::vec3 pos = glm::vec3(-10,1,0);
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0), 0, 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1);

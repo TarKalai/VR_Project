@@ -2,8 +2,8 @@
 
 Skybox::Skybox(){
     createShader();
-    setDay("lake");
-    setNight("temple");
+    setDay("day");
+    setNight("night");
 }
 
 void Skybox::setDay(std::string name) {

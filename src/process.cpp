@@ -222,7 +222,6 @@ void Process::initMousePosition(){
 		glfwGetWindowSize(window, &width, &height);
 		camera->initRunX = width/2 - camera->getYaw()*(1/camera->getMouseSensitivity());
 		camera->initRunY = height/2 + camera->getPitch()*(1/camera->getMouseSensitivity());
-		printf("size width %d, height %d\n", width, height);
 	}
 	else {
 		double xpos, ypos;

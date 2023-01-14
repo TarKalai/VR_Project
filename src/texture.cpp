@@ -28,7 +28,6 @@ Texture::Texture(const char* FileLocation, const char* _name, bool mirrored_x, b
 
 GLuint Texture::LoadTexture(const char* fileLoc, bool flip, bool mirrored_x, bool mirrored_y){
     GLuint id;
-    std::cout << fileLoc << std::endl;
     stbi_set_flip_vertically_on_load(flip);
     unsigned char *data = stbi_load(fileLoc, &width, &height, &nrComponents, 0);
 
@@ -52,7 +51,6 @@ GLuint Texture::LoadTexture(const char* fileLoc, bool flip, bool mirrored_x, boo
     glGenerateMipmap(GL_TEXTURE_2D); // generate MipMap automatically. 
 
     //3. Define the parameters for the texture
-    printf("%d %d %s\n", mirrored_x, mirrored_y, fileLoc);
     if (mirrored_x)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);  // GL_TEXTURE_WRAP_S: it defines how the texture behaves around the s axis which corresponds to the x axis, with GL_REPEAT we tell it to trepeat the texture once we go over the border. 
     else

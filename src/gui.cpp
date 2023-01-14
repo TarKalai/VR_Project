@@ -106,9 +106,15 @@ void GUI::displayDominoInfo() {
         if (ImGui::Button("White")) {process->textureDomino = Textures::White();}
         else if (ImGui::Button("Brick")) {process->textureDomino = Textures::Brick();}
         else if (ImGui::Button("Brick2")) {process->textureDomino = Textures::Brick2();}
+        else if (ImGui::Button("Cobblestone")) {process->textureDomino = Textures::Brickwall();}
         else if (ImGui::Button("Dirt")) {process->textureDomino = Textures::Dirt();}
         else if (ImGui::Button("Wood")) {process->textureDomino = Textures::Wood();}
+        else if (ImGui::Button("Concrete")) {process->textureDomino = Textures::Concrete();}
+        else if (ImGui::Button("Container")) {process->textureDomino = Textures::Container();}
+        //else if (ImGui::Button("Damier")) {process->textureDomino = Textures::Damier();}
         else if (ImGui::Button("Anubis")) {process->textureDomino = Textures::Anubis();}
+        else if (ImGui::Button("Point1")) {process->textureDomino = Textures::Point1();}
+        else if (ImGui::Button("Point2")) {process->textureDomino = Textures::Point2();}
         else { texturePicked = false; }
         ImGui::EndMenu();
     } else { texturePicked = false; }
@@ -172,8 +178,15 @@ void GUI::dominoModify() {
                 if (ImGui::Button("White")) {domino->texture = Textures::White();}
                 else if (ImGui::Button("Brick")) {domino->texture = Textures::Brick();}
                 else if (ImGui::Button("Brick2")) {domino->texture = Textures::Brick2();}
+                else if (ImGui::Button("Cobblestone")) {domino->texture = Textures::Brickwall();}
                 else if (ImGui::Button("Dirt")) {domino->texture = Textures::Dirt();}
                 else if (ImGui::Button("Wood")) {domino->texture = Textures::Wood();}
+                else if (ImGui::Button("Concrete")) {domino->texture = Textures::Concrete();}
+                else if (ImGui::Button("Container")) {domino->texture = Textures::Container();}
+                //else if (ImGui::Button("Damier")) {domino->texture = Textures::Damier();}
+                else if (ImGui::Button("Anubis")) {domino->texture = Textures::Anubis();}
+                else if (ImGui::Button("Point1")) {domino->texture = Textures::Point1();}
+                else if (ImGui::Button("Point2")) {domino->texture = Textures::Point2();}
                 else { texturePicked = false; }
                 ImGui::EndMenu();
             } else { texturePicked = false; }
@@ -229,7 +242,6 @@ void GUI::displaySaveLoad() {
                             float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, colX, colY, colZ;
                             std::string tex, mat;
                             iss >> type >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
-                            printf("%d %f %f %f\n", idx, posX, posY, posZ);
                             glm::vec3 pos = glm::vec3(posX, posY, posZ);
                             glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
                             glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);

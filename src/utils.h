@@ -64,8 +64,11 @@ class Textures {
 			else if (name == "anubis") {return Get().IDirt();}
 			else if (name == "white") {return Get().IWhite();}
 			else if (name == "wood") {return Get().IWood();}
-			else if (name == "hulk") {return Get().IHulk();}
-			else if (name == "bird") {return Get().IBird();}
+			else if (name == "concrete") {return Get().IConcrete();}
+			else if (name == "container") {return Get().IContainer();}
+			else if (name == "damier") {return Get().IDamier();}
+			else if (name == "point1") {return Get().IPoint1();}
+			else if (name == "point2") {return Get().IPoint2();}
 			else if (name == "brick2") {return Get().IBrick2();}
 			else if (name == "toy") {return Get().IToy();}
 			else {return Get().IWhite();}
@@ -76,8 +79,11 @@ class Textures {
 		static Texture* Anubis(){return Get().IAnubis();}
 		static Texture* White(){return Get().IWhite();}
 		static Texture* Wood(){return Get().IWood();}
-		static Texture* Hulk(){return Get().IHulk();}
-		static Texture* Bird(){return Get().IBird();}
+		static Texture* Concrete(){return Get().IConcrete();}
+		static Texture* Container(){return Get().IContainer();}
+		static Texture* Damier(){return Get().IDamier();}
+		static Texture* Point1(){return Get().IPoint1();}
+		static Texture* Point2(){return Get().IPoint2();}
 		static Texture* Brickwall(){return Get().IBrickwall();}
 		static Texture* Brick2(){return Get().IBrick2();}
 		static Texture* Toy(){return Get().IToy();}
@@ -96,8 +102,11 @@ class Textures {
 		Texture* IAnubis(){return &anubis;}
 		Texture* IWhite(){return &white;}
 		Texture* IWood(){return &wood;}
-		Texture* IHulk(){return &hulk;}
-		Texture* IBird(){return &bird;}
+		Texture* IConcrete(){return &concrete;}
+		Texture* IContainer(){return &container;}
+		Texture* IDamier(){return &damier;}
+		Texture* IPoint1(){return &point1;}
+		Texture* IPoint2(){return &point2;}
 		Texture* IBrickwall(){return &brickwall;}
 		Texture* IBrick2(){return &brick2;}
 		Texture* IToy(){return &toy;}
@@ -108,8 +117,11 @@ class Textures {
 		Texture anubis  = Texture(image::dirt, "anubis", true, true); 
 		Texture white = Texture(image::white, "white", false, false);
 		Texture wood  = Texture(image::wood, "wood", false, false);
-		Texture hulk  = Texture(image::hulk, "hulk", false, false);
-		Texture bird  = Texture(image::bird, "bird", false, false);
+		Texture concrete  = Texture(image::concrete, "concrete", false, false);
+		Texture container  = Texture(image::container, "container", false, false);
+		Texture damier  = Texture(image::damier, "damier", true, true);
+		Texture point1  = Texture(image::point1, "point1", true, true);
+		Texture point2  = Texture(image::point2, "point2", true, true);
 		Texture brickwall  = Texture(image::brickwall, "brickwall", false, false, image::brickwalln);
 		Texture brick2  = Texture(image::brick2, "brick2", false, false, image::brick2n, image::brick2d); // paralax
 		Texture toy  = Texture(image::toy, "toy", false, false, image::toyn, image::toyd); // paralax

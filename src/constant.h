@@ -21,33 +21,28 @@ namespace values
 namespace image
 {
     //classic image
-    static constexpr char white[128] = "../../image/white.png";
-    static constexpr char wood[128] = "../../image/woodFloor.png";
-    static constexpr char damier[128] = "../../image/damier.png";
-    static constexpr char container[128] = "../../image/container.jpg";
-    static constexpr char concrete[128] = "../../image/concreteTexture.png";
-    static constexpr char rgb[128] = "../../image/rgb.jpeg";
-    static constexpr char red[128] = "../../image/red.png";
-    static constexpr char green[128] = "../../image/green.png";
-    static constexpr char blue[128] = "../../image/blue.png";
-    static constexpr char yellow[128] = "../../image/yellow.png";
-    static constexpr char brick[128] = "../../image/brick.png";
-    static constexpr char dirt[128] = "../../image/dirt.png";
-    static constexpr char bird[128] = "../../image/bird.png";
-    static constexpr char hulk[128] = "../../image/hulk.png";
+    static constexpr char white[128] = "../../image/Textures/white.png";
+    static constexpr char wood[128] = "../../image/Textures/woodFloor.png";
+    static constexpr char damier[128] = "../../image/Textures/damier.png";
+    static constexpr char container[128] = "../../image/Textures/container.jpg";
+    static constexpr char concrete[128] = "../../image/Textures/concrete.png";
+    static constexpr char brick[128] = "../../image/Textures/brick.png";
+    static constexpr char dirt[128] = "../../image/Textures/dirt.png";
+    static constexpr char point1[128] = "../../image/Textures/point1.jpg";
+    static constexpr char point2[128] = "../../image/Textures/point2.jpg";
 
     //image with normal
-    static constexpr char brickwall[128] = "../../image/brickwall.jpg";
-    static constexpr char brickwalln[128] = "../../image/brickwall_normal.jpg";
+    static constexpr char brickwall[128] = "../../image/Textures/brickwall.jpg";
+    static constexpr char brickwalln[128] = "../../image/NormalMap/brickwall_normal.jpg";
 
     //image with paralax
-    static constexpr char brick2[128] = "../../image/bricks2.jpg";
-    static constexpr char brick2n[128] = "../../image/bricks2_normal.jpg";
-    static constexpr char brick2d[128] = "../../image/bricks2_disp.jpg";
+    static constexpr char brick2[128] = "../../image/Textures/bricks2.jpg";
+    static constexpr char brick2n[128] = "../../image/NormalMap/bricks2_normal.jpg";
+    static constexpr char brick2d[128] = "../../image/Parallax/bricks2_disp.jpg";
 
-    static constexpr char toy[128] = "../../image/toy_box.png";
-    static constexpr char toyn[128] = "../../image/toy_box_normal.png";
-    static constexpr char toyd[128] = "../../image/toy_box_disp.png";
+    static constexpr char toy[128] = "../../image/Textures/toy_box.png";
+    static constexpr char toyn[128] = "../../image/NormalMap/toy_box_normal.png";
+    static constexpr char toyd[128] = "../../image/Parallax/toy_box_disp.png";
 }
 
 namespace geometry
