@@ -19,6 +19,7 @@ namespace values
 
 namespace image
 {
+    //classic image
     static constexpr char white[128] = "../../image/white.png";
     static constexpr char wood[128] = "../../image/woodFloor.png";
     static constexpr char damier[128] = "../../image/damier.png";
@@ -33,12 +34,19 @@ namespace image
     static constexpr char dirt[128] = "../../image/dirt.png";
     static constexpr char bird[128] = "../../image/bird.png";
     static constexpr char hulk[128] = "../../image/hulk.png";
+
+    //image with normal
     static constexpr char brickwall[128] = "../../image/brickwall.jpg";
     static constexpr char brickwalln[128] = "../../image/brickwall_normal.jpg";
 
+    //image with paralax
     static constexpr char brick2[128] = "../../image/bricks2.jpg";
     static constexpr char brick2n[128] = "../../image/bricks2_normal.jpg";
     static constexpr char brick2d[128] = "../../image/bricks2_disp.jpg";
+
+    static constexpr char toy[128] = "../../image/toy_box.png";
+    static constexpr char toyn[128] = "../../image/toy_box_normal.png";
+    static constexpr char toyd[128] = "../../image/toy_box_disp.png";
 }
 
 namespace geometry

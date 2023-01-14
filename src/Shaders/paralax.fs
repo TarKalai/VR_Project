@@ -113,16 +113,18 @@ vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor) // in
     vec3 TangentViewPos  = TBN * eyePosition;
     vec3 TangentFragPos  = TBN * FragPos;    
 
-    vec3 lightDir = normalize(TangentViewPos - TangentFragPos);
-    vec2 texCoords = ParallaxMapping(TexCoord,  lightDir);
+    vec3 eyeDirection = normalize(TangentViewPos - TangentFragPos);
+    vec2 texCoords = ParallaxMapping(TexCoord,  eyeDirection);
 
     vec3 normal = texture(normalMap, texCoords).rgb;
     normal = normalize(normal * 2.0 - 1.0);  
     
     vec4 ambientColor = vec4(light.color, 1.0f)*light.ambientIntensity;
 
-    float diffuseFactor = max(dot(normalize(normal), normalize(lightDir)), 0.0); 
+    float diffuseFactor = max(dot(normalize(normal), normalize(eyeDirection)), 0.0); 
     vec4 diffuseColor = vec4(light.color, 1.0f)*light.diffuseIntensity * diffuseFactor;
+
+    vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
     
     vec4 specularColor = vec4(0,0,0,0); 
     if(diffuseFactor>0.0f)
@@ -215,13 +217,13 @@ void main(){
     finalColor += CalcPointLights();
     finalColor += CalcSpotLights(); 
 
-    // vec3 TangentLightPos = TBN * (-directionalLight.direction*1000);
-    // vec3 TangentViewPos  = TBN * eyePosition;
-    // vec3 TangentFragPos  = TBN * FragPos;    
-    // vec3 lightDir = normalize(TangentLightPos - TangentFragPos);
-    // vec2 texCoords = ParallaxMapping(TexCoord,  lightDir);
+    vec3 TangentLightPos = TBN * (-directionalLight.direction*1000);
+    vec3 TangentViewPos  = TBN * eyePosition;
+    vec3 TangentFragPos  = TBN * FragPos;    
+    vec3 lightDir = normalize(TangentViewPos - TangentFragPos);
+    vec2 texCoords = ParallaxMapping(TexCoord,  lightDir);
 
 
-    color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
+    color = texture(theTexture, texCoords)*finalColor*vec4(objectColor, 1.0);
     color = mix(vec4(skyColor, 1.0), color, visibility); // 0 visibility would correspond to same color as the sky. 
 }
