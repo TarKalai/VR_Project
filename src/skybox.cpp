@@ -80,24 +80,14 @@ void Skybox::BindTextures()
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay); 
     glActiveTexture(GL_TEXTURE12); 
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight); 
-    skyShader->SetBlendFactor(0.5f); // blend = 0.5 equal mix of day and night textures 
+    skyShader->SetBlendFactor(); // blend = 0.5 equal mix of day and night textures 
 
 }
 
 void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
-    // we don't want to take into account the translation part of the camera => we get rid of the last column of the transformation matrix
-    // which deal with translations
-    viewMatrix = glm::mat3(viewMatrix); 
-    rotation += 0.05; 
-    if(rotation > 360.0f)
-    {
-        rotation = 0.1f; 
-    }
-    viewMatrix = glm::rotate(viewMatrix, glm::radians(rotation), glm::vec3(0., 1., 0.)); 
-    viewMatrix = glm::mat4(glm::mat3(viewMatrix));
-    // first we convert into 3x3 matrix then to a 4x4 matrix , we will get a blank 4th col.
-
+    viewMatrix = updateRotation(viewMatrix);
+    
     glDepthMask(GL_FALSE); // so that the sky box is infinitely far away, no depth perception
 
     skyShader->UseShader(); 
@@ -110,6 +100,13 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     skyShader->Validate(); 
     skyMesh->draw(); 
     glDepthMask(GL_TRUE); 
+}
+
+glm::mat4 Skybox::updateRotation(glm::mat4 viewMatrix) {
+    glm::vec3 rot = glm::vec3(1.);
+    rot.y = 2*3.14*Time::getTime()/Ttime::maxTime;
+    viewMatrix = glm::rotate(viewMatrix, rot.y, glm::vec3(0., 1., 0.)); 
+    return glm::mat4(glm::mat3(viewMatrix));
 }
 
 Skybox::~Skybox(){}

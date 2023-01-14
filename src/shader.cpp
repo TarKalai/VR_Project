@@ -131,6 +131,14 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformEyePosition = GetEyePositionLocation(); 
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
+
+    
+    glUniform1i(uniformSkyboxDay, 11); 
+    glUniform1i(uniformSkyboxNight, 12); 
+    SetBlendFactor();
+    glUniform1f(GetReflectivityLocation(), Optic::getReflectivity());
+    glUniform1f(GetRefractivityLocation(), Optic::getRefractivity());
+    glUniform1f(GetCoefRefractionLocation(), Optic::getCoefRefractivity());
     
     
 
@@ -317,9 +325,6 @@ void Shader::CompileProgram()
     uniformSkyboxDay = glGetUniformLocation(shaderID, "skyboxDay"); 
     uniformSkyboxNight = glGetUniformLocation(shaderID, "skyboxNight"); 
     uniformBlendFactor = glGetUniformLocation(shaderID, "blendFactor"); 
-    
-    
-
 
     uniformPointLightCount = glGetUniformLocation(shaderID, "pointLightCount"); 
 
@@ -394,6 +399,11 @@ void Shader::CompileProgram()
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
     uniformLTC2 = glGetUniformLocation(shaderID, "LTC2");
     uniformMaterialDiffuse = glGetUniformLocation(shaderID, "material.diffuse");
+    
+    uniformReflectivity = glGetUniformLocation(shaderID, "Reflectivity");
+    uniformRefractivity = glGetUniformLocation(shaderID, "Refractivity");
+    uniformCoefRefraction = glGetUniformLocation(shaderID, "CoefRefraction");
+
 
     for (int i = 0; i < values::MAX_AREA_LIGHTS; i++){
 
@@ -497,8 +507,9 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
-void Shader::SetBlendFactor(float blend)
+void Shader::SetBlendFactor()
 {
+    float blend = pow(cos(3.14*Time::getTime()/Ttime::maxTime),4); 
     glUniform1f(uniformBlendFactor, blend); 
 }
 
@@ -624,6 +635,19 @@ GLuint Shader::GetShininessLocation(){
 GLuint Shader::GetEyePositionLocation(){
     return uniformEyePosition; 
 }
+
+GLuint Shader::GetReflectivityLocation() {
+    return uniformReflectivity;
+} 
+
+GLuint Shader::GetRefractivityLocation() {
+    return uniformRefractivity;
+} 
+
+GLuint Shader::GetCoefRefractionLocation() {
+    return uniformCoefRefraction;
+}
+
 
 Shader::~Shader(){
     ClearShader(); 

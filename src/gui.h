@@ -40,6 +40,7 @@ private:
     bool geometryPicked = false;
 
     void menuTitle();
+    void reflectionRefraction();
     float* getFPS();
     void displayFPS();
     void displayTime();
