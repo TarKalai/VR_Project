@@ -40,9 +40,6 @@ Shader objectShader;
 Shader directionalShadowShader; 
 Shader areaLightShader; 
 
-Skybox skyboxDay; 
-Skybox skyboxNight; 
-
 Camera camera; 
 
 DirectionalLight* mainLight; 
@@ -98,6 +95,7 @@ int main(){
     
     CreateShaders();
     CreateObjects(); 
+    Skybox skybox = Skybox();
 
     camera = Camera(glm::vec3(0.0f, 15.0f, -25.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, -30.0f);
 
@@ -133,27 +131,6 @@ int main(){
 	process.initMousePosition();
     
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
-
-    
-    std::vector<std::string> skyboxFacesDay; 
-    std::vector<std::string> skyboxFacesNight; 
-
-    skyboxFacesNight.push_back("../../image/Skyboxes/night_posx.jpg"); 
-    skyboxFacesNight.push_back("../../image/Skyboxes/night_negx.jpg"); 
-    skyboxFacesNight.push_back("../../image/Skyboxes/night_posy.jpg"); 
-    skyboxFacesNight.push_back("../../image/Skyboxes/night_negy.jpg"); 
-    skyboxFacesNight.push_back("../../image/Skyboxes/night_posz.jpg"); 
-    skyboxFacesNight.push_back("../../image/Skyboxes/night_negz.jpg");
-
-    skyboxFacesDay.push_back("../../image/Skyboxes/sky_posx.jpg"); 
-    skyboxFacesDay.push_back("../../image/Skyboxes/sky_negx.jpg"); 
-    skyboxFacesDay.push_back("../../image/Skyboxes/sky_posy.jpg"); 
-    skyboxFacesDay.push_back("../../image/Skyboxes/sky_negy.jpg"); 
-    skyboxFacesDay.push_back("../../image/Skyboxes/sky_posz.jpg"); 
-    skyboxFacesDay.push_back("../../image/Skyboxes/sky_negz.jpg");
-
-    skyboxNight = Skybox(skyboxFacesNight, false); 
-    skyboxDay = Skybox(skyboxFacesDay, true);
     
 
     while(!mainWindow.getShouldClose()){
@@ -176,14 +153,12 @@ int main(){
         // Order is really important : order = shadow, object, objectLight
         directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
         mainWindow.resetViewport();
-        // skybox.DrawSkyBox(view, projection); 
         glViewport(0, 0, 960, 540); 
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
         //glClear is also clearing the depth buffer bit.
 
-        skyboxDay.DrawSkyBox(view, projection);
-        skyboxNight.DrawSkyBox(view, projection); 
+        skybox.DrawSkyBox(view, projection);
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         areaLightShader.DrawLightObjects(projection, view);
              

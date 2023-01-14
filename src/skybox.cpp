@@ -1,29 +1,50 @@
 #include "skybox.h"
 
-Skybox::Skybox(){}
+Skybox::Skybox(){
+    createShader();
+    setDay("day");
+    setNight("night");
+}
 
-Skybox::Skybox(std::vector<std::string> faceLocations, bool day){
+void Skybox::setDay(std::string name) {
+    std::vector<std::string> skyboxFacesDay;
+    skyboxFacesDay.push_back("../../image/Skyboxes/"+name+"_posx.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/"+name+"_negx.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/"+name+"_posy.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/"+name+"_negy.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/"+name+"_posz.jpg"); 
+    skyboxFacesDay.push_back("../../image/Skyboxes/"+name+"_negz.jpg");
+    // DAY
+    glGenTextures(1, &textureDay); 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay);
 
-    // Shader Setup
+    linkTexture(skyboxFacesDay); 
+}
+
+void Skybox::setNight(std::string name) { 
+    std::vector<std::string> skyboxFacesNight; 
+
+    skyboxFacesNight.push_back("../../image/Skyboxes/"+name+"_posx.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/"+name+"_negx.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/"+name+"_posy.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/"+name+"_negy.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/"+name+"_posz.jpg"); 
+    skyboxFacesNight.push_back("../../image/Skyboxes/"+name+"_negz.jpg");
+    // NIGHT
+    glGenTextures(1, &textureNight); 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight);
+    linkTexture(skyboxFacesNight);
+}
+
+void Skybox::createShader() {
     skyShader = new Shader(); 
     skyShader->CreateFromFiles("../../src/Shaders/skybox.vs", "../../src/Shaders/skybox.fs"); 
 
     uniformProjection = skyShader->GetProjectionLocation(); 
     uniformView = skyShader->GetViewLocation(); 
-    // uniformFogColor = skyShader->GetFogColorLocation(); 
+}
 
-    // Texture Setup
-    // glGenTextures(1, &textureId); 
-    // glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); // generate the texture and bind it to thz cubemap.
-
-    if (day) {
-        glGenTextures(1, &textureDay); 
-        glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay);
-    } else {
-        glGenTextures(1, &textureNight); 
-        glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight);
-    }
-
+void Skybox::linkTexture(std::vector<std::string> faceLocations) {
     int width, height, bitDepth; 
 
     for(size_t i = 0; i < 6; i++)
@@ -51,13 +72,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations, bool day){
 
     skyMesh = new Object(geometry::cube, NULL, Materials::Empty(), glm::vec3(0.), glm::vec3(1.), glm::vec3(1.), false, glm::vec3(1.));
     skyMesh->MakeObject(); 
-
 }
-
-// void Skybox::LoadFogColor(float r, float g, float b)
-// { 
-//     skyShader->SetFogColor(r, g, b); 
-// }
 
 void Skybox::BindTextures()
 {
@@ -71,10 +86,8 @@ void Skybox::BindTextures()
 
 void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
-
     // we don't want to take into account the translation part of the camera => we get rid of the last column of the transformation matrix
     // which deal with translations
-    
     viewMatrix = glm::mat3(viewMatrix); 
     rotation += 0.05; 
     if(rotation > 360.0f)
@@ -93,22 +106,9 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-    // LoadFogColor(0.5, 0.5, 0.5); 
-
-    // glActiveTexture(GL_TEXTURE0); // we can do GL_TEXTURE0 because this shader is used independently from the other shaders 
-    // // the cube map is set to texture0
-
-    // glBindTexture(GL_TEXTURE_CUBE_MAP, textureId); 
-
-     
-
-
-    // we don't need to set the uniforms because by default it is set to 0
 
     skyShader->Validate(); 
-
     skyMesh->draw(); 
-
     glDepthMask(GL_TRUE); 
 }
 

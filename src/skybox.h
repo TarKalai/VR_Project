@@ -24,17 +24,19 @@ public:
     
     Skybox(); 
 
-    Skybox(std::vector<std::string> faceLocations, bool day); // vector of all the locations of our faces
+    void setDay(std::string name);
+    void setNight(std::string name);
 
     void DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix); 
-
-   // void LoadFogColor(float r, float g, float b); 
-
-   void BindTextures(); 
 
     ~Skybox();
 
 private:
+
+    void createShader();
+    void linkTexture(std::vector<std::string> faceLocations);
+
+    void BindTextures(); 
 
     GLuint textureDay, textureNight;
 
