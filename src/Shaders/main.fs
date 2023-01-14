@@ -63,7 +63,12 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS]; 
 uniform AreaLight areaLights[MAX_AREA_LIGHTS];
 
+
 uniform samplerCube skybox;
+uniform float Reflectivity;
+uniform float Refractivity;
+uniform float CoefRefraction;
+
 uniform sampler2D theTexture;
 uniform sampler2D directionalShadowMap; 
 uniform sampler2D LTC1; // for inverse M
@@ -418,13 +423,13 @@ void main(){
 	Diamond:  2.42
     */
 
-    // vec3 Refract = refract(-fragToEye,normal,1/1.52);
-    // color = texture(skybox, Refract);
+    vec3 Refract = refract(-fragToEye,normal,1/CoefRefraction);
+    vec4 refraction = texture(skybox, Refract);
     vec3 Reflect = reflect(-fragToEye, normal);
-    vec4 envColor = normalize(texture(skybox, Reflect));
+    vec4 reflection = texture(skybox, Reflect);
     // color = texture(skybox, Reflect) * .3; // plus sombre (vitre teinté)
     // color = texture(skybox, Reflect) * vec4(1.,0.,0., 1.0); // rouge
 
-    color = envColor*texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
+    color = (Reflectivity/3*refraction+texture(theTexture, TexCoord))*finalColor*vec4(objectColor, 1.0);
     //color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
 }

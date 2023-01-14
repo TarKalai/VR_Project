@@ -48,6 +48,11 @@ public:
     GLuint GetShininessLocation(); 
     GLuint GetEyePositionLocation(); 
 
+    GLuint GetReflectivityLocation(); 
+    GLuint GetRefractivityLocation(); 
+    GLuint GetCoefRefractionLocation(); 
+
+
     void SetDirectionalLight(DirectionalLight * dLight);
     void SetPointLights(PointLight * pLight,int lightCount); 
     void SetSpotLights(SpotLight * sLight, int lightCount);
@@ -94,7 +99,7 @@ private:
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
-    uniformskybox;
+    uniformskybox, uniformReflectivity, uniformRefractivity, uniformCoefRefraction;
 
     struct {
         GLuint uniformColor; 

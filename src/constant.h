@@ -3,6 +3,19 @@
 #include <glm/glm.hpp>
 #include "stb_image.h"
 
+namespace optic {
+    static float reflectivity = 1.;
+    static float refractivity = 1.;
+    static float coefRefraction = 1.52;
+    /* Refraction indices:
+	Air:      1.0
+	Water:    1.33
+	Ice:      1.309
+	Glass:    1.52
+	Diamond:  2.42
+    */
+}
+
 namespace values
 {
     static constexpr int MAX_POINT_LIGHTS = 4;

@@ -48,9 +48,10 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
 
-    
     glUniform1i(uniformskybox, 3);
-    //glEnable(GL_CULL_FACE);
+    glUniform1f(GetReflectivityLocation(), optic::reflectivity);
+    glUniform1f(GetRefractivityLocation(), optic::refractivity);
+    glUniform1f(GetCoefRefractionLocation(), optic::coefRefraction);
     
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -291,7 +292,11 @@ void Shader::CompileProgram()
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
     uniformLTC2 = glGetUniformLocation(shaderID, "LTC2");
     uniformMaterialDiffuse = glGetUniformLocation(shaderID, "material.diffuse");
+    
     uniformskybox = glGetUniformLocation(shaderID, "skybox");
+    uniformReflectivity = glGetUniformLocation(shaderID, "Reflectivity");
+    uniformRefractivity = glGetUniformLocation(shaderID, "Refractivity");
+    uniformCoefRefraction = glGetUniformLocation(shaderID, "CoefRefraction");
 
 
     for (int i = 0; i < values::MAX_AREA_LIGHTS; i++){
@@ -504,6 +509,18 @@ GLuint Shader::GetShininessLocation(){
 
 GLuint Shader::GetEyePositionLocation(){
     return uniformEyePosition; 
+}
+
+GLuint Shader::GetReflectivityLocation() {
+    return uniformReflectivity;
+} 
+
+GLuint Shader::GetRefractivityLocation() {
+    return uniformRefractivity;
+} 
+
+GLuint Shader::GetCoefRefractionLocation() {
+    return uniformCoefRefraction;
 }
 
 
