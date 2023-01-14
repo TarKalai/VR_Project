@@ -309,14 +309,7 @@ void Process::PutDominos(){
 													normalize(colorDomino));			
 						world->addObject(domino);
 						shader->addObject(domino);
-						shadow->addObject(domino);
-
-						Object* c = new Object(geometry::cube, textureDomino, materialDomino, 
-													glm::vec3(lastDomino.x, lastDomino.y+scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), 
-													glm::vec3(scaleDomino*dimDomino.x/2, scaleDomino*dimDomino.y/2, scaleDomino*dimDomino.z/2), 
-													normalize(colorDomino));			
-						shader->addObject(c);
-
+						shadow->addObject(domino);		
 					}
 					else 
 						firstDomino = true;

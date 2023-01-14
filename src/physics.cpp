@@ -24,8 +24,10 @@ btCollisionShape* PhysicalWorld::getShape(Object *obj) {
         return new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
     else if (obj->type==geometry::sphere)
         return new btSphereShape(btScalar(obj->scale.x));
-    else if (obj->type==geometry::bunny)
-        return new btBoxShape(btVector3((dominoDim::thick/2)*obj->scale.x, (dominoDim::height/2)*obj->scale.y, (dominoDim::width/2)*obj->scale.z));
+    else if (obj->type==geometry::bunny) {
+        printf("bunny: %f %f %f \n", (bunnyDim::thick/2)*obj->scale.x, (bunnyDim::height/2)*obj->scale.y, (bunnyDim::width/2)*obj->scale.z);
+        return new btBoxShape(btVector3((bunnyDim::thick/2)*obj->scale.x, (bunnyDim::height/2)*obj->scale.y, (bunnyDim::width/2)*obj->scale.z));
+    }
     return new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
 }
 

@@ -105,8 +105,8 @@ namespace dominoDim
 }
 namespace bunnyDim
 {
-    static constexpr float height = 5;
-    static constexpr float width = 3;
+    static constexpr float height = 3;
+    static constexpr float width = 2.5;
     static constexpr float thick = 4;
 }
 
