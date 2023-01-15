@@ -30,7 +30,7 @@ btCollisionShape* PhysicalWorld::getShape(Object *obj) {
     return new btBoxShape(btVector3(obj->scale.x, obj->scale.y, obj->scale.z));
 }
 
-void PhysicalWorld::addObject(Object *obj, int type){
+void PhysicalWorld::addObject(Object *obj){
     btCollisionShape* colShape = getShape(obj);
     
     collisionShapes.push_back(colShape);
@@ -42,7 +42,7 @@ void PhysicalWorld::addObject(Object *obj, int type){
 
     //rigidbody is dynamic if and only if mass is non zero, otherwise static
     btScalar mass;
-    if (type==PHYSIC::GROUND_OBJECT) 
+    if (obj->physicType==PHYSIC::UNMOVABLE) 
         mass = btScalar(0.);
     else
         mass = btScalar(obj->scale.x * obj->scale.y * obj->scale.z);
@@ -72,10 +72,10 @@ void PhysicalWorld::addObject(Object *obj, int type){
 
     btRigidBody* body = new btRigidBody(rbInfo);
     body->setUserIndex(obj->id); // >0 used for classical collisionable object with openGL display (e.g. dominos)
-    if (type==PHYSIC::GROUND_OBJECT) 
-        setType(body, PHYSIC::GROUND_OBJECT);
+    if (obj->physicType==PHYSIC::UNMOVABLE) 
+        setType(body, PHYSIC::UNMOVABLE);
     else
-        setType(body, PHYSIC::NORMAL_OBJECT);
+        setType(body, PHYSIC::MOVABLE);
     //body->setLinearVelocity(btVector3(velocity.x, velocity.y,velocity.z)); // set initial velocity 
     dynamicsWorld->addRigidBody(body);
 }
@@ -229,7 +229,7 @@ void PhysicalWorld::animate()
             trans = obj->getWorldTransform();
         }
 
-        if (getType(body) != PHYSIC::GROUND_OBJECT){ // not ground
+        if (getType(body) != PHYSIC::UNMOVABLE){ // not ground
             Object* glObj = glObjects.at(body->getUserIndex());
             btScalar roll, pitch, yaw;
             trans.getRotation().getEulerZYX(yaw,pitch,roll);

@@ -21,7 +21,7 @@
 
 class GUI {
 public:
-    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader);
+    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader, Shader* bumpMapShader, Shader* paralaxMapShader, Shader* objectLightShader);
     void update();
     void clear();
 
@@ -32,6 +32,10 @@ private:
     Shader* shader;
     Shader* shadow;
     Shader* omniShadow;
+    Shader* bumpmap;
+    Shader* parallax;
+    Shader* objectLight;
+    
     double prev = 0;
 	int deltaFrame = 0;
     float fps = 0;
@@ -51,4 +55,5 @@ private:
     void dominoModify();
     void displayPushPower();
     void shortcutList();
+    void addToShaders(Object* obj);
 };

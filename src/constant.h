@@ -100,6 +100,14 @@ namespace general
     static constexpr float spotShadowResolution = 2048;
 }
 
+namespace ShaderType
+{
+    static constexpr int OBJECT = 0;
+    static constexpr int BUMPMAP = 1;
+    static constexpr int PARALLAX = 2;
+    static constexpr int LIGHT = 3;
+}
+
 namespace Ttime
 {
     static constexpr int maxTime = 5*60; // (number of seconds, e.g. 24h = 86400 seconds)
@@ -114,7 +122,7 @@ namespace dominoDim
 }
 namespace bunnyDim
 {
-    static constexpr float height = 3;
+    static constexpr float height = 3.2;
     static constexpr float width = 2.5;
     static constexpr float thick = 4;
 }
@@ -122,8 +130,8 @@ namespace bunnyDim
 namespace PHYSIC
 {
     static constexpr int ANY_TYPE = 0;
-    static constexpr int NORMAL_OBJECT = 1;
-    static constexpr int GROUND_OBJECT = 2;
+    static constexpr int MOVABLE = 1;
+    static constexpr int UNMOVABLE = 2;
 }
 
 namespace color

@@ -10,16 +10,17 @@ Object::Object() {
     VBO = 0; 
 }
 
-Object::Object(int _geometry, Texture* tex, Material* matos, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color,  bool Bumpmap){
+Object::Object(int _geometry, int _shaderType, Texture* tex, Material* matos, int _physicType, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color){
     type = _geometry;
     texture = tex;
     material = matos;
+    physicType = _physicType;
+    shaderType = _shaderType;
     position = obj_pos;
     rotation = obj_rot;
     scale = obj_scale;
     color = Color;
     id = objectCounter;
-    bumpmap = Bumpmap;
     objectCounter++;  
 
     LoadVertices();
@@ -105,7 +106,7 @@ void Object::LoadVertices(){
             AssignPoNoTe(&v2, f2);
             AssignPoNoTe(&v3, f3);
 
-            if (bumpmap){
+            if (shaderType == ShaderType::BUMPMAP || shaderType == ShaderType::PARALLAX) {
                 AssignTangent(&v1, &v2, &v3);
             }
 
@@ -134,7 +135,7 @@ void Object::MakeObject(){
 
     float* data = getData();
     int size = 8; // pos is a vec3, tex is a vec2, normal is a vec3 (sum = 8)
-    if (bumpmap) size += 3; // tangent = vec3 (sum += 3)
+    if (shaderType == ShaderType::BUMPMAP || shaderType == ShaderType::PARALLAX) size += 3; // tangent = vec3 (sum += 3)
 
 
     
@@ -163,7 +164,7 @@ void Object::MakeObject(){
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    if (bumpmap){
+    if (shaderType == ShaderType::BUMPMAP || shaderType == ShaderType::PARALLAX){
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(8 * sizeof(float)));
         glEnableVertexAttribArray(3);
         // glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, size * sizeof(GLfloat), (void*)(11 * sizeof(float)));
@@ -195,7 +196,7 @@ void Object::setPosRot(glm::vec3 obj_pos, glm::vec3 obj_rot) {
 
 float* Object::getData(){
     float* data;
-    if (bumpmap){
+    if (shaderType == ShaderType::BUMPMAP || shaderType == ShaderType::PARALLAX){
         data = new float[11 * numVertices];
         for (int i = 0; i < numVertices; i++) {
             Vertex v = vertices.at(i);

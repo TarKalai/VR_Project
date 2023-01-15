@@ -28,9 +28,10 @@ class Object
 {
 public:
 	static int objectCounter;
-
-	bool bumpmap;
+	
 	int type;
+	int shaderType;
+	int physicType;
 
 	glm::vec3 position;
 	glm::vec3 rotation;
@@ -58,7 +59,7 @@ public:
 	glm::mat4 model = glm::mat4(1.0);
 
 	Object();
-	Object(int _geometry, Texture* tex, Material* matos,  glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color=glm::vec3(1.0), bool Bumpmap=false);
+	Object(int _geometry, int _shaderType, Texture* tex, Material* matos, int _physicType, glm::vec3 obj_pos, glm::vec3 obj_rot, glm::vec3 obj_scale, glm::vec3 Color=glm::vec3(1.0));
 
 	
 	void MakeObject();

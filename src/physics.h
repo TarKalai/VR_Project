@@ -29,7 +29,7 @@ public:
 
     btCollisionShape* getShape(Object *obj);
 
-    void addObject(Object *obj, int type=PHYSIC::NORMAL_OBJECT);
+    void addObject(Object *obj);
     int getType(btRigidBody* body) { return body->getUserIndex2(); }
     void setType(btRigidBody* body, int type) { body->setUserIndex2(type); }
     

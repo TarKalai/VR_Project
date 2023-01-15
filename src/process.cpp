@@ -196,7 +196,7 @@ void Process::Pushing() {
 		double dist = 200; // Distance to push object (May vary depending of the farplane)
 		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
 
-		world->RayCastPush(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT, enterPressed);
+		world->RayCastPush(camera->getPosition(), to, PHYSIC::MOVABLE, enterPressed);
 		enterPressed = 0;
 	}
 }
@@ -256,7 +256,7 @@ void Process::ModifyDomino() {
 		double dist = 200; // Distance to delete object (May vary depending of the farplane)
 		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
 
-		selectedDomino = world->RayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT); // See GUI for next step
+		selectedDomino = world->RayCastObj(camera->getPosition(), to, PHYSIC::MOVABLE); // See GUI for next step
 	} else { selectedDomino = nullptr; }
 }
 
@@ -267,7 +267,7 @@ void Process::DeleteDominos() {
 
 		double dist = 200; // Distance to delete object (May vary depending of the farplane)
 		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
-		int objID = world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::NORMAL_OBJECT);
+		int objID = world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::MOVABLE);
 		shader->remove(objID);
 		shadow->remove(objID);
 	}
@@ -282,7 +282,7 @@ void Process::PutDominos(){
 	if (dir.y < 0) {
 		double ratio = -pos.y/dir.y;
 		glm::vec3 to = glm::vec3(pos.x+ratio*dir.x, pos.y+ratio*dir.y, pos.z+ratio*dir.z);
-		glm::vec3 destination = world->RayCastPos(camera->getPosition(), to, PHYSIC::GROUND_OBJECT);
+		glm::vec3 destination = world->RayCastPos(camera->getPosition(), to, PHYSIC::UNMOVABLE);
 
 		if (destination.y != -1) {
 			if (firstDomino) {
@@ -302,7 +302,7 @@ void Process::PutDominos(){
 					nextDomino.y = destination.y;
 					glm::vec3 delta_dir = nextDomino-lastDomino;
 					if (abs(nextDomino.y - lastDomino.y) < 0.1){
-						Object* domino = new Object(geometryDomino, textureDomino, materialDomino, 
+						Object* domino = new Object(geometryDomino, ShaderType::OBJECT, textureDomino, materialDomino, PHYSIC::MOVABLE,
 													glm::vec3(lastDomino.x, lastDomino.y+scaleDomino, lastDomino.z), glm::vec3(0., -glm::atan(delta_dir.z/delta_dir.x), 0.), glm::vec3(scaleDomino), 
 													normalize(colorDomino));			
 						world->addObject(domino);

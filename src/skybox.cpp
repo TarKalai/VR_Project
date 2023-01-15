@@ -70,7 +70,7 @@ void Skybox::linkTexture(std::vector<std::string> faceLocations) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_TEXTURE_MAG_FILTER: when we are closer to the image. 
 
 
-    skyMesh = new Object(geometry::cube, NULL, Materials::Empty(), glm::vec3(0.), glm::vec3(1.), glm::vec3(1.), glm::vec3(1.));
+    skyMesh = new Object(geometry::cube, ShaderType::LIGHT, NULL, Materials::Empty(), PHYSIC::UNMOVABLE, glm::vec3(0.), glm::vec3(1.), glm::vec3(1.), glm::vec3(1.));
     skyMesh->MakeObject(); 
 }
 

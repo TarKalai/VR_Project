@@ -15,7 +15,7 @@ void LightConstructor::createMainLight(){
 }
 
 void LightConstructor::createPointLight(){  
-    for (int i=0; i<10; i++) {
+    for (int i=0; i<1; i++) {
 		glm::vec3 pos = glm::vec3(Utils::getRandom(-30.0, 30.0),Utils::getRandom(1.0, 5.0),Utils::getRandom(-30.0, 30.0));
 		glm::vec3 rot = glm::vec3(0.0, 0.0, 0.0);
 		glm::vec3 scale = glm::vec3(0.25);
@@ -26,7 +26,7 @@ void LightConstructor::createPointLight(){
             color = color::Green;
         else
             color = color::Blue;
-		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Empty(), pos, rot, scale, color);
+		Object* sphere = new Object(geometry::sphere,  ShaderType::LIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, pos, rot, scale, color);
 		pointLightObjects.push_back(sphere);
 
 		pointLights[i] = PointLight(general::pointShadowResolution, general::pointShadowResolution,
@@ -66,7 +66,5 @@ void LightConstructor::createTorch(){
                             20.0f);  // spread of the angle : 20°
     spotLightCount++;
 }
-
-
 
 LightConstructor::~LightConstructor(){}

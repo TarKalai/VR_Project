@@ -1,12 +1,15 @@
 #include "gui.h"
 
-GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader) {
+GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader, Shader* bumpMapShader, Shader* paralaxMapShader, Shader* objectLightShader) {
     process = processArg;
     display = displayArg;
     world = worldArg;
     shader = shaderArg;
     shadow = shadowArg;
     omniShadow = omniShadowShader;
+    bumpmap = bumpMapShader;
+    parallax = paralaxMapShader;
+    objectLight = objectLightShader;
 }
 
 void GUI::update() {
@@ -235,7 +238,7 @@ void GUI::displaySaveLoad() {
         {
             if (ImGui::BeginMenu("Load"))
             {
-                char file[256] = "";
+                char file[256];
                 #ifdef _WIN32
                 if (ImGui::InputText("##loadName", file, sizeof(file), ImGuiInputTextFlags_EnterReturnsTrue)) {
                     strcat(file, ".save");
@@ -250,32 +253,41 @@ void GUI::displaySaveLoad() {
                     }
                 }
                 #endif
-                if (file != "") {
-                    std::ifstream in("../../save/"+std::string(file));
+
+                std::string fileStr(file);
+                if (fileStr.length() >= 5) {
+                    std::ifstream in("../../save/"+fileStr);
                     // Check if the file was successfully opened
                     if (in.fail()) { std::cout << "Error opening file" << std::endl;}
                     else {
+                        // Delete World
+                        for (auto& pair : world->glObjects) {
+                            int idx = pair.first;
+                            shader->remove(idx);
+                            shadow->remove(idx);
+                            omniShadow->remove(idx);
+                            bumpmap->remove(idx);
+                            parallax->remove(idx);
+                            objectLight->remove(idx);
+                        }  
+
                         std::string line;
                         while (std::getline(in, line)) {
                             std::istringstream iss(line); // Like a "split"
                             std::string indice;
 
-                            int type, idx;
+                            int idx, shaderType, physicType, type;
                             float posX, posY, posZ, rotX, rotY, rotZ, scaX, scaY, scaZ, colX, colY, colZ;
                             std::string tex, mat;
-                            iss >> type >> idx >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
+                            iss >> idx >> shaderType >> physicType >> type >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> scaX >> scaY >> scaZ >> colX >> colY >> colZ >> tex >> mat;
                             glm::vec3 pos = glm::vec3(posX, posY, posZ);
                             glm::vec3 rot = glm::vec3(rotX, rotY, rotZ);
                             glm::vec3 scale = glm::vec3(scaX, scaY, scaZ);
                             glm::vec3 color = glm::vec3(colX, colY, colZ);
                             Texture* texture = Textures::Get(tex);
                             Material* material= Materials::Get(mat);
-                            Object* domino = new Object(type, texture, material,  pos, rot, scale, color);	
-                            world->addObject(domino);  
-                            shader->addObject(domino);
-                            shadow->addObject(domino);
-                            omniShadow->addObject(domino);
-                            
+                            Object* obj = new Object(type, shaderType, texture, material, physicType,  pos, rot, scale, color);	
+                            addToShaders(obj);
                         }
                     }
                 }
@@ -293,15 +305,14 @@ void GUI::displaySaveLoad() {
                     for (auto& pair : world->glObjects) {
                         int idx = pair.first;
                         Object* object = pair.second;
-                        if (idx != 0) {
-                            out << object->type << " " << idx << " ";
-                            out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
-                            out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
-                            out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
-                            out << object->color.x << " " << object->color.y << " " << object->color.z << " ";
-                            out << object->texture->name << " ";
-                            out << object->material->name << std::endl;
-                        }
+
+                        out << idx << " " << object->shaderType << " " << object->physicType << " " << object->type << " ";
+                        out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
+                        out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
+                        out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
+                        out << object->color.x << " " << object->color.y << " " << object->color.z << " ";
+                        out << object->texture->name << " ";
+                        out << object->material->name << std::endl;
                     }  
                     // Close the file
                     out.close();
@@ -380,4 +391,21 @@ void GUI::clear(){
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+void GUI::addToShaders(Object* obj) {
+    if (obj->shaderType == ShaderType::LIGHT) {
+        objectLight->addObject(obj);
+    }
+    else {
+        world->addObject(obj);
+        shadow->addObject(obj); 
+        omniShadow->addObject(obj);
+        if (obj->shaderType == ShaderType::OBJECT)
+            shader->addObject(obj);
+        if (obj->shaderType == ShaderType::BUMPMAP)
+            bumpmap->addObject(obj);
+        else if (obj->shaderType == ShaderType::PARALLAX)
+            parallax->addObject(obj);
+    }
 }
