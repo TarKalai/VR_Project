@@ -64,7 +64,8 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS]; 
 uniform AreaLight areaLights[MAX_AREA_LIGHTS];
 
-
+uniform float sinTime;
+uniform float cosTime;
 uniform samplerCube skyboxDay;
 uniform samplerCube skyboxNight;
 uniform float blendFactor;
@@ -418,12 +419,11 @@ void main(){
 
     finalColor += CalcAreaLights();
 
-    // color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
-    // color = mix(vec4(skyColor, 1.0), color, visibility); // 0 visibility would correspond to same color as the sky. 
 
-    vec3 Refract = refract(-fragToEye,normal,1/CoefRefraction);
-    vec4 refraction = mix(texture(skyboxDay, Refract), texture(skyboxNight, Refract), blendFactor); 
-    vec3 Reflect = reflect(-fragToEye, normal);
+    mat3 timeRotation = mat3(cosTime,0,sinTime, 0,1,0, -sinTime,0,cosTime);
+    vec3 Refract = refract(-fragToEye, normal,1/CoefRefraction)*timeRotation;
+    vec4 refraction = mix(texture(skyboxDay, Refract), texture(skyboxNight, -Refract), blendFactor); 
+    vec3 Reflect = reflect(-fragToEye, normal)*timeRotation;
     vec4 reflection = mix(texture(skyboxDay, Reflect), texture(skyboxNight, Reflect), blendFactor); 
 
 

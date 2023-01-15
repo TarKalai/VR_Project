@@ -51,6 +51,8 @@ public:
     GLuint GetUniformSkyboxDay(); 
     GLuint GetUniformSkyboxNight(); 
     GLuint GetUniformBlendFactor(); 
+    GLuint GetUniformSinTime(); 
+    GLuint GetUniformCosTime(); 
 
     GLuint GetReflectivityLocation(); 
     GLuint GetRefractivityLocation(); 
@@ -69,6 +71,7 @@ public:
 
     void ConnectSkyboxes(); 
     void SetBlendFactor(); 
+    void SetTime();
 
     void addObject(Object *obj);
     void addObjects(std::vector<Object*> objects);
@@ -127,6 +130,7 @@ private:
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
     uniformNormalMap, uniformSkyColor, uniformDepthMap,
+    uniformSinTime, uniformCosTime,
     uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor, 
     uniformReflectivity, uniformRefractivity, uniformCoefRefraction;
 
