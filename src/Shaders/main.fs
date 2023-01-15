@@ -50,7 +50,7 @@ struct AreaLight{
 struct Material{
     float specularIntensity; 
     float shininess;  
-    vec4 albedoRoughness; // (x,y,z) = color, w = roughness
+    float albedoRoughness; // (x,y,z) = color, w = roughness
 };
 
 struct OmniShadowMap
@@ -449,7 +449,7 @@ vec4 CalcAreaLights(){
         float dotNV = clamp(dot(N, V), 0.0, 1.0);
 
         // use roughness and sqrt(1-cos_theta) to sample M_texture
-        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0 - dotNV));
+        vec2 uv = vec2(material.albedoRoughness, sqrt(1.0 - dotNV));
         uv = uv*LUT_SCALE + LUT_BIAS;
 
         // get 4 parameters for inverse_M

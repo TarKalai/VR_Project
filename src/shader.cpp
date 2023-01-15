@@ -43,8 +43,8 @@ void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 5, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 5 + pointLightCount, pointLightCount); 
+    SetPointLights(pointLights, pointLightCount, 7, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 7 + pointLightCount, pointLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
@@ -60,7 +60,7 @@ void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view,
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f;
-    // spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
 
     RenderScene();
@@ -87,8 +87,8 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 5, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 5 + pointLightCount, pointLightCount); 
+    SetPointLights(pointLights, pointLightCount, 7, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 7 + pointLightCount, pointLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
@@ -99,11 +99,11 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
 
     SetTexture(1);
     SetNormalMap(2);
-    SetDirectionalShadowMap(3);
+    SetDirectionalShadowMap(4);
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f;
-    //spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
 
     RenderScene();
@@ -143,8 +143,8 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
 
     
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 5, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 5 + pointLightCount, pointLightCount); 
+    SetPointLights(pointLights, pointLightCount, 7, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 7 + pointLightCount, pointLightCount); 
     SetAreaLights(areaLights, areaLightCount); 
    
     // --------------------------------------------------------- // 
@@ -152,21 +152,21 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     SetDirectionalLightTransform(&resmainLight); 
 
 
-    mainLight->GetShadowMap()->Read(GL_TEXTURE2);// we are binding to a given textureUnit and we are binding that texture to that tewture unti. 
+    mainLight->GetShadowMap()->Read(GL_TEXTURE4);// we are binding to a given textureUnit and we are binding that texture to that tewture unti. 
     // we use GL_TEXTURE1 because GL_TECTURE0 is taken for the normal texture of the objects
     // shadowMap is going to be bound to GL_TEXTURE1
 
     SetTexture(1); // bound to texture unit 0 
-    SetDirectionalShadowMap(2); // bound to GL_TEXTURE1
-    SetLTC1(3);
-    SetLTC2(4);
+    SetDirectionalShadowMap(4); // bound to GL_TEXTURE1
+    SetLTC1(5);
+    SetLTC2(6);
 
     // --------------------------------------------------------- // 
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
-    //spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
     Validate(); 
 
@@ -417,7 +417,7 @@ void Shader::CompileProgram()
     uniformAreaLightCount = glGetUniformLocation(shaderID, "areaLightCount");
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
     uniformLTC2 = glGetUniformLocation(shaderID, "LTC2");
-    uniformMaterialDiffuse = glGetUniformLocation(shaderID, "material.diffuse");
+    uniformAlbedoRoughness = glGetUniformLocation(shaderID, "material.albedoRoughness");
 
     for (int i = 0; i < values::MAX_AREA_LIGHTS; i++){
 
@@ -550,11 +550,8 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount, unsigned
 void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     if(lightCount > values::MAX_AREA_LIGHTS) lightCount = values::MAX_AREA_LIGHTS; 
 
-    glUniform1i(uniformAreaLightCount, lightCount); // make sure it is an int ! to go through the loop
-    
-    // glUniform1i(uniformMaterialDiffuse, 0);
-    // glUniform1i(uniformLTC1, 3);
-    // glUniform1i(uniformLTC2, 4); 
+    glUniform1i(uniformAreaLightCount, lightCount);
+    glUniform1f(uniformAlbedoRoughness, 0.5);
 
     for(int i=0; i < lightCount; i++){
 

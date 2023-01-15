@@ -260,7 +260,7 @@ const char* Object::getGeometryPath() {
         return geometryPath::domino;
     else if (type == geometry::plane) {
         scale.y = general::floorThickness;
-        return geometryPath::cube;
+        return geometryPath::plane;
     }
     else if (type == geometry::cube)
         return geometryPath::cube;

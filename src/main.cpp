@@ -202,7 +202,7 @@ int main(){
     
 
     
-	for (int i=0; i<0; i++) {
+	for (int i=0; i<1; i++) {
 		glm::vec3 pos = glm::vec3(-10,1,0);
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0), 0, 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1);
@@ -265,9 +265,9 @@ int main(){
         bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
         paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
 
-        glActiveTexture(GL_TEXTURE3);
+        glActiveTexture(GL_TEXTURE5);
 		glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
-		glActiveTexture(GL_TEXTURE4);
+		glActiveTexture(GL_TEXTURE6);
 		glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
         
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
