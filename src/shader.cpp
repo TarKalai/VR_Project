@@ -522,9 +522,9 @@ void Shader::SetBlendFactor()
 
 void Shader::SetTime()
 {
-    float sinTime = sin(2*3.14*Time::getTime()/Ttime::maxTime); 
+    float sinTime = -sin(2*3.14*Time::getTime()/Ttime::maxTime); 
     glUniform1f(uniformSinTime, sinTime);
-    float cosTime = cos(2*3.14*Time::getTime()/Ttime::maxTime); 
+    float cosTime = -cos(2*3.14*Time::getTime()/Ttime::maxTime); 
     glUniform1f(uniformCosTime, cosTime);  
 }
 
