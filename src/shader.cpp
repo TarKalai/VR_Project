@@ -352,6 +352,7 @@ void Shader::CompileProgram()
     uniformSkyboxDay = glGetUniformLocation(shaderID, "skyboxDay"); 
     uniformSkyboxNight = glGetUniformLocation(shaderID, "skyboxNight"); 
     uniformBlendFactor = glGetUniformLocation(shaderID, "blendFactor"); 
+    uniformSunLightColor = glGetUniformLocation(shaderID, "sunLightColor"); 
     uniformSinTime = glGetUniformLocation(shaderID, "sinTime"); 
     uniformCosTime = glGetUniformLocation(shaderID, "cosTime"); 
 
@@ -603,6 +604,13 @@ void Shader::SetBlendFactor()
     glUniform1f(uniformBlendFactor, blend); 
 }
 
+void Shader::SetSunLightColor() {
+    float base = 1.5;
+    float x = glm::sin(2*3.14*Time::getTime()/Ttime::maxTime);
+    glm::vec3 color = glm::normalize(glm::vec3(base+color::OrangeRed.x*pow(x,20), base+color::OrangeRed.y*pow(x,20), base+color::OrangeRed.z*pow(x,20)));
+    glUniform3f(uniformSunLightColor, color.x, color.y, color.z);
+}
+
 void Shader::SetTime()
 {
     float sinTime = -sin(2*3.14*Time::getTime()/Ttime::maxTime); 
@@ -711,6 +719,10 @@ GLuint Shader::GetUniformSkyboxNight(){
 
 GLuint Shader::GetUniformBlendFactor(){
     return uniformBlendFactor; 
+}
+
+GLuint Shader::GetUniformSunLightColor(){
+    return uniformSunLightColor; 
 }
 
 GLuint Shader::GetUniformSinTime(){

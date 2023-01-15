@@ -80,8 +80,8 @@ void Skybox::BindTextures()
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay); 
     glActiveTexture(GL_TEXTURE8); 
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight); 
-    skyShader->SetBlendFactor(); // blend = 0.5 equal mix of day and night textures 
-
+    skyShader->SetBlendFactor();
+    skyShader->SetSunLightColor();
 }
 
 void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)

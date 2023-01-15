@@ -54,6 +54,7 @@ public:
     GLuint GetUniformSkyboxDay(); 
     GLuint GetUniformSkyboxNight(); 
     GLuint GetUniformBlendFactor(); 
+    GLuint GetUniformSunLightColor(); 
     GLuint GetUniformSinTime(); 
     GLuint GetUniformCosTime(); 
 
@@ -84,6 +85,7 @@ public:
 
     void ConnectSkyboxes(); 
     void SetBlendFactor(); 
+    void SetSunLightColor(); 
     void SetTime();
 
     void addObject(Object *obj);
@@ -146,7 +148,7 @@ private:
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
     uniformNormalMap, uniformSkyColor, uniformDepthMap,
-    uniformSinTime, uniformCosTime,
+    uniformSinTime, uniformCosTime, uniformSunLightColor,
     uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor, 
     uniformReflectivity, uniformRefractivity, uniformCoefRefraction,
     
