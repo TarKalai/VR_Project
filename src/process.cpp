@@ -319,26 +319,17 @@ void Process::PutDominos(){
 
 void Process::FlashLight() {
 	glm::vec3 color = Torch::getColor();
-	glm::vec2 intensity = Torch::getIntensity();
 
 	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) { // Torch mode
 		Torch::setOn(true);
 		// INTENSITY
 		// ambiant
 		if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-			intensity.x = max(0, intensity.x-0.1);
+			Torch::setIntensity(glm::max(0., Torch::getIntensity()-0.05));
 		} 
 		else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-			intensity.x = min(1, intensity.x+0.1);
+			Torch::setIntensity(glm::min(5., Torch::getIntensity()+0.05));
 		}
-		// diffuse
-		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-			intensity.y = max(0, intensity.y-0.1);
-		} 
-		else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-			intensity.y = min(1, intensity.y+0.1);
-		}
-		Torch::setIntensity(intensity);
 		// SIZE
 		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
 			Torch::setSize(glm::max(10.f, Torch::getSize()-1));

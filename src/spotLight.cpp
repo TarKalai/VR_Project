@@ -47,8 +47,8 @@ void SpotLight::SetFlash(glm::vec3 pos, glm::vec3 dir){
         direction = dir;
         
         color = Torch::getColor();
-        ambientIntensity = Torch::getIntensity().x;
-        diffuseIntensity = Torch::getIntensity().y;
+        ambientIntensity = Torch::getIntensity();
+        diffuseIntensity = Torch::getIntensity();
         procEdge = cosf(glm::radians(Torch::getSize())); 
     }
     else { position = glm::vec3(-1000); }

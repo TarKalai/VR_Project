@@ -335,10 +335,10 @@ class Torch
             return color();
         }	
 
-        static void setIntensity(const glm::vec2 _intensity){
+        static void setIntensity(const float _intensity){
             intensity() = _intensity;
         }           
-        static const glm::vec2& getIntensity(){
+        static const float getIntensity(){
             return intensity();
         }	
 
@@ -361,8 +361,8 @@ class Torch
             return color;
         }
 
-		static glm::vec2& intensity(){
-            static glm::vec2 intensity = glm::vec2(1, 0.1);
+		static float& intensity(){
+            static float intensity = 1;
             return intensity;
         }
 
