@@ -21,7 +21,7 @@
 
 class GUI {
 public:
-    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
+    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader);
     void update();
     void clear();
 
@@ -31,6 +31,7 @@ private:
     PhysicalWorld* world;
     Shader* shader;
     Shader* shadow;
+    Shader* omniShadow;
     double prev = 0;
 	int deltaFrame = 0;
     float fps = 0;

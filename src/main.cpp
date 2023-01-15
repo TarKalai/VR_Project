@@ -63,9 +63,9 @@ GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
 
 void CreateObjects(){
     // GROUNDS
-    Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
+    Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.));
     physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
-    bumpMapShader.addObject(ground);
+    objectShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
     omniShadowShader.addObject(ground);
 
@@ -175,7 +175,7 @@ void OmniShadowMapPass(PointLight* light)
 
 int main(){
 
-    mainWindow = Display(true); 
+    mainWindow = Display(false); 
     mainWindow.Initialise(); 
 
     LTC_matrices mLTC;
@@ -222,11 +222,11 @@ int main(){
 
 	glfwSwapInterval(1);
 
-    Process process = Process(&mainWindow, &camera, &physicalWorld, &objectShader, &directionalShadowShader);
+    Process process = Process(&mainWindow, &camera, &physicalWorld, &objectShader, &directionalShadowShader, &omniShadowShader);
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 	process.initMousePosition();
     
-	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
+	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader, &omniShadowShader);
     
     camera.processKeyboardMovement(LEFT, 0.1); // DO NOT REMOVE ! Fix bug updating camera position
     while(!mainWindow.getShouldClose()){
@@ -264,12 +264,13 @@ int main(){
 
         bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
         paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
-        
-        objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
+
         glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
+        
+        objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         objectLightShader.DrawLightObjects(projection, view);
         shader2D.drawObject();
              

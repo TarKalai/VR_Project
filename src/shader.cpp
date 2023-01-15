@@ -50,17 +50,17 @@ void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view,
     SetDirectionalLightTransform(&resmainLight); 
 
 
-    mainLight->GetShadowMap()->Read(GL_TEXTURE3);
+    mainLight->GetShadowMap()->Read(GL_TEXTURE4);
 
 
-    SetTexture(0);
-    SetNormalMap(1);
-    SetDepthMap(2);
-    SetDirectionalShadowMap(3);
+    SetTexture(1);
+    SetNormalMap(2);
+    SetDepthMap(3);
+    SetDirectionalShadowMap(4);
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f;
-    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    // spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
 
     RenderScene();
@@ -94,16 +94,16 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
     SetDirectionalLightTransform(&resmainLight); 
 
 
-    mainLight->GetShadowMap()->Read(GL_TEXTURE2);
+    mainLight->GetShadowMap()->Read(GL_TEXTURE4);
 
 
-    SetTexture(0);
-    SetNormalMap(1);
-    SetDirectionalShadowMap(2);
+    SetTexture(1);
+    SetNormalMap(2);
+    SetDirectionalShadowMap(3);
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f;
-    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    //spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
 
     RenderScene();
@@ -166,7 +166,7 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
-    spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+    //spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
 
     Validate(); 
 
@@ -552,9 +552,9 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
 
     glUniform1i(uniformAreaLightCount, lightCount); // make sure it is an int ! to go through the loop
     
-    glUniform1i(uniformMaterialDiffuse, 0);
-    glUniform1i(uniformLTC1, 3);
-    glUniform1i(uniformLTC2, 4); 
+    // glUniform1i(uniformMaterialDiffuse, 0);
+    // glUniform1i(uniformLTC1, 3);
+    // glUniform1i(uniformLTC2, 4); 
 
     for(int i=0; i < lightCount; i++){
 

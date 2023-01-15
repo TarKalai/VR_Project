@@ -9,7 +9,7 @@ in float visibility;
 
 out vec4 color;
 
-const int MAX_POINT_LIGHTS = 10;
+const int MAX_POINT_LIGHTS = 1;
 const int MAX_SPOT_LIGHTS = 5;
 const int MAX_AREA_LIGHTS = 5;
 
@@ -50,7 +50,6 @@ struct AreaLight{
 struct Material{
     float specularIntensity; 
     float shininess;  
-    sampler2D diffuse;
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness
 };
 
@@ -439,7 +438,7 @@ vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 vec4 CalcAreaLights(){
     // gamma correction
     if (areaLightCount>0){
-        vec3 mDiffuse = texture(material.diffuse, TexCoord).xyz;// * vec3(0.7f, 0.8f, 0.96f);
+        vec3 mDiffuse = texture(theTexture, TexCoord).xyz;// * vec3(0.7f, 0.8f, 0.96f);
         vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // mDiffuse
 
         vec3 result = vec3(0.0);

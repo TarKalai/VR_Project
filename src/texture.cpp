@@ -87,14 +87,14 @@ GLuint Texture::LoadTexture(const char* fileLoc, bool flip, bool mirrored_x, boo
 
 
 void Texture::UseTexture(){
-    glActiveTexture(GL_TEXTURE0); // GL_TEXTURE0: texture unit => when the texture is run in the fragment shader, there will be a sampler that will have access to the data for the texture and it accesses it throught the texture unit. 
+    glActiveTexture(GL_TEXTURE1); // GL_TEXTURE0: texture unit => when the texture is run in the fragment shader, there will be a sampler that will have access to the data for the texture and it accesses it throught the texture unit. 
     glBindTexture(GL_TEXTURE_2D, textureID); // bind to the texture unit. 
     if (normalID != 0){
-        glActiveTexture(GL_TEXTURE1); // the normal texture
+        glActiveTexture(GL_TEXTURE2); // the normal texture
         glBindTexture(GL_TEXTURE_2D, normalID);
     }
     if (dispID != 0){
-        glActiveTexture(GL_TEXTURE2); // the normal texture
+        glActiveTexture(GL_TEXTURE3); // the normal texture
         glBindTexture(GL_TEXTURE_2D, dispID);
     }
 }
