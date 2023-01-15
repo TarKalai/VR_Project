@@ -284,7 +284,9 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
     uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform"); // it will bind for vertex a AND frag because it is the same name
     uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 
-    // uniformTime = glGetUniformLocation(shaderID, "time");
+    uniformTransform = glGetUniformLocation(shaderID, "u_Transform"); 
+    uniformParticleColor = glGetUniformLocation(shaderID, "u_Color"); 
+    uniformParticleViewProjection = glGetUniformLocation(shaderID, "u_ViewProj"); 
 
 
     uniformAreaLightCount = glGetUniformLocation(shaderID, "areaLightCount");
@@ -441,6 +443,21 @@ void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_ty
     }
 
     glAttachShader(program, the_shader);
+}
+
+GLuint Shader::GetParticleViewProjectionLocation()
+{
+    return uniformParticleViewProjection; 
+}
+
+GLuint Shader::GetParticleColorLocation()
+{
+    return uniformParticleColor; 
+}
+
+GLuint Shader::GetTransformLocation()
+{
+    return uniformTransform; 
 }
 
 GLuint Shader::GetProjectionLocation(){

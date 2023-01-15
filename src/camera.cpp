@@ -22,6 +22,12 @@ glm::mat4 Camera::getProjectionMatrix(GLFWwindow* window, float near, float far)
     return glm::perspective(glm::radians(zoom), (float) width/height, near, far);
 }
 
+// glm::mat4 Camera::getViewProjectionMatrix()
+// {
+//     glm::
+//     return 
+// }
+
 void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime){
     float velocity = movementSpeed * deltaTime;
     if (direction == FORWARD)

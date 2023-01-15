@@ -31,6 +31,7 @@
 #include "gui.h"
 #include "utils.h"
 #include "shader2D.h"
+#include "sandboxLayer.h"
 // #include "particle.h"
 
 // Particle particles; 
@@ -38,6 +39,8 @@
 Display mainWindow; 
 
 PhysicalWorld physicalWorld;
+
+SandboxLayer particle; 
 
 Shader objectShader; 
 Shader directionalShadowShader; 
@@ -115,9 +118,9 @@ int main(){
     
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
 
-    glEnable(GL_POINTS); 
+    // glEnable(GL_POINTS); 
 
-    glPointSize(10); 
+    // glPointSize(10); 
 
     // particles.CreateParticles(1000); 
 
@@ -141,6 +144,7 @@ int main(){
         // Order is really important : order = shadow, object, objectLight
         directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
         mainWindow.resetViewport();
+        particle.OnUpdate(projection, view, &mainWindow); //PARTICLES
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);  
         areaLightShader.DrawLightObjects(projection, view);
         shader2D.drawObject();

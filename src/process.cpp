@@ -1,5 +1,7 @@
 #include "process.h"
 
+Process::Process(){}
+
 Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg) {
 	display = displayArg;
 	window = display->getWindow();
@@ -102,6 +104,16 @@ void Process::FullScreen() {
 		}
 		fullscreen = !fullscreen;
 	}
+}
+
+bool Process::GenerateParticles()
+{
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+		sliderSpeedAnimation = 0;
+		Time::setSpeed(0.);
+		return true; 
+	}
+	return false; 
 }
 
 void Process::AnimationSpeed() {

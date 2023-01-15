@@ -24,6 +24,7 @@ class Camera;
 
 class Process{
 public: 
+    Process(); 
     Display* display;
     GLFWwindow* window; 
     Camera* camera;
@@ -42,6 +43,7 @@ public:
     void HandleMouse(); 
     void PutDominoes();
 	void AnimationSpeed();
+    bool GenerateParticles(); 
     ~Process(); 
 private: 
     bool menuPressed = false;

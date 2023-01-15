@@ -46,6 +46,10 @@ public:
     GLuint GetShininessLocation(); 
     GLuint GetEyePositionLocation(); 
 
+    GLuint GetTransformLocation(); 
+    GLuint GetParticleColorLocation(); 
+    GLuint GetParticleViewProjectionLocation(); 
+
     void SetDirectionalLight(DirectionalLight * dLight);
     void SetPointLights(PointLight * pLight,int lightCount); 
     void SetSpotLights(SpotLight * sLight, int lightCount);
@@ -86,8 +90,8 @@ private:
     GLuint uniformProjection, uniformModel, uniformView, uniformEyePosition, 
     uniformSpecularIntensity, uniformShininess,
     uniformTexture, uniformColor,
-    uniformDirectionalLightTransform, uniformDirectionalShadowMap; 
-    // uniformTime;
+    uniformDirectionalLightTransform, uniformDirectionalShadowMap,
+    uniformTransform, uniformParticleColor, uniformParticleViewProjection; 
 
     struct {
         GLuint uniformColor; 

@@ -20,9 +20,10 @@ set(SOURCES_REFACTOR "main.cpp"
 "display.cpp" "display.h"
 "physics.cpp" "physics.h"
 "gui.cpp" "gui.h"
-"particle.cpp" "particle.h"
+"particleSystem.cpp" "particleSystem.h"
+"sandboxLayer.cpp" "sandboxLayer.h"
 "shader2D.cpp" "shader2D.h"
-"particleRender.cpp" "particleRender.h"
+"random.cpp" "random.h"
 "debug.h"
 "constant.h")
 
