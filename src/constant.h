@@ -3,12 +3,17 @@
 #include <glm/glm.hpp>
 #include "stb_image.h"
 
-namespace skycolor
-{
-    static constexpr float RED = 0.5f; 
-    static constexpr float GREEN = 0.5f; 
-    static constexpr float BLUE = 0.5f; 
-
+namespace optic {
+    static float reflectivity = 1.;
+    static float refractivity = 1.;
+    static float coefRefraction = 1.52;
+    /* Refraction indices:
+	Air:      1.0
+	Water:    1.33
+	Ice:      1.309
+	Glass:    1.52
+	Diamond:  2.42
+    */
 }
 
 namespace values

@@ -78,7 +78,6 @@ void CreateObjects(){
     physicalWorld.addObject(box, PHYSIC::NORMAL_OBJECT);
     paralaxMapShader.addObject(box);
     directionalShadowShader.addObject(box);
-
 }
 
 void CreateShaders()

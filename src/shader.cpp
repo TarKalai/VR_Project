@@ -131,6 +131,19 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     uniformEyePosition = GetEyePositionLocation(); 
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
+
+    
+    // glm::vec3 rot = glm::vec3(1.);
+    // rot.y = 2*3.14*Time::getTime()/Ttime::maxTime;
+    // view = glm::rotate(view, rot.y, glm::vec3(0., 1., 0.)); 
+    // view = glm::mat4(glm::mat3(view));
+    glUniform1i(uniformSkyboxDay, 11); 
+    glUniform1i(uniformSkyboxNight, 12); 
+    SetBlendFactor();
+    SetTime();
+    glUniform1f(GetReflectivityLocation(), Optic::getReflectivity());
+    glUniform1f(GetRefractivityLocation(), Optic::getRefractivity());
+    glUniform1f(GetCoefRefractionLocation(), Optic::getCoefRefractivity());
     
     
 
@@ -317,9 +330,8 @@ void Shader::CompileProgram()
     uniformSkyboxDay = glGetUniformLocation(shaderID, "skyboxDay"); 
     uniformSkyboxNight = glGetUniformLocation(shaderID, "skyboxNight"); 
     uniformBlendFactor = glGetUniformLocation(shaderID, "blendFactor"); 
-    
-    
-
+    uniformSinTime = glGetUniformLocation(shaderID, "sinTime"); 
+    uniformCosTime = glGetUniformLocation(shaderID, "cosTime"); 
 
     uniformPointLightCount = glGetUniformLocation(shaderID, "pointLightCount"); 
 
@@ -394,6 +406,11 @@ void Shader::CompileProgram()
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
     uniformLTC2 = glGetUniformLocation(shaderID, "LTC2");
     uniformMaterialDiffuse = glGetUniformLocation(shaderID, "material.diffuse");
+    
+    uniformReflectivity = glGetUniformLocation(shaderID, "Reflectivity");
+    uniformRefractivity = glGetUniformLocation(shaderID, "Refractivity");
+    uniformCoefRefraction = glGetUniformLocation(shaderID, "CoefRefraction");
+
 
     for (int i = 0; i < values::MAX_AREA_LIGHTS; i++){
 
@@ -497,9 +514,18 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
-void Shader::SetBlendFactor(float blend)
+void Shader::SetBlendFactor()
 {
+    float blend = pow(cos(3.14*Time::getTime()/Ttime::maxTime),4); 
     glUniform1f(uniformBlendFactor, blend); 
+}
+
+void Shader::SetTime()
+{
+    float sinTime = -sin(2*3.14*Time::getTime()/Ttime::maxTime); 
+    glUniform1f(uniformSinTime, sinTime);
+    float cosTime = -cos(2*3.14*Time::getTime()/Ttime::maxTime); 
+    glUniform1f(uniformCosTime, cosTime);  
 }
 
 void Shader::ConnectSkyboxes()
@@ -593,6 +619,14 @@ GLuint Shader::GetUniformBlendFactor(){
     return uniformBlendFactor; 
 }
 
+GLuint Shader::GetUniformSinTime(){
+    return uniformSinTime; 
+}
+
+GLuint Shader::GetUniformCosTime(){
+    return uniformCosTime; 
+}
+
 GLuint Shader::GetViewLocation(){
     return uniformView; 
 }
@@ -624,6 +658,19 @@ GLuint Shader::GetShininessLocation(){
 GLuint Shader::GetEyePositionLocation(){
     return uniformEyePosition; 
 }
+
+GLuint Shader::GetReflectivityLocation() {
+    return uniformReflectivity;
+} 
+
+GLuint Shader::GetRefractivityLocation() {
+    return uniformRefractivity;
+} 
+
+GLuint Shader::GetCoefRefractionLocation() {
+    return uniformCoefRefraction;
+}
+
 
 Shader::~Shader(){
     ClearShader(); 

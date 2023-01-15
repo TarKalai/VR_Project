@@ -14,6 +14,8 @@ void GUI::update() {
     ImGui::NewFrame();
 
     menuTitle();
+    reflectionRefraction();
+    shortcutList();
     displayFPS();
     displayTime();
     displaySpeedAnimation();
@@ -38,6 +40,25 @@ void GUI::menuTitle() {
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,255,255,255));
         ImGui::Text("MENU");
         ImGui::PopStyleColor();
+        ImGui::End();
+    }
+}
+
+void GUI::reflectionRefraction() {
+    if (!display->cursor_disabled) {
+        Point size = Point({200, 100});
+        ImGui::SetNextWindowPos(ImVec2(0, (display->getHeight()-size.y)/2));
+        ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+        ImGui::Begin("Reflection & Refraction", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        float reflec = Optic::getReflectivity();
+        float refrac = Optic::getRefractivity();
+        float coefRefrac = Optic::getCoefRefractivity();
+        ImGui::SliderFloat("Reflec.", &(reflec), 0., 1.);
+        ImGui::SliderFloat("Refrac.", &(refrac), 0., 1.);
+        ImGui::SliderFloat("Coef. ", &(coefRefrac), 1., 10.);
+        Optic::setReflectivity(reflec);
+        Optic::setRefractivity(refrac);
+        Optic::setCoefRefractivity(coefRefrac);
         ImGui::End();
     }
 }

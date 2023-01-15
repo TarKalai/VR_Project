@@ -64,6 +64,15 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS]; 
 uniform AreaLight areaLights[MAX_AREA_LIGHTS];
 
+uniform float sinTime;
+uniform float cosTime;
+uniform samplerCube skyboxDay;
+uniform samplerCube skyboxNight;
+uniform float blendFactor;
+uniform float Reflectivity;
+uniform float Refractivity;
+uniform float CoefRefraction;
+
 uniform sampler2D theTexture;
 uniform sampler2D directionalShadowMap; 
 uniform sampler2D LTC1; // for inverse M
@@ -76,6 +85,9 @@ uniform vec3 objectColor;
 const float LUT_SIZE  = 64.0; // ltc_texture size
 const float LUT_SCALE = (LUT_SIZE - 1.0)/LUT_SIZE;
 const float LUT_BIAS  = 0.5/LUT_SIZE;
+
+vec3 fragToEye;
+vec3 normal;
 
 float CalcDirectionalShadowFactor(DirectionalLight light)
 {
@@ -93,7 +105,7 @@ float CalcDirectionalShadowFactor(DirectionalLight light)
     float current = projCoords.z; // how far away the point is from the light (forward and backward)
 
     // to correct the ACne problem we are going to add a bias:
-    vec3 normal = normalize(Normal); // need the normal of the point we are checking
+    normal = normalize(Normal); // need the normal of the point we are checking
     vec3 lightDir= normalize(light.direction); 
     // we want to find the angle/factor between these 2 vectors which will be used to compute the bias: 
     // Normally bias = 0.05 is good enough, but computing it based on the angle is better as it adapts to where you are looking
@@ -162,7 +174,7 @@ vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor) // in
 
     if(diffuseFactor>0.0f)
     {
-        vec3 fragToEye = normalize(eyePosition - FragPos); // we just want the direction where the fragment is from the eye
+        fragToEye = normalize(eyePosition - FragPos); // we just want the direction where the fragment is from the eye
         vec3 reflectedVertex = normalize(reflect(direction, normalize(Normal))); // we want ot know where the light ray is reflected around the normal. The first argument is what we want ot reflect and the scd is what we are reflecting it around. 
         // we are reflecting the light direction across the normal pointing out of the object. 
         // if fragToEye is the same as reflectedVertex then we will see bright light because specular is most intance at that point. 
@@ -407,6 +419,15 @@ void main(){
 
     finalColor += CalcAreaLights();
 
-    color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
+
+    mat3 timeRotation = mat3(cosTime,0,sinTime, 0,1,0, -sinTime,0,cosTime);
+    vec3 Refract = refract(-fragToEye, normal,1/CoefRefraction)*timeRotation;
+    vec4 refraction = mix(texture(skyboxDay, Refract), texture(skyboxNight, -Refract), blendFactor); 
+    vec3 Reflect = reflect(-fragToEye, normal)*timeRotation;
+    vec4 reflection = mix(texture(skyboxDay, Reflect), texture(skyboxNight, Reflect), blendFactor); 
+
+
+    color = (Refractivity*refraction+Reflectivity*reflection+texture(theTexture, TexCoord)*vec4(objectColor, 1.0))*finalColor;
     color = mix(vec4(skyColor, 1.0), color, visibility); // 0 visibility would correspond to same color as the sky. 
+    //color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
 }

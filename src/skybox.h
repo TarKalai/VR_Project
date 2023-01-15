@@ -38,14 +38,13 @@ private:
 
     void BindTextures(); 
 
-    GLuint textureDay, textureNight;
+    glm::mat4 updateRotation(glm::mat4 viewMatrix);
 
-    float rotation =0; 
+    GLuint textureDay, textureNight;
 
     Shader* skyShader; 
 
     Object* skyMesh; 
-
-    GLuint textureId; 
+ 
     GLuint uniformProjection, uniformView; //, uniformFogColor;  
 };

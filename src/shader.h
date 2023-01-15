@@ -51,6 +51,13 @@ public:
     GLuint GetUniformSkyboxDay(); 
     GLuint GetUniformSkyboxNight(); 
     GLuint GetUniformBlendFactor(); 
+    GLuint GetUniformSinTime(); 
+    GLuint GetUniformCosTime(); 
+
+    GLuint GetReflectivityLocation(); 
+    GLuint GetRefractivityLocation(); 
+    GLuint GetCoefRefractionLocation(); 
+
 
     void SetDirectionalLight(DirectionalLight * dLight);
     void SetPointLights(PointLight * pLight,int lightCount); 
@@ -63,7 +70,8 @@ public:
     void SetDirectionalLightTransform(glm::mat4* ltransform);  
 
     void ConnectSkyboxes(); 
-    void SetBlendFactor(float blend); 
+    void SetBlendFactor(); 
+    void SetTime();
 
     void addObject(Object *obj);
     void addObjects(std::vector<Object*> objects);
@@ -122,7 +130,9 @@ private:
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
     uniformNormalMap, uniformSkyColor, uniformDepthMap,
-    uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor;  
+    uniformSinTime, uniformCosTime,
+    uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor, 
+    uniformReflectivity, uniformRefractivity, uniformCoefRefraction;
 
     struct {
         GLuint uniformColor; 

@@ -273,3 +273,46 @@ class Time
             return deltaTime;
 		}
 };
+
+class Optic 
+{
+    public:
+        static void setReflectivity(const float _reflec){
+            reflectivity() = _reflec;
+        }           
+        static const float& getReflectivity(){
+            return reflectivity();
+        }	
+
+        static void setRefractivity(const float _refrac){
+            refractivity() = _refrac;
+        }           
+        static const float& getRefractivity(){
+            return refractivity();
+        }	
+
+        static void setCoefRefractivity(const float _coefRefrac){
+            coefRefractivity() = _coefRefrac;
+        }           
+        static const float& getCoefRefractivity(){
+            return coefRefractivity();
+        }		
+
+
+	private:
+
+        static float& reflectivity(){
+            static float reflec = optic::reflectivity;
+            return reflec;
+        }
+
+		static float& refractivity(){
+            static float refrac = optic::refractivity;
+            return refrac;
+        }
+
+		static float& coefRefractivity(){
+			static float coefRefrac = optic::coefRefraction;
+            return coefRefrac;
+		}
+};
