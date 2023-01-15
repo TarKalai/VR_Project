@@ -327,10 +327,10 @@ void Process::FlashLight() {
 		// INTENSITY
 		// ambiant
 		if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-			Torch::setIntensity(glm::max(0., Torch::getIntensity()-0.05));
+			Torch::setIntensity(glm::max(0., Torch::getIntensity()-5.0));
 		} 
 		else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-			Torch::setIntensity(glm::min(5., Torch::getIntensity()+0.05));
+			Torch::setIntensity(glm::min(1000., Torch::getIntensity()+5.0));
 		}
 		// SIZE
 		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {

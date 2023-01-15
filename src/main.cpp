@@ -83,7 +83,7 @@ void CreateObjects(){
     directionalShadowShader.addObject(ground3);
     omniShadowShader.addObject(ground3);
 
-    Object* box = new Object(geometry::cube, Textures::Toy(), Materials::Shiny(), glm::vec3(10., 10.0, 5.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.), true);
+    Object* box = new Object(geometry::cube, Textures::Toy(), Materials::Shiny(), glm::vec3(10., 15.0, 5.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.), true);
     physicalWorld.addObject(box, PHYSIC::NORMAL_OBJECT);
     paralaxMapShader.addObject(box);
     directionalShadowShader.addObject(box);
