@@ -78,6 +78,8 @@ int Display::Initialise()
 
     glEnable(GL_DEPTH_TEST); //Enable depth testing to determine which trangle is deeper into the image. 
 
+    glEnable(GL_POINTS); 
+
     glEnable(GL_MULTISAMPLE); 
 
     glViewport(0, 0, bufferWidth, bufferHeight);

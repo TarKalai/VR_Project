@@ -8,14 +8,10 @@ void Particle::CreateParticles(GLuint numberOfParticlesIn)
     std::vector<GLfloat> particlePositionData; 
     GLfloat minimiser = 2.0f/numberOfParticles; 
 
-    std::default_random_engine generator; 
-    std::uniform_int_distribution<int> distribution(-(int)(numberOfParticles), numberOfParticles); 
-
     for (size_t i = 0; i < numberOfParticles; i++)
     {
         particlePositionData.push_back(-1.0f + i * minimiser); // x position
-        // particlePositionData.push_back(sin(i * minimiser * 2) + (GLfloat)distribution(generator) * minimiser / 20); // y position
-        particlePositionData.push_back(sin(i * minimiser * 2)); // + (GLfloat)distribution(generator) * minimiser / 20); // y position
+        particlePositionData.push_back(sin(i * minimiser)); // y position
     }
 
     glGenVertexArrays(1, &particleObjectLocation); 

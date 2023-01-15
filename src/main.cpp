@@ -115,8 +115,6 @@ int main(){
     
 	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader);
 
-    glEnable(GL_POINTS); 
-
     glPointSize(10); 
 
     particles.CreateParticles(1000); 
@@ -143,11 +141,10 @@ int main(){
         mainWindow.resetViewport();
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount);  
         areaLightShader.DrawLightObjects(projection, view);
-        shader2D.drawObject();
-        // particleShader.UseShader();
+        // shader2D.drawObject();
+        particleShader.UseShader();
         // particleShader.SetTime();  
         particles.Render();
-             
         gui.update();
         mainWindow.swapBuffers(); // There are 2 scenes going on at once, we are drawing to the one that can't be seen, and we call swapBuffers to swap them around: so then the one we are drawing to is the one that can be seen and the one which could be seen originaly is the one we are drawing to. 
     }
