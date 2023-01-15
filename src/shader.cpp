@@ -592,7 +592,7 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
-void Shader::SetFogColor(float, r, float, g, float b)
+void Shader::SetFogColor(float r, float g, float b)
 {
     glUniform3f(uniformFogColor, r, g, b); 
 }
