@@ -19,13 +19,18 @@ void LightConstructor::createPointLight(){
 		glm::vec3 pos = glm::vec3(Utils::getRandom(-30.0, 30.0),Utils::getRandom(1.0, 5.0),Utils::getRandom(-30.0, 30.0));
 		glm::vec3 rot = glm::vec3(0.0, 0.0, 0.0);
 		glm::vec3 scale = glm::vec3(0.25);
-        glm::vec3 color = glm::vec3(Utils::getRandom(0,1),Utils::getRandom(0,1),Utils::getRandom(0,1));
-
+        glm::vec3 color = glm::vec3(0.0);
+        if (i<3)
+            color = color::Red;
+        else if (i<7)
+            color = color::Green;
+        else
+            color = color::Blue;
 		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Empty(), pos, rot, scale, color);
 		pointLightObjects.push_back(sphere);
 
 		pointLights[i] = PointLight(color.x,color.y, color.z, 
-                                    1.0f, 2.0,
+                                    1.0f, 2.0f,
                                     pos.x,pos.y,pos.z,
                                     0.3f, 0.2f, 0.1f); //0.003f, 0.002f, 0.001f
     	pointLightCount++; 
