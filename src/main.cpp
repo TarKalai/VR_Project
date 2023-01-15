@@ -63,21 +63,21 @@ GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
 
 void CreateObjects(){
     // GROUNDS
-    Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
+    Object* ground = new Object(geometry::plane3D, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
     physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
     bumpMapShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
     omniShadowShader.addObject(ground);
 
     //TODO
-    // Object* ground2 = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/50., general::floorThickness, general::sceneSize.z/50), glm::vec3(1.), true);
+    // Object* ground2 = new Object(geometry::plane3D, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/50., general::floorThickness, general::sceneSize.z/50), glm::vec3(1.), true);
     // physicalWorld.addObject(ground2, PHYSIC::GROUND_OBJECT);
     // bumpMapShader.addObject(ground2);
     // directionalShadowShader.addObject(ground2);
     // omniShadowShader.addObject(ground2);
 
 
-    Object* ground3 = new Object(geometry::plane, Textures::Brick2(), Materials::Shiny(), glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
+    Object* ground3 = new Object(geometry::plane3D, Textures::Brick2(), Materials::Shiny(), glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
     physicalWorld.addObject(ground3, PHYSIC::GROUND_OBJECT);
     paralaxMapShader.addObject(ground3);
     directionalShadowShader.addObject(ground3);
@@ -186,7 +186,7 @@ int main(){
     
 
     
-	for (int i=0; i<10; i++) {
+	for (int i=0; i<1; i++) {
 		glm::vec3 pos = glm::vec3(Utils::getRandom(-20,20),1,Utils::getRandom(-20,20));
 		glm::vec3 rot = glm::vec3(glm::radians(-90.0), Utils::getRandom(glm::radians(-90.0),glm::radians(90.0)), 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
 		glm::vec3 scale = glm::vec3(1);

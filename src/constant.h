@@ -58,6 +58,7 @@ namespace geometry
 	static constexpr int cube = 2;
     static constexpr int sphere = 3;
     static constexpr int bunny = 4;
+    static constexpr int plane3D = 5;
 }
 
 namespace geometryPath
