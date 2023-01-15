@@ -1,12 +1,13 @@
 #include "process.h"
 
-Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg) {
+Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader) {
 	display = displayArg;
 	window = display->getWindow();
 	camera = cameraArg;
 	world = worldArg;
 	shader = shaderArg;
 	shadow = shadowArg;
+	omniShadow = omniShadowShader;
 }
 
 
@@ -307,6 +308,7 @@ void Process::PutDominos(){
 						world->addObject(domino);
 						shader->addObject(domino);
 						shadow->addObject(domino);		
+						omniShadow->addObject(domino);		
 					}
 					else 
 						firstDomino = true;

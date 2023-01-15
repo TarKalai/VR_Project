@@ -1,11 +1,12 @@
 #include "gui.h"
 
-GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg) {
+GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader) {
     process = processArg;
     display = displayArg;
     world = worldArg;
     shader = shaderArg;
     shadow = shadowArg;
+    omniShadow = omniShadowShader;
 }
 
 void GUI::update() {
@@ -273,6 +274,7 @@ void GUI::displaySaveLoad() {
                             world->addObject(domino);  
                             shader->addObject(domino);
                             shadow->addObject(domino);
+                            omniShadow->addObject(domino);
                             
                         }
                     }

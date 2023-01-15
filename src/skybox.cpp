@@ -76,9 +76,9 @@ void Skybox::linkTexture(std::vector<std::string> faceLocations) {
 
 void Skybox::BindTextures()
 {
-    glActiveTexture(GL_TEXTURE11); 
+    glActiveTexture(GL_TEXTURE7); 
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDay); 
-    glActiveTexture(GL_TEXTURE12); 
+    glActiveTexture(GL_TEXTURE8); 
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight); 
     skyShader->SetBlendFactor(); // blend = 0.5 equal mix of day and night textures 
 

@@ -30,6 +30,7 @@ public:
     PhysicalWorld* world;
     Shader* shader;
     Shader* shadow;
+    Shader* omniShadow;
     int enterPressed = 0;
     float sliderSpeedAnimation = 1.;
     float scaleDomino = 1.;
@@ -40,7 +41,7 @@ public:
     glm::vec3 dimDomino = glm::vec3(dominoDim::width, dominoDim::height, dominoDim::thick);
     int geometryDomino = geometry::domino;
 
-    Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg);
+    Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader);
     void initMousePosition();
     void processInput(); 
     void HandleMouse(); 
