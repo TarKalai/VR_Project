@@ -3,9 +3,9 @@
 #include <vector> //to store the mesh list
 #include <string>
 
-#include <assimp\Importer.hpp>
-#include <assimp\scene.h>
-#include <assimp\postprocess.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "mesh.h"
 #include "texture.h"
