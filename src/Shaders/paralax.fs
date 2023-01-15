@@ -190,6 +190,13 @@ vec4 CalcSpotLight(SpotLight sLight)
 
 }
 
+vec4 saturate(vec4 totalColor) {
+    totalColor.x = min(totalColor.x, 1);
+    totalColor.y = min(totalColor.y, 1);
+    totalColor.z = min(totalColor.z, 1);
+    return totalColor;
+}
+
 vec4 CalcPointLights()
 {
     vec4 totalColor = vec4(0, 0, 0, 0);
@@ -209,13 +216,15 @@ vec4 CalcSpotLights()
         totalColor += CalcSpotLight(spotLights[i]); // compute each light then adding whathever the result is for the fragment we are currently on. 
     }
 
-    return totalColor; 
+    return totalColor;  
 }
+
 
 void main(){       
     vec4 finalColor = CalcDirectionalLight();
     finalColor += CalcPointLights();
     finalColor += CalcSpotLights(); 
+    finalColor = saturate(finalColor);
 
     vec3 TangentLightPos = TBN * (-directionalLight.direction*1000);
     vec3 TangentViewPos  = TBN * eyePosition;

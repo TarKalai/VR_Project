@@ -52,11 +52,11 @@ void LightConstructor::createSpotLight(){
 
 void LightConstructor::createTorch(){
     // the first one is a torch
-    spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 
-                                1.0f, 10.0f,
+    spotLights[0] = SpotLight(.0f, 1.0f, .0f, 
+                                1.0f, .10f,
                                 0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
                                 0.0f, -1.0f, 0.0f, // points straight down
-                                0.1f, 0.1f, 0.1f, //strenght/a*distance**2 + b*distance + c
+                                0.f, 0.f, 0.1f, //strenght/a*distance**2 + b*distance + c
                                 20.0f);  // spread of the angle : 20°
     spotLightCount++;
 }

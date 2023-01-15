@@ -4,9 +4,10 @@
 #include "stb_image.h"
 
 namespace optic {
-    static float reflectivity = 1.;
-    static float refractivity = 1.;
-    static float coefRefraction = 1.52;
+    // Initial Values
+    static float reflectivity = 0.;
+    static float refractivity = 0.;
+    static float coefRefraction = 10.;
     /* Refraction indices:
 	Air:      1.0
 	Water:    1.33

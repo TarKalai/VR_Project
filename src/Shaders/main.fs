@@ -240,6 +240,13 @@ vec4 CalcSpotLight(SpotLight sLight)
 
 }
 
+vec4 saturate(vec4 totalColor) {
+    totalColor.x = min(totalColor.x, 1);
+    totalColor.y = min(totalColor.y, 1);
+    totalColor.z = min(totalColor.z, 1);
+    return totalColor;
+}
+
 vec4 CalcPointLights()
 {
     vec4 totalColor = vec4(0, 0, 0, 0);
@@ -259,7 +266,7 @@ vec4 CalcSpotLights()
         totalColor += CalcSpotLight(spotLights[i]); // compute each light then adding whathever the result is for the fragment we are currently on. 
     }
 
-    return totalColor; 
+    return totalColor;  
 }
 
 // Vector form without project to the plane (dot with the normal)
@@ -419,6 +426,7 @@ void main(){
 
     finalColor += CalcAreaLights();
 
+    finalColor = saturate(finalColor);
 
     mat3 timeRotation = mat3(cosTime,0,sinTime, 0,1,0, -sinTime,0,cosTime);
     vec3 Refract = refract(-fragToEye, normal,1/CoefRefraction)*timeRotation;
@@ -429,5 +437,4 @@ void main(){
 
     color = (Refractivity*refraction+Reflectivity*reflection+texture(theTexture, TexCoord)*vec4(objectColor, 1.0))*finalColor;
     color = mix(vec4(skyColor, 1.0), color, visibility); // 0 visibility would correspond to same color as the sky. 
-    //color = texture(theTexture, TexCoord)*finalColor*vec4(objectColor, 1.0);
 }
