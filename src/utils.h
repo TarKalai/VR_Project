@@ -317,3 +317,57 @@ class Optic
             return coefRefrac;
 		}
 };
+
+class Torch 
+{
+    public:
+		static void setOn(const bool _on){
+            on() = _on;
+        }           
+        static const bool& getOn(){
+            return on();
+        }	
+
+        static void setColor(const glm::vec3 _color){
+            color() = _color;
+        }           
+        static const glm::vec3& getColor(){
+            return color();
+        }	
+
+        static void setIntensity(const glm::vec2 _intensity){
+            intensity() = _intensity;
+        }           
+        static const glm::vec2& getIntensity(){
+            return intensity();
+        }	
+
+        static void setSize(const float _size){
+            size() = _size;
+        }           
+        static const float& getSize(){
+            return size();
+        }		
+
+
+	private:
+		static bool& on(){
+			static bool on = false;
+			return on;
+		}
+
+        static glm::vec3& color(){
+            static glm::vec3 color = glm::vec3(1);
+            return color;
+        }
+
+		static glm::vec2& intensity(){
+            static glm::vec2 intensity = glm::vec2(1, 0.1);
+            return intensity;
+        }
+
+		static float& size(){
+			static float size = 30.0f;
+            return size;
+		}
+};

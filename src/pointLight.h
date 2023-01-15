@@ -2,6 +2,7 @@
 
 
 #include "light.h"
+#include "utils.h"
 
 
 class PointLight :

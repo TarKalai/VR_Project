@@ -125,51 +125,53 @@ void Process::AnimationSpeed() {
 }
 
 void Process::PlacingParameter() {
-	// SIZE
-	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		scaleIncrease = false;
-		scaleDecrease = true;
-	} 
-	else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-		scaleIncrease = true;
-		scaleDecrease = false;
-	}
-	else {
-		scaleIncrease = false;
-		scaleDecrease = false;
-	}
+	if (glfwGetKey(window, GLFW_KEY_V) != GLFW_PRESS) { // If not "Torch mode"
+		// SIZE
+		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			scaleIncrease = false;
+			scaleDecrease = true;
+		} 
+		else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+			scaleIncrease = true;
+			scaleDecrease = false;
+		}
+		else {
+			scaleIncrease = false;
+			scaleDecrease = false;
+		}
 
-	// COLOR
-	// RED
-	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		colorDomino.x -= 0.01;
+		// COLOR
+		// RED
+		if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			colorDomino.x -= 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+			colorDomino.x += 0.01;
+		}
+		// GREEN
+		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			colorDomino.y -= 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+			colorDomino.y += 0.01;
+		}
+		// BLUE
+		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			colorDomino.z -= 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+			colorDomino.z += 0.01;
+		}
+		// RANDOM
+		if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
+			colorDomino = Utils::getRandom3();
+		}
+		// RAINBOW
+		if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
+			colorDomino = Utils::RainbowColor(glfwGetTime());
+		}
+		colorDomino = normalize(colorDomino);
 	}
-	else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-		colorDomino.x += 0.01;
-	}
-	// GREEN
-	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		colorDomino.y -= 0.01;
-	}
-	else if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
-		colorDomino.y += 0.01;
-	}
-	// BLUE
-	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-		colorDomino.z -= 0.01;
-	}
-	else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-		colorDomino.z += 0.01;
-	}
-	// RANDOM
-	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
-		colorDomino = Utils::getRandom3();
-	}
-	// RAINBOW
-	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
-		colorDomino = Utils::RainbowColor(glfwGetTime());
-	}
-	colorDomino = normalize(colorDomino);
 }
 
 void Process::PlacingDomino() {
@@ -212,10 +214,6 @@ void Process::Deplacement() {
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 		camera->processKeyboardMovement(DOWN, 0.1);
 }
-
-void Process::FlashLight() {
-}
-
 void Process::initMousePosition(){
 	if (display->getCursorDisabled()){
 		int height, width;
@@ -317,6 +315,70 @@ void Process::PutDominos(){
 			}
 		}
 	}
+}
+
+void Process::FlashLight() {
+	glm::vec3 color = Torch::getColor();
+	glm::vec2 intensity = Torch::getIntensity();
+
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) { // Torch mode
+		Torch::setOn(true);
+		// INTENSITY
+		// ambiant
+		if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			intensity.x = max(0, intensity.x-0.1);
+		} 
+		else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+			intensity.x = min(1, intensity.x+0.1);
+		}
+		// diffuse
+		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			intensity.y = max(0, intensity.y-0.1);
+		} 
+		else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+			intensity.y = min(1, intensity.y+0.1);
+		}
+		Torch::setIntensity(intensity);
+		// SIZE
+		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			Torch::setSize(glm::max(10.f, Torch::getSize()-1));
+		} 
+		else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+			Torch::setSize(glm::min(80.f, Torch::getSize()+1));
+		}
+		// COLOR
+		// RED
+		if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			color.x -= 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+			color.x += 0.01;
+		}
+		// GREEN
+		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			color.y -= 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+			color.y += 0.01;
+		}
+		// BLUE
+		if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+			color.z -= 0.01;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+			color.z += 0.01;
+		}
+		// RANDOM
+		if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {
+			color = Utils::getRandom3();
+		}
+		// RAINBOW
+		if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
+			color = Utils::RainbowColor(glfwGetTime());
+		}
+		Torch::setColor(normalize(color));
+	}
+	else { Torch::setOn(false); }
 }
 
 Process::~Process(){}
