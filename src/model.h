@@ -7,7 +7,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "mesh.h"
+#include "object.h"
 #include "texture.h"
 
 
@@ -31,7 +31,7 @@ private:
     void LoadMesh(aiMesh *mesh, const aiScene *scene); // the mesh will have to reference the scene to find the correct texture
     void LoadMaterials(const aiScene *scene);//we can have textures specific to specular lighting or dffuse lighting
 
-    std::vector<Mesh*> meshList; 
+    std::vector<Object*> meshList; 
     std::vector<Texture*> textureList; 
     std::vector<unsigned int> meshToTex; 
 

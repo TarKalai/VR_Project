@@ -63,6 +63,7 @@ int spotLightCount;
 int areaLightCount = 0;
 
 GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
+GLfloat blackhawkAngle = 0.0f;
 
 void CreateObjects(){
 
@@ -101,21 +102,21 @@ void CreateObjects(){
     omniShadowShader.addObject(box); 
 
 
-    model = glm::mat4(1.0); 
+    glm::mat4 model = glm::mat4(1.0); 
     model = glm::translate(model, glm::vec3(0.0, -2.0, 0.0)); // only altering the x value so the top right value in the matrix will be changed
     model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f ));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
-    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
+    // shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
     x_wing.RenderModel(); 
 
     model = glm::mat4(1.0);
-    model = glm::rotate(model, -blackhawkAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));  
+    model = glm::rotate(model, glm::radians(-blackhawkAngle), glm::vec3(0.0f, 1.0f, 0.0f));  
     model = glm::translate(model, glm::vec3(2.0, 4.0, 0.0)); // only altering the x value so the top right value in the matrix will be changed
-    model = glm::rotate(model, 20.0f*toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); 
-    model = glm::rotate(model, -90.0f*toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); 
+    // model = glm::rotate(model, 20.0f*toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); 
+    // model = glm::rotate(model, -90.0f*toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); 
     model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f ));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
-    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
+    // shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
     blackhawk.RenderModel(); 
 
 }
