@@ -8,7 +8,7 @@ LightConstructor::LightConstructor(){
 
 void LightConstructor::createMainLight(){
 
-    mainLight = DirectionalLight(8196, 8196, 
+    mainLight = DirectionalLight(general::mainShadowResolution, general::mainShadowResolution, 
                                 1.0f, 1.0f, 1.0f, 
                                 0.4f, 0.4f, 
                                 -1.0f, -1.0f, 0.0f); 
@@ -29,7 +29,7 @@ void LightConstructor::createPointLight(){
 		Object* sphere = new Object(geometry::sphere, Textures::White(), Materials::Empty(), pos, rot, scale, color);
 		pointLightObjects.push_back(sphere);
 
-		pointLights[i] = PointLight(1024, 1024,
+		pointLights[i] = PointLight(general::pointShadowResolution, general::pointShadowResolution,
                                     0.01, 100.0f,
                                     color.x,color.y, color.z, 
                                     1.0f, 2.0,
@@ -43,7 +43,7 @@ void LightConstructor::createSpotLight(){
     
     createTorch();
 
-    spotLights[1] = SpotLight(1024, 1024, 
+    spotLights[1] = SpotLight(general::spotShadowResolution, general::spotShadowResolution, 
                             0.01f, 100.0f,
                             1.0f, 1.0f, 1.0f, 
                             1.0f, 2.0f,

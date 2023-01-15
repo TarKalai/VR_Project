@@ -69,25 +69,24 @@ void CreateObjects(){
     directionalShadowShader.addObject(ground); 
     omniShadowShader.addObject(ground);
 
-    //TODO
-    // Object* ground2 = new Object(geometry::plane3D, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/50., general::floorThickness, general::sceneSize.z/50), glm::vec3(1.), true);
-    // physicalWorld.addObject(ground2, PHYSIC::GROUND_OBJECT);
-    // bumpMapShader.addObject(ground2);
-    // directionalShadowShader.addObject(ground2);
-    // omniShadowShader.addObject(ground2);
+    // Object* ground3 = new Object(geometry::plane3D, Textures::Brick2(), Materials::Shiny(), glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
+    // physicalWorld.addObject(ground3, PHYSIC::GROUND_OBJECT);
+    // paralaxMapShader.addObject(ground3);
+    // directionalShadowShader.addObject(ground3);
+    // omniShadowShader.addObject(ground3);
+
+    // Object* box = new Object(geometry::cube, Textures::Toy(), Materials::Shiny(), glm::vec3(10., 15.0, 5.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.), true);
+    // physicalWorld.addObject(box, PHYSIC::NORMAL_OBJECT);
+    // paralaxMapShader.addObject(box);
+    // directionalShadowShader.addObject(box);
+    // omniShadowShader.addObject(box); 
 
 
-    Object* ground3 = new Object(geometry::plane3D, Textures::Brick2(), Materials::Shiny(), glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
-    physicalWorld.addObject(ground3, PHYSIC::GROUND_OBJECT);
-    paralaxMapShader.addObject(ground3);
-    directionalShadowShader.addObject(ground3);
-    omniShadowShader.addObject(ground3);
-
-    Object* box = new Object(geometry::cube, Textures::Toy(), Materials::Shiny(), glm::vec3(10., 15.0, 5.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.), true);
-    physicalWorld.addObject(box, PHYSIC::NORMAL_OBJECT);
-    paralaxMapShader.addObject(box);
-    directionalShadowShader.addObject(box);
-    omniShadowShader.addObject(box); 
+    // Object* box = new Object(geometry::bunny, Textures::Brick2(), Materials::Shiny(), glm::vec3(10., 15.0, 5.), glm::vec3(0.), glm::vec3(5.0), glm::vec3(1.), true);
+    // physicalWorld.addObject(box, PHYSIC::NORMAL_OBJECT);
+    // paralaxMapShader.addObject(box);
+    // directionalShadowShader.addObject(box);
+    // omniShadowShader.addObject(box);
 
 }
 
