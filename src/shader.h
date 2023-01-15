@@ -147,7 +147,9 @@ private:
         GLuint uniformDirection; 
     } uniformDirectionalLight; // struct calls uniformDirectionalLight, it is an instance of the struct (which does not have a name)
 
-    GLuint uniformPointLightCount; 
+    GLuint uniformPointLightCount, uniformMaxPointLight; 
+
+    
 
     struct {
         GLuint uniformColor; 
@@ -160,7 +162,7 @@ private:
         GLuint uniformExponent; 
     } uniformPointLight[values::MAX_POINT_LIGHTS]; // We are going to have mulitple lights, so we use an array
 
-    GLuint uniformSpotLightCount; 
+    GLuint uniformSpotLightCount, uniformMaxSpotLight; 
 
     struct {
         GLuint uniformColor; 
@@ -178,8 +180,7 @@ private:
 
     GLuint uniformLTC1;
     GLuint uniformLTC2;
-    GLuint uniformMaterialDiffuse;
-    GLuint uniformAreaLightCount;
+    GLuint uniformAreaLightCount, uniformMaxAreaLight ;
     struct {
         GLuint uniformColor; 
         GLuint uniformIntensity; 

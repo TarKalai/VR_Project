@@ -346,6 +346,8 @@ void Shader::CompileProgram()
 
 
     uniformPointLightCount = glGetUniformLocation(shaderID, "pointLightCount"); 
+    uniformMaxPointLight = glGetUniformLocation(shaderID, "MAX_POINT_LIGHTS");
+
 
     for (int i = 0; i < values::MAX_POINT_LIGHTS; i ++){
 
@@ -374,6 +376,8 @@ void Shader::CompileProgram()
     }
 
     uniformSpotLightCount = glGetUniformLocation(shaderID, "spotLightCount"); 
+    uniformMaxSpotLight = glGetUniformLocation(shaderID, "MAX_SPOT_LIGHTS");
+
 
     for (int i = 0; i < values::MAX_SPOT_LIGHTS; i ++){
 
@@ -415,6 +419,7 @@ void Shader::CompileProgram()
 
 
     uniformAreaLightCount = glGetUniformLocation(shaderID, "areaLightCount");
+    uniformMaxAreaLight = glGetUniformLocation(shaderID, "MAX_AREA_LIGHTS");
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
     uniformLTC2 = glGetUniformLocation(shaderID, "LTC2");
     uniformAlbedoRoughness = glGetUniformLocation(shaderID, "material.albedoRoughness");
@@ -501,6 +506,7 @@ void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount, unsign
     if(lightCount > values::MAX_POINT_LIGHTS) lightCount = values::MAX_POINT_LIGHTS; 
 
     glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
+    glUniform1i(uniformMaxPointLight, values::MAX_POINT_LIGHTS);
 
     for(int i=0; i < lightCount; i++){
         pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, 
@@ -524,6 +530,7 @@ void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount, unsigned
      if(lightCount > values::MAX_SPOT_LIGHTS) lightCount = values::MAX_SPOT_LIGHTS; 
 
     glUniform1i(uniformSpotLightCount, lightCount); // make sure it is an int ! to go through the loop
+    glUniform1i(uniformMaxSpotLight, values::MAX_SPOT_LIGHTS);
 
     for(int i=0; i < lightCount; i++){
 
@@ -551,6 +558,7 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     if(lightCount > values::MAX_AREA_LIGHTS) lightCount = values::MAX_AREA_LIGHTS; 
 
     glUniform1i(uniformAreaLightCount, lightCount);
+    glUniform1i(uniformMaxAreaLight, values::MAX_AREA_LIGHTS);
     glUniform1f(uniformAlbedoRoughness, 0.5);
 
     for(int i=0; i < lightCount; i++){

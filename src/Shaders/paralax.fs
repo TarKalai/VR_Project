@@ -12,8 +12,7 @@ const int MAX_POINT_LIGHTS = 1;
 const int MAX_SPOT_LIGHTS = 5;
 const int MAX_AREA_LIGHTS = 5;
 
-struct Light
-{
+struct Light{
     vec3 color; 
     float ambientIntensity; 
     float diffuseIntensity; 
@@ -24,18 +23,15 @@ struct DirectionalLight{
     vec3 direction; 
 }; 
 
-struct PointLight 
-{
+struct PointLight {
     Light base; 
     vec3 position; 
     float constant;
     float linear; 
     float exponent; 
-
 };
 
-struct SpotLight
-{
+struct SpotLight{
     PointLight base; 
     vec3 direction; 
     float edge;
@@ -44,8 +40,12 @@ struct SpotLight
 struct Material{
     float specularIntensity; 
     float shininess;  
-    sampler2D diffuse;
-    vec4 albedoRoughness; // (x,y,z) = color, w = roughness
+    float albedoRoughness; // (x,y,z) = color, w = roughness
+};
+
+struct OmniShadowMap{
+    samplerCube shadowMap;
+    float farPlane;
 };
 
 uniform int pointLightCount; 
@@ -61,6 +61,7 @@ uniform sampler2D theTexture;
 uniform sampler2D normalMap;
 uniform sampler2D depthMap;
 uniform sampler2D directionalShadowMap; 
+uniform OmniShadowMap omniShadowMaps[MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS]; 
 
 const float height_scale = 0.1;
 
@@ -68,6 +69,15 @@ uniform Material material;
 
 uniform vec3 eyePosition;
 uniform vec3 objectColor;
+
+vec3 sampleOffsetDirections[20] = vec3[]
+(
+    vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1), 
+    vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1), 
+    vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0), 
+    vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1), 
+    vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
+);
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir){ 
     float height =  texture(depthMap, texCoords).r;    
@@ -104,6 +114,35 @@ float CalcDirectionalShadowFactor(DirectionalLight light){
     if(projCoords.z > 1.0){
         shadow = 0.0; 
     }
+    return shadow; 
+}
+
+float CalcOmniShadowFactor(PointLight light, int shadowIndex)
+{   
+    vec3 TangentLightPos = TBN * light.position;
+    vec3 TangentViewPos  = TBN * eyePosition;
+    vec3 TangentFragPos  = TBN * FragPos;    
+
+    vec3 fragToLight = FragPos - light.position;
+    float currentDepth = length(fragToLight); 
+    float shadow = 0.0; 
+    float bias = 0.05;
+    int samples = 20; 
+
+
+    float viewDistance = length(eyePosition - FragPos); 
+    float diskRadius = (1.0 + (viewDistance/omniShadowMaps[shadowIndex].farPlane))/25.0; 
+
+
+    for (int i = 0; i < samples; i++) {
+        float closestDepth = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        closestDepth *= omniShadowMaps[shadowIndex].farPlane;
+        if (currentDepth - bias > closestDepth){
+            shadow += 1.0; 
+        } 
+    }
+
+    shadow /= float(samples); 
     return shadow; 
 }
 
@@ -147,21 +186,23 @@ vec4 CalcDirectionalLight(){
     return CalcLightByDirection(directionalLight.base, directionalLight.direction*1000, shadowFactor); 
 }
 
-vec4 CalcPointLight(PointLight pLight)
+vec4 CalcPointLight(PointLight pLight, int shadowIndex)
 // to calculate only one of the light so that if we are doing spotLight and it needs pointLight we can use this function
 {
     vec3 direction = FragPos - pLight.position; // we get the vector from the pointLight to the fragment = direction
     float distance = length(direction); 
     direction = normalize(direction);
 
-    vec4 color = CalcLightByDirection(pLight.base, direction, 0.0f); 
+    float shadowFactor = CalcOmniShadowFactor(pLight, shadowIndex);
+
+    vec4 color = CalcLightByDirection(pLight.base, -pLight.position, shadowFactor); 
     float attenuation = pLight.exponent * distance * distance + pLight.linear*distance + pLight.constant;
 
     return (color/attenuation); // get the color of the pixel 
 
 }
 
-vec4 CalcSpotLight(SpotLight sLight)
+vec4 CalcSpotLight(SpotLight sLight, int shadowIndex)
 {
     
     vec3 rayDirection = normalize(FragPos - sLight.base.position); 
@@ -173,7 +214,7 @@ vec4 CalcSpotLight(SpotLight sLight)
 
     if (slFactor > sLight.edge)
     {
-        vec4 color = CalcPointLight(sLight.base); // we pass in the pointLight part of our spotLight
+        vec4 color = CalcPointLight(sLight.base, shadowIndex); // we pass in the pointLight part of our spotLight
 
         return  color*(1.0f - (1.0f- slFactor)*(1.0f/(1.0f - sLight.edge)));
 
@@ -195,7 +236,7 @@ vec4 CalcPointLights()
     vec4 totalColor = vec4(0, 0, 0, 0);
     for(int i=0; i < pointLightCount; i++)
     {
-        totalColor += CalcPointLight(pointLights[i]); // compute each light then adding whathever the result is for the fragment we are currently on. 
+        totalColor += CalcPointLight(pointLights[i], i); // compute each light then adding whathever the result is for the fragment we are currently on. 
     }
 
     return totalColor; 
@@ -206,7 +247,7 @@ vec4 CalcSpotLights()
     vec4 totalColor = vec4(0, 0, 0, 0);
     for(int i=0; i < spotLightCount; i++)
     {
-        totalColor += CalcSpotLight(spotLights[i]); // compute each light then adding whathever the result is for the fragment we are currently on. 
+        totalColor += CalcSpotLight(spotLights[i], i + pointLightCount); // compute each light then adding whathever the result is for the fragment we are currently on. 
     }
 
     return totalColor; 

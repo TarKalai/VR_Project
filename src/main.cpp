@@ -63,9 +63,9 @@ GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
 
 void CreateObjects(){
     // GROUNDS
-    Object* ground = new Object(geometry::plane, Textures::Wood(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.));
+    Object* ground = new Object(geometry::plane, Textures::Brick2(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
     physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
-    objectShader.addObject(ground);
+    paralaxMapShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
     omniShadowShader.addObject(ground);
 
@@ -83,7 +83,7 @@ void CreateObjects(){
     directionalShadowShader.addObject(ground3);
     omniShadowShader.addObject(ground3);
 
-    Object* box = new Object(geometry::cube, Textures::Toy(), Materials::Shiny(), glm::vec3(10., 10.0, 10.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.), true);
+    Object* box = new Object(geometry::cube, Textures::Toy(), Materials::Shiny(), glm::vec3(10., 10.0, 5.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.), true);
     physicalWorld.addObject(box, PHYSIC::NORMAL_OBJECT);
     paralaxMapShader.addObject(box);
     directionalShadowShader.addObject(box);
@@ -107,14 +107,15 @@ struct LTC_matrices {
 	GLuint mat2;
 };
 
-GLuint loadMTexture()
+
+GLuint loadTexture(const float *ltc)
 {
 	GLuint texture = 0;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
-	             0, GL_RGBA, GL_FLOAT, LTC1);
+	             0, GL_RGBA, GL_FLOAT, ltc);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -125,23 +126,6 @@ GLuint loadMTexture()
 	return texture;
 }
 
-GLuint loadLUTTexture()
-{
-	GLuint texture = 0;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
-	             0, GL_RGBA, GL_FLOAT, LTC2);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return texture;
-}
 
 
 void OmniShadowMapPass(PointLight* light)
@@ -175,12 +159,12 @@ void OmniShadowMapPass(PointLight* light)
 
 int main(){
 
-    mainWindow = Display(false); 
+    mainWindow = Display(true); 
     mainWindow.Initialise(); 
 
     LTC_matrices mLTC;
-    mLTC.mat1 = loadMTexture();
-    mLTC.mat2 = loadLUTTexture();
+    mLTC.mat1 = loadTexture(LTC1);
+    mLTC.mat2 = loadTexture(LTC2);
     
     physicalWorld = PhysicalWorld();
     CreateShaders();
