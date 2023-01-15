@@ -43,8 +43,8 @@ void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount);
-    SetSpotLights(spotLights, spotLightCount); 
+    SetPointLights(pointLights, pointLightCount, 5, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 5 + pointLightCount, pointLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
@@ -87,8 +87,8 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount);
-    SetSpotLights(spotLights, spotLightCount); 
+    SetPointLights(pointLights, pointLightCount, 5, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 5 + pointLightCount, pointLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
@@ -142,22 +142,24 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     
-    SetAreaLights(areaLights, areaLightCount); 
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount); 
+    SetPointLights(pointLights, pointLightCount, 5, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 5 + pointLightCount, pointLightCount); 
+    SetAreaLights(areaLights, areaLightCount); 
+   
     // --------------------------------------------------------- // 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
 
 
-    mainLight->GetShadowMap()->Read(GL_TEXTURE1);// we are binding to a given textureUnit and we are binding that texture to that tewture unti. 
+    mainLight->GetShadowMap()->Read(GL_TEXTURE2);// we are binding to a given textureUnit and we are binding that texture to that tewture unti. 
     // we use GL_TEXTURE1 because GL_TECTURE0 is taken for the normal texture of the objects
     // shadowMap is going to be bound to GL_TEXTURE1
 
-    SetTexture(0); // bound to texture unit 0 
-    SetDirectionalShadowMap(1); // bound to GL_TEXTURE1
-    
+    SetTexture(1); // bound to texture unit 0 
+    SetDirectionalShadowMap(2); // bound to GL_TEXTURE1
+    SetLTC1(3);
+    SetLTC2(4);
 
     // --------------------------------------------------------- // 
 
@@ -165,6 +167,9 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     lowerLight.y -= 0.3f; // in order to have a more realisitc flashlght we lower the real position of the camera (copy)
     // so that it creates an effect of skewness much like in reality. 
     spotLights[0].SetFlash(lowerLight, camera.getDirection()); 
+
+    Validate(); 
+
     RenderScene();
 }
 
@@ -196,6 +201,8 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light) {
     glm::mat4 resLight = light->CalculateLightTransform(); 
     SetDirectionalLightTransform(&resLight);
 
+    Validate(); 
+
     RenderScene(); 
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
@@ -211,6 +218,9 @@ void Shader::DrawLightObjects(glm::mat4 projection, glm::mat4 view) {
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
+
+    SetTexture(1); // bound to texture unit 1
+
     
     // RENDER SCENE
     RenderScene();
@@ -242,6 +252,20 @@ void Shader::CreateFromFiles(const char* vertexLocation, const char* fragmentLoc
     const char* fragmentCode = fragmentString.c_str(); 
 
     CompileShader(vertexCode, fragmentCode); 
+}
+
+
+void Shader::CreateFromFiles(const char* vertexLocation, const char* geometryLocation, const char* fragmentLocation)
+{
+    std::string vertexString = ReadFile(vertexLocation); 
+    std::string geometryString = ReadFile(geometryLocation); 
+    std::string fragmentString = ReadFile(fragmentLocation); 
+
+    const char* vertexCode = vertexString.c_str(); //c_str : convert to c string format which is const char array. 
+    const char* geometryCode = geometryString.c_str(); 
+    const char* fragmentCode = fragmentString.c_str(); 
+
+    CompileShader(vertexCode, geometryCode, fragmentCode); 
 }
 
 
@@ -411,7 +435,45 @@ void Shader::CompileProgram()
 		uniformAreaLight[i].uniformIntensity = glGetUniformLocation(shaderID, str_intensity.c_str());
         uniformAreaLight[i].uniformTwoSided = glGetUniformLocation(shaderID, str_twoSided.c_str());
 
+    }
+
+    uniformOmniLightPos = glGetUniformLocation(shaderID, "lightPos"); 
+    uniformFarPlane = glGetUniformLocation(shaderID, "farPlane"); 
+
+    for (size_t i =0; i < 6; i++)
+    {
+        char locBuff[100] = { '\0' };
+
+        snprintf(locBuff, sizeof(locBuff), "lightMatrices[%d]", i); 
+        uniformLightMatrices[i] = glGetUniformLocation(shaderID, locBuff);  
+    }
+
+    for (size_t i =0; i < values::MAX_POINT_LIGHTS + values::MAX_SPOT_LIGHTS ; i++)
+    {
+        char locBuff[100] = { '\0' };
+
+        snprintf(locBuff, sizeof(locBuff), "omniShadowMaps[%d].shadowMap", i); 
+        uniformOmniShadowMap[i].shadowMap = glGetUniformLocation(shaderID, locBuff);  
+
+        snprintf(locBuff, sizeof(locBuff), "omniShadowMaps[%d].farPlane", i); 
+        uniformOmniShadowMap[i].farPlane = glGetUniformLocation(shaderID, locBuff);
     } 
+}
+
+void Shader::CompileShader(const char* vertexCode, const char* geometryCode, const char* fragmentCode){
+    shaderID = glCreateProgram(); // Outputs the Ids of the shaders. 
+
+    if (!shaderID){
+        printf("Error Creating shader program");
+        return; 
+    }
+
+    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER); //GL_VERTEX_SHADER is the type of shader, it needs to know what type the shaders are. 
+    AddShader(shaderID, geometryCode, GL_GEOMETRY_SHADER);
+    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
+
+    CompileProgram(); 
+
 }
 
 void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
@@ -434,7 +496,7 @@ void Shader::SetDirectionalLight(DirectionalLight * dLight){
 }
 
 
-void Shader::SetPointLights(PointLight * pLight, int lightCount){
+void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset){
 
     if(lightCount > values::MAX_POINT_LIGHTS) lightCount = values::MAX_POINT_LIGHTS; 
 
@@ -448,12 +510,16 @@ void Shader::SetPointLights(PointLight * pLight, int lightCount){
                            uniformPointLight[i].uniformConstant, 
                            uniformPointLight[i].uniformLinear, 
                            uniformPointLight[i].uniformExponent); 
+        pLight[i].GetShadowMap()->Read(GL_TEXTURE0+ textureUnit + i); // need a new GL_TEXTURE for each pointlight
+        // the textureUnit is just the starting point: for instance if it is 0 then we will have GL_TEXTURE0 then GL_TEXTURE1, ...
+        glUniform1i(uniformOmniShadowMap[i + offset].shadowMap, textureUnit + i); // for pointlights the offset will be 0 IF WE SET THEM FIRST before the spotlights
+        glUniform1f(uniformOmniShadowMap[i + offset].farPlane, pLight[i].GetFarPlane()); 
         
     }
 }
 
 
-void Shader::SetSpotLights(SpotLight * sLight, int lightCount){
+void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset){
 
      if(lightCount > values::MAX_SPOT_LIGHTS) lightCount = values::MAX_SPOT_LIGHTS; 
 
@@ -470,6 +536,12 @@ void Shader::SetSpotLights(SpotLight * sLight, int lightCount){
                            uniformSpotLight[i].uniformLinear, 
                            uniformSpotLight[i].uniformExponent,
                            uniformSpotLight[i].uniformEdge); 
+
+        sLight[i].GetShadowMap()->Read(GL_TEXTURE0+ textureUnit + i); 
+        // need a new GL_TEXTURE for each pointlight
+        // the textureUnit is just the starting point: for instance if it is 0 then we will have GL_TEXTURE0 then GL_TEXTURE1, ...
+        glUniform1i(uniformOmniShadowMap[i + offset].shadowMap, textureUnit + i); 
+        glUniform1f(uniformOmniShadowMap[i + offset].farPlane, sLight[i].GetFarPlane()); 
 
     }
 }
@@ -495,6 +567,14 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
                             uniformAreaLight[i].uniformTwoSided);
 
     }
+}
+
+void Shader::SetLTC1(GLuint textureUnit){
+    glUniform1i(uniformLTC1, textureUnit);
+}
+
+void Shader::SetLTC2(GLuint textureUnit){
+    glUniform1i(uniformLTC2, textureUnit);
 }
 
 void Shader::SetBlendFactor(float blend)
@@ -533,9 +613,20 @@ void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
     glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
 }
 
+void Shader::SetLightMatrices(std::vector<glm::mat4> lightMatrices)
+{
+    for(size_t i = 0; i < 6; i ++){
+
+        glUniformMatrix4fv(uniformLightMatrices[i], 1, GL_FALSE, glm::value_ptr(lightMatrices[i])); 
+        
+    }
+}
+
 void Shader::UseShader(){
     glUseProgram(shaderID); 
 }
+
+
 
 void Shader::ClearShader(){
     if(shaderID != 0){
@@ -623,6 +714,14 @@ GLuint Shader::GetShininessLocation(){
 
 GLuint Shader::GetEyePositionLocation(){
     return uniformEyePosition; 
+}
+
+GLuint Shader::GetOmniLightPosLocation(){
+    return uniformOmniLightPos; 
+}
+
+GLuint Shader::GetFarPlaneLocation(){
+    return uniformFarPlane; 
 }
 
 Shader::~Shader(){

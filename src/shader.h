@@ -33,6 +33,8 @@ public:
 
     void CreateFromString(const char* vertexCode, const char* fragmentCode); //Create the shader from a string we pass into it without reading a file. 
     void CreateFromFiles(const char* vertexLocation, const char* fragmentLocation); 
+    void CreateFromFiles(const char* vertexLocation, const char* geometryLocation, const char* fragmentLocation);
+
 
     std::string ReadFile(const char* fileLocation); 
 
@@ -48,13 +50,24 @@ public:
     GLuint GetSpecularIntensityLocation(); 
     GLuint GetShininessLocation(); 
     GLuint GetEyePositionLocation();
+
     GLuint GetUniformSkyboxDay(); 
     GLuint GetUniformSkyboxNight(); 
     GLuint GetUniformBlendFactor(); 
 
+    GLuint GetOmniLightPosLocation(); 
+    GLuint GetFarPlaneLocation(); 
+
     void SetDirectionalLight(DirectionalLight * dLight);
-    void SetPointLights(PointLight * pLight,int lightCount); 
-    void SetSpotLights(SpotLight * sLight, int lightCount);
+    void SetPointLights(PointLight * pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset); 
+    void SetSpotLights(SpotLight * sLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset);
+
+    void SetAreaLights(AreaLight *  aLights, int lightCount);
+    void SetLTC1(GLuint textureUnit);
+    void SetLTC2(GLuint textureUnit);
+
+    void SetLightMatrices(std::vector<glm::mat4> lightMatrices); 
+
     
     void SetTexture(GLuint textureUnit); 
     void SetNormalMap(GLuint textureUnit); 
@@ -104,7 +117,6 @@ public:
     void remove(int objID);
     void ClearShader();
 
-    void SetAreaLights(AreaLight *  aLights, int lightCount);
 
     void SetSkyColor(float r, float g, float b); 
  
@@ -122,7 +134,11 @@ private:
     uniformTexture, uniformColor,
     uniformDirectionalLightTransform, uniformDirectionalShadowMap, 
     uniformNormalMap, uniformSkyColor, uniformDepthMap,
-    uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor;  
+    uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor, 
+    uniformOmniLightPos, uniformFarPlane, uniformAlbedoRoughness;  
+
+    GLuint uniformLightMatrices[6];
+
 
     struct {
         GLuint uniformColor; 
@@ -175,7 +191,15 @@ private:
         GLuint uniformPoint3;
     } uniformAreaLight[values::MAX_AREA_LIGHTS];
 
-    void CompileShader(const char* vertexCode, const char* fragmentCode); 
+
+    struct { // struct that represents the struct in the shader.frag
+        GLuint shadowMap; 
+        GLuint farPlane; 
+    } uniformOmniShadowMap[values::MAX_POINT_LIGHTS + values::MAX_SPOT_LIGHTS];
+
+    void CompileShader(const char* vertexCode, const char* fragmentCode);
+    void CompileShader(const char* vertexCode, const char* geometryCode, const char* fragmentCode); 
+
     void AddShader(GLuint program, const char* shader_code, GLenum shader_type); 
 
 };

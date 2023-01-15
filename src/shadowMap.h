@@ -23,7 +23,7 @@ public:
 
     ~ShadowMap(); 
 
-private: 
+protected: 
 
     GLuint FBO, shadowMap;  // Id of texture
     GLuint shadowWidth, shadowHeight; // need this when we change the size of the veiewport, when we do the shadow render (first render from the point of view of the camera) we want to make sure that the viewport is the same dimensions as the shadow map texture

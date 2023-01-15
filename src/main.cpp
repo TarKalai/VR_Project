@@ -31,6 +31,8 @@
 #include "utils.h"
 #include "shader2D.h"
 #include "skybox.h"
+#include "ltc_matrix.hpp"
+
 
 Display mainWindow; 
 
@@ -42,6 +44,7 @@ Shader objectLightShader;
 Shader2D shader2D;
 Shader bumpMapShader;
 Shader paralaxMapShader;
+Shader omniShadowShader; 
 
 Camera camera; 
 
@@ -56,28 +59,35 @@ int pointLightCount;
 int spotLightCount;
 int areaLightCount = 0;
 
+GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
+
 void CreateObjects(){
     // GROUNDS
     Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
     physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
     bumpMapShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
+    omniShadowShader.addObject(ground);
 
-    Object* ground2 = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/50., general::floorThickness, general::sceneSize.z/50), glm::vec3(1.), true);
-    physicalWorld.addObject(ground2, PHYSIC::GROUND_OBJECT);
-    bumpMapShader.addObject(ground2);
-    directionalShadowShader.addObject(ground2);
+    //TODO
+    // Object* ground2 = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 10, 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/50., general::floorThickness, general::sceneSize.z/50), glm::vec3(1.), true);
+    // physicalWorld.addObject(ground2, PHYSIC::GROUND_OBJECT);
+    // bumpMapShader.addObject(ground2);
+    // directionalShadowShader.addObject(ground2);
+    // omniShadowShader.addObject(ground2);
 
 
     Object* ground3 = new Object(geometry::plane, Textures::Brick2(), Materials::Shiny(), glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.), true);
     physicalWorld.addObject(ground3, PHYSIC::GROUND_OBJECT);
     paralaxMapShader.addObject(ground3);
     directionalShadowShader.addObject(ground3);
+    omniShadowShader.addObject(ground3);
 
     Object* box = new Object(geometry::cube, Textures::Toy(), Materials::Shiny(), glm::vec3(10., 10.0, 10.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.), true);
     physicalWorld.addObject(box, PHYSIC::NORMAL_OBJECT);
     paralaxMapShader.addObject(box);
     directionalShadowShader.addObject(box);
+    omniShadowShader.addObject(box); 
 
 }
 
@@ -89,12 +99,88 @@ void CreateShaders()
     shader2D = Shader2D(true);
     bumpMapShader.CreateFromFiles(shaderfiles::bumpMapVertex, shaderfiles::bumpMapFrag); 
     paralaxMapShader.CreateFromFiles(shaderfiles::paralaxMapVertex, shaderfiles::paralaxMapFrag);
+    omniShadowShader.CreateFromFiles(shaderfiles::omniShadowVertex, shaderfiles::omniShadowGeom, shaderfiles::omniShadowFrag);
 }
+
+struct LTC_matrices {
+	GLuint mat1;
+	GLuint mat2;
+};
+
+GLuint loadMTexture()
+{
+	GLuint texture = 0;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
+	             0, GL_RGBA, GL_FLOAT, LTC1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texture;
+}
+
+GLuint loadLUTTexture()
+{
+	GLuint texture = 0;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64,
+	             0, GL_RGBA, GL_FLOAT, LTC2);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texture;
+}
+
+
+void OmniShadowMapPass(PointLight* light)
+{
+    omniShadowShader.UseShader(); // doesn't have colors, it is the depth map. 
+
+    glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
+
+    light->GetShadowMap()->Write();
+
+    glClear(GL_DEPTH_BUFFER_BIT); // if there iis already some depth infor. in the buffer we clear it
+
+    uniformModel  = omniShadowShader.GetModelLocation();
+    uniformOmniLightPos = omniShadowShader.GetOmniLightPosLocation(); 
+    uniformFarPlane = omniShadowShader.GetFarPlaneLocation(); 
+
+    glUniform3f(uniformOmniLightPos, light->GetPosition().x, light->GetPosition().y, light->GetPosition().z); // position of the light in the world
+    glUniform1f(uniformFarPlane, light->GetFarPlane()); 
+
+    // std::vector<glm::mat4> omiLightTransform = ; 
+    omniShadowShader.SetLightMatrices(light->CalculateLightTransform()); 
+
+    omniShadowShader.Validate(); 
+
+    omniShadowShader.RenderScene(); 
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
+
+}
+
 
 int main(){
 
     mainWindow = Display(true); 
     mainWindow.Initialise(); 
+
+    LTC_matrices mLTC;
+    mLTC.mat1 = loadMTexture();
+    mLTC.mat2 = loadLUTTexture();
     
     physicalWorld = PhysicalWorld();
     CreateShaders();
@@ -162,6 +248,13 @@ int main(){
         
         // Order is really important : order = shadow, object, objectLight
         directionalShadowShader.DirectionalShadowMapPass(mainLight); // shadow map will be updated for the light passed 
+        for(size_t i = 0; i < pointLightCount;  i++ ){
+            OmniShadowMapPass(&pointLights[i]); 
+        }
+        for (size_t i = 0; i < spotLightCount; i++){
+            OmniShadowMapPass(&spotLights[i]); 
+        }
+
         mainWindow.resetViewport();
 
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -173,7 +266,10 @@ int main(){
         paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
         
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
-
+        glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
         objectLightShader.DrawLightObjects(projection, view);
         shader2D.drawObject();
              

@@ -78,6 +78,9 @@ namespace shaderfiles
     static constexpr char bumpMapFrag[128] = "../../src/Shaders/bumpmap.fs";
     static constexpr char paralaxMapVertex[128] = "../../src/Shaders/paralax.vs";
     static constexpr char paralaxMapFrag[128] = "../../src/Shaders/paralax.fs";
+    static constexpr char omniShadowFrag[128] = "../../src/Shaders/omni_shadow_map.fs";
+    static constexpr char omniShadowVertex[128] = "../../src/Shaders/omni_shadow_map.vs";
+    static constexpr char omniShadowGeom[128] = "../../src/Shaders/omni_shadow_map.geom";
 } 
 
 namespace general
