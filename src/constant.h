@@ -13,9 +13,9 @@ namespace skycolor
 
 namespace values
 {
-    static constexpr int MAX_POINT_LIGHTS = 1;
-    static constexpr int MAX_SPOT_LIGHTS = 5;
-    static constexpr int MAX_AREA_LIGHTS = 5;
+    static constexpr int MAX_POINT_LIGHTS = 10;
+    static constexpr int MAX_SPOT_LIGHTS = 10;
+    static constexpr int MAX_AREA_LIGHTS = 10;
 }
 
 namespace image

@@ -43,8 +43,8 @@ void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 7, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 7 + pointLightCount, pointLightCount); 
+    SetPointLights(pointLights, pointLightCount, 9, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 9 + pointLightCount, pointLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
@@ -87,8 +87,8 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
 
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 7, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 7 + pointLightCount, pointLightCount); 
+    SetPointLights(pointLights, pointLightCount, 9, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 9 + pointLightCount, pointLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
@@ -143,8 +143,8 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
 
     
     SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 7, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 7 + pointLightCount, pointLightCount); 
+    SetPointLights(pointLights, pointLightCount, 9, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(spotLights, spotLightCount, 9 + pointLightCount, pointLightCount); 
     SetAreaLights(areaLights, areaLightCount); 
    
     // --------------------------------------------------------- // 
@@ -589,8 +589,8 @@ void Shader::SetBlendFactor(float blend)
 
 void Shader::ConnectSkyboxes()
 {
-    glUniform1i(uniformSkyboxDay, 11);
-    glUniform1i(uniformSkyboxNight, 12); 
+    glUniform1i(uniformSkyboxDay, 7);
+    glUniform1i(uniformSkyboxNight, 8); 
 }
 
 void Shader::SetSkyColor(float r, float g, float b)
