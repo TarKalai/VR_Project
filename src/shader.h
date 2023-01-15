@@ -105,7 +105,9 @@ public:
                          PointLight* pointLights, 
                          int pointLightCount, 
                          SpotLight* spotLights, 
-                         int spotLightCount);
+                         int spotLightCount, 
+                         AreaLight* areaLights, 
+                         int areaLightCount);
 
     void DirectionalShadowMapPass(DirectionalLight* light); // DirectionalShadowMapPass
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
