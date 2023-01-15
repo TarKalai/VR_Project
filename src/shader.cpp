@@ -439,6 +439,8 @@ void Shader::CompileProgram()
     uniformRefractivity = glGetUniformLocation(shaderID, "Refractivity");
     uniformCoefRefraction = glGetUniformLocation(shaderID, "CoefRefraction");
 
+    uniformFogColor = glGetUniformLocation(shaderID, "fogColor"); 
+
 
     for (int i = 0; i < values::MAX_AREA_LIGHTS; i++){
 
@@ -590,6 +592,11 @@ void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
     }
 }
 
+void Shader::SetFogColor(float, r, float, g, float b)
+{
+    glUniform3f(uniformFogColor, r, g, b); 
+}
+
 void Shader::SetLTC1(GLuint textureUnit){
     glUniform1i(uniformLTC1, textureUnit);
 }
@@ -699,6 +706,11 @@ void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_ty
         return; 
     }
     glAttachShader(program, the_shader);
+}
+
+GLuint Shader::GetFogColorLocation()
+{
+    return uniformFogColor;
 }
 
 GLuint Shader::GetProjectionLocation(){

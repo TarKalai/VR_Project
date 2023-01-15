@@ -41,7 +41,7 @@ public:
     GLuint GetProjectionLocation(); 
     GLuint GetModelLocation(); 
     GLuint GetViewLocation();
-    // GLuint GetFogColorLocation();  
+    GLuint GetFogColorLocation();  
     GLuint GetAmbientIntensityLocation(); 
     GLuint GetAmbientColorLocation(); 
 
@@ -87,6 +87,7 @@ public:
     void SetBlendFactor(); 
     void SetSunLightColor(); 
     void SetTime();
+    void SetFogColor(float r, float g, float b); 
 
     void addObject(Object *obj);
     void addObjects(std::vector<Object*> objects);
@@ -151,8 +152,8 @@ private:
     uniformSinTime, uniformCosTime, uniformSunLightColor,
     uniformSkyboxDay, uniformSkyboxNight, uniformBlendFactor, 
     uniformReflectivity, uniformRefractivity, uniformCoefRefraction,
-    
-    uniformOmniLightPos, uniformFarPlane, uniformAlbedoRoughness;  
+    uniformOmniLightPos, uniformFarPlane, uniformAlbedoRoughness, 
+    uniformFogColor;  
 
     GLuint uniformLightMatrices[6]; 
 

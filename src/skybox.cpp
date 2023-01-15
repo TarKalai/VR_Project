@@ -82,6 +82,7 @@ void Skybox::BindTextures()
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureNight); 
     skyShader->SetBlendFactor();
     skyShader->SetSunLightColor();
+    skyShader->SetFogColor(0.5f, 0.5f, 0.5f); 
 }
 
 void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
