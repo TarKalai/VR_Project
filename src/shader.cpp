@@ -71,7 +71,9 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
                          PointLight* pointLights, 
                          int pointLightCount, 
                          SpotLight* spotLights, 
-                         int spotLightCount){
+                         int spotLightCount, 
+                         AreaLight* areaLights, 
+                         int areaLightCount){
     UseShader(); 
 
     uniformModel = GetModelLocation(); 
@@ -89,6 +91,7 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
     SetDirectionalLight(mainLight);
     SetPointLights(pointLights, pointLightCount, 9, 0);//since it is an array we don't need to pass the address. 
     SetSpotLights(spotLights, spotLightCount, 9 + pointLightCount, pointLightCount); 
+    SetAreaLights(areaLights, areaLightCount); 
 
     glm::mat4 resmainLight = mainLight->CalculateLightTransform();
     SetDirectionalLightTransform(&resmainLight); 
@@ -100,6 +103,8 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view,
     SetTexture(1);
     SetNormalMap(2);
     SetDirectionalShadowMap(4);
+    SetLTC1(5);
+    SetLTC2(6);
 
     glm::vec3 lowerLight = camera.getPosition(); 
     lowerLight.y -= 0.3f;

@@ -63,9 +63,9 @@ GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
 
 void CreateObjects(){
     // GROUNDS
-    Object* ground = new Object(geometry::plane, Textures::Brick2(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
+    Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
     physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
-    paralaxMapShader.addObject(ground);
+    bumpMapShader.addObject(ground);
     directionalShadowShader.addObject(ground); 
     omniShadowShader.addObject(ground);
 
@@ -246,13 +246,13 @@ int main(){
 
         skybox.DrawSkyBox(view, projection);
 
-        bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
-        paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
-
         glActiveTexture(GL_TEXTURE5);
 		glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
 		glActiveTexture(GL_TEXTURE6);
 		glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
+
+        bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
+        paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount); 
         
         objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
         objectLightShader.DrawLightObjects(projection, view);

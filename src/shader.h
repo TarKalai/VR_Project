@@ -96,7 +96,9 @@ public:
                     PointLight* pointLights, 
                     int pointLightCount, 
                     SpotLight* spotLights, 
-                    int spotLightCount);      
+                    int spotLightCount, 
+                    AreaLight* areaLights, 
+                    int areaLightCount);      
 
     void RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, 
                          DirectionalLight* mainLight,

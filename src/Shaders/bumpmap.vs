@@ -10,6 +10,8 @@ out vec3 FragPos;
 out mat3 TBN;
 out vec4 DirectionalLightSpacePos; // position of the fragment is relative to the light
 out float visibility; 
+out vec3 Normal;
+
 
 uniform mat4 directionalLightTransform;
 uniform mat4 model;
@@ -33,6 +35,8 @@ void main(){
     vec3 B = cross(N, T);
     
     TBN = transpose(mat3(T, B, N));  
+    Normal = N;
+
 
 
     vec3 scale = vec3(length(normalMatrix[0]), length(normalMatrix[1]), length(normalMatrix[2]));

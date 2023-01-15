@@ -79,14 +79,14 @@ uniform OmniShadowMap omniShadowMaps[MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS];
 // Possible bug that may occur : if we are not using all the omniShadowMaps then the one which are not use will not have their textureUnit id's updated
 // they will be set to 0 Then we will have a sampler2D (for the texture) and a samplerCube using the same GL_TEXTURE => Crash
 // we will be setting up everything by 1 => then we will be sure nothing will be set to the default value.
-uniform sampler2D LTC1; // for inverse M
-uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
+uniform sampler2D LTC1; 
+uniform sampler2D LTC2; 
 uniform Material material; 
 
 uniform vec3 eyePosition; // camera position
 uniform vec3 objectColor;
 
-const float LUT_SIZE  = 64.0; // ltc_texture size
+const float LUT_SIZE  = 64.0;
 const float LUT_SCALE = (LUT_SIZE - 1.0)/LUT_SIZE;
 const float LUT_BIAS  = 0.5/LUT_SIZE;
 
@@ -438,7 +438,6 @@ vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 vec4 CalcAreaLights(){
     // gamma correction
     if (areaLightCount>0){
-        vec3 mDiffuse = texture(theTexture, TexCoord).xyz;// * vec3(0.7f, 0.8f, 0.96f);
         vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // mDiffuse
 
         vec3 result = vec3(0.0);
@@ -481,7 +480,7 @@ vec4 CalcAreaLights(){
             // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
             specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
 
-            result += areaLights[i].base.color * areaLights[i].base.diffuseIntensity * (specular + mDiffuse * diffuse); // (specular + mDiffuse * diffuse)
+            result += areaLights[i].base.color * areaLights[i].base.diffuseIntensity * (specular + diffuse); // (specular + mDiffuse * diffuse)
         }
         return vec4(ToSRGB(result), 1.0f);
     }else {
