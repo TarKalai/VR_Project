@@ -69,6 +69,7 @@ class Textures {
 			else if (name == "damier") {return Get().IDamier();}
 			else if (name == "point1") {return Get().IPoint1();}
 			else if (name == "point2") {return Get().IPoint2();}
+			else if (name == "brickwall") {return Get().IBrickwall();}
 			else if (name == "brick2") {return Get().IBrick2();}
 			else if (name == "toy") {return Get().IToy();}
 			else {return Get().IWhite();}
