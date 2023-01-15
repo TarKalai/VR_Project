@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
-#include <vector>
+#include <vector> // dynamic arrays
+#include <random> // random data to particles
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -14,30 +15,23 @@
 
 #include "constant.h"
 
+
 class Particle
 {
-public : 
+public: 
 
-    Particle(glm::vec3 position, glm::vec3 velocity, float gravityEffect, float lifeLength, float rotation, float scale); 
-    
-    bool Update(); 
+    Particle(); 
 
-    glm::vec3 GetPosition(); 
-    float GetRotation(); 
-    float GetScale(); 
+    void CreateParticles(GLuint numberOfParticlesIn); 
 
-    ~Particle();
+    void Render(); 
 
+    ~Particle(); 
 
 
 private: 
 
-    glm::vec3 position; 
-    glm::vec3 velocity; 
-    float gravityEffect; //indicates how much a particle is affected by gravity.
-    float lifeLength; // how long the particles stay around
-    float rotation; // to make the particles rotate
-    float scale;
+    GLuint particleObjectLocation;
+    GLuint numberOfParticles; 
 
-    float elapsedTime = 0; // time since the particle has been alive.
 };

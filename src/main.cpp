@@ -31,9 +31,9 @@
 #include "gui.h"
 #include "utils.h"
 #include "shader2D.h"
-// #include "particle.h"
+#include "particle.h"
 
-// Particle particles; 
+Particle particles; 
 
 Display mainWindow; 
 
@@ -43,7 +43,7 @@ Shader objectShader;
 Shader directionalShadowShader; 
 Shader areaLightShader; 
 Shader2D shader2D;
-// Shader particleShader; 
+Shader particleShader; 
 
 Camera camera; 
 
@@ -69,7 +69,7 @@ void CreateShaders()
     directionalShadowShader.CreateFromFiles(shaderfiles::shadowMapVertex, shaderfiles::shadowMapFrag); 
     areaLightShader.CreateFromFiles(shaderfiles::lightPlaneVertex, shaderfiles::lightPlaneFrag); 
     shader2D = Shader2D(true);
-    // particleShader.CreateFromFiles(shaderfiles::particleVertex, shaderfiles::particleFrag); 
+    particleShader.CreateFromFiles(shaderfiles::particleVertex, shaderfiles::particleFrag); 
 }
 
 int main(){
@@ -119,7 +119,7 @@ int main(){
 
     glPointSize(10); 
 
-    // particles.CreateParticles(1000); 
+    particles.CreateParticles(1000); 
 
     while(!mainWindow.getShouldClose()){
         Time::updateTime();
@@ -146,7 +146,7 @@ int main(){
         shader2D.drawObject();
         // particleShader.UseShader();
         // particleShader.SetTime();  
-        // particles.Render();
+        particles.Render();
              
         gui.update();
         mainWindow.swapBuffers(); // There are 2 scenes going on at once, we are drawing to the one that can't be seen, and we call swapBuffers to swap them around: so then the one we are drawing to is the one that can be seen and the one which could be seen originaly is the one we are drawing to. 

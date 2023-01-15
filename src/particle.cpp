@@ -1,45 +1,47 @@
 #include "particle.h"
 
-Particle::Particle(glm::vec3 position, glm::vec3 velocity, float gravityEffect, float lifeLength, float rotation, float scale)
+Particle::Particle(){}
+
+void Particle::CreateParticles(GLuint numberOfParticlesIn)
 {
-    this->position = position; 
-    this->velocity = velocity; 
-    this->gravityEffect = gravityEffect; 
-    this->lifeLength = lifeLength; 
-    this->rotation = rotation; 
-    this->scale = scale; 
+    numberOfParticles = numberOfParticlesIn; 
+    std::vector<GLfloat> particlePositionData; 
+    GLfloat minimiser = 2.0f/numberOfParticles; 
 
+    std::default_random_engine generator; 
+    std::uniform_int_distribution<int> distribution(-(int)(numberOfParticles), numberOfParticles); 
+
+    for (size_t i = 0; i < numberOfParticles; i++)
+    {
+        particlePositionData.push_back(-1.0f + i * minimiser); // x position
+        // particlePositionData.push_back(sin(i * minimiser * 2) + (GLfloat)distribution(generator) * minimiser / 20); // y position
+        particlePositionData.push_back(sin(i * minimiser * 2)); // + (GLfloat)distribution(generator) * minimiser / 20); // y position
+    }
+
+    glGenVertexArrays(1, &particleObjectLocation); 
+    glBindVertexArray(particleObjectLocation);
+
+    GLuint particlePositionBufferLocation; 
+    glGenBuffers(1, &particlePositionBufferLocation); 
+    glBindBuffer(GL_ARRAY_BUFFER, particlePositionBufferLocation); 
+    glBufferData(GL_ARRAY_BUFFER, particlePositionData.size() * sizeof(GLfloat), particlePositionData.data(), GL_STATIC_DRAW);
+
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0); 
+    glEnableVertexArrayAttrib(particleObjectLocation, 0); 
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindVertexArray(0); 
 }
 
-
-glm::vec3 Particle::GetPosition()
+void Particle::Render()
 {
-    return position; 
+    glBindVertexArray(particleObjectLocation); 
+    // particleObjectLocation is in the graphics card memory and with glBindVertexArray we tell it to draw
+    glDrawArrays(GL_POINTS, 0, numberOfParticles); 
+
+    glBindVertexArray(0); 
+
 }
 
-float Particle::GetRotation()
-{
-    return rotation; 
-}
-
-float Particle::GetScale(){
-    return scale; 
-}
-
-bool Particle::Update() 
-// return false if the particle has been around 
-// longer than its lifelength which means it has to be removed
-{
-    velocity.y += general::gravity * gravityEffect * 1/60; 
-    glm::vec3 change = velocity; 
-    change = glm::vec3(glfwGetTime()); 
-    position += change; 
-    elapsedTime += glfwGetTime(); 
-    return elapsedTime < lifeLength;  
-    // change.sca
-}
-
-// Particle::Particle()
-// {
-// }
-Particle::~Particle() {}
+Particle::~Particle(){}

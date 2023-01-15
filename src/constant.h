@@ -43,8 +43,8 @@ namespace shaderfiles
     static constexpr char lightPlaneFrag[128] = "../../src/Shaders/light_plane.fs";
     static constexpr char shadowMapVertex[128] = "../../src/Shaders/directional_shadow_map.vs";
     static constexpr char shadowMapFrag[128] = "../../src/Shaders/directional_shadow_map.fs";
-    // static constexpr char particleFrag[128] = "../../src/Shaders/particleShader.fs";
-    // static constexpr char particleVertex[128] = "../../src/Shaders/particleShader.vs";
+    static constexpr char particleFrag[128] = "../../src/Shaders/particleShader.fs";
+    static constexpr char particleVertex[128] = "../../src/Shaders/particleShader.vs";
 } 
 
 namespace general
