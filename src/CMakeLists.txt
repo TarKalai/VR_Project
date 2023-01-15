@@ -24,6 +24,7 @@ set(SOURCES_REFACTOR "main.cpp"
 "shader2D.cpp" "shader2D.h"
 "debug.h" "utils.h"
 "skybox.cpp" "skybox.h"
+"model.cpp" "model.h"
 "constant.h")
 
 #To use the content of a variable you need to use ${NAME_OF_YOUR_VARIABLE}

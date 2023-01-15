@@ -32,6 +32,7 @@
 #include "shader2D.h"
 #include "skybox.h"
 #include "ltc_matrix.hpp"
+#include "model.h"
 
 
 Display mainWindow; 
@@ -45,6 +46,8 @@ Shader2D shader2D;
 Shader bumpMapShader;
 Shader paralaxMapShader;
 Shader omniShadowShader; 
+Model x_wing; 
+Model blackhawk; 
 
 Camera camera; 
 
@@ -62,6 +65,14 @@ int areaLightCount = 0;
 GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
 
 void CreateObjects(){
+
+
+    x_wing = Model(); 
+    x_wing.LoadModel("../../src/Models/x-wing.obj");
+
+    blackhawk = Model(); 
+    blackhawk.LoadModel("../../src/Models/uh60.obj");
+
     // GROUNDS
     Object* ground = new Object(geometry::plane, Textures::Brickwall(), Materials::Shiny(), glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.), true);
     physicalWorld.addObject(ground, PHYSIC::GROUND_OBJECT);
@@ -88,6 +99,24 @@ void CreateObjects(){
     paralaxMapShader.addObject(box);
     directionalShadowShader.addObject(box);
     omniShadowShader.addObject(box); 
+
+
+    model = glm::mat4(1.0); 
+    model = glm::translate(model, glm::vec3(0.0, -2.0, 0.0)); // only altering the x value so the top right value in the matrix will be changed
+    model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f ));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
+    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
+    x_wing.RenderModel(); 
+
+    model = glm::mat4(1.0);
+    model = glm::rotate(model, -blackhawkAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));  
+    model = glm::translate(model, glm::vec3(2.0, 4.0, 0.0)); // only altering the x value so the top right value in the matrix will be changed
+    model = glm::rotate(model, 20.0f*toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); 
+    model = glm::rotate(model, -90.0f*toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); 
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f ));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
+    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess); 
+    blackhawk.RenderModel(); 
 
 }
 
