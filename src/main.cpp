@@ -51,13 +51,14 @@ Camera camera;
 DirectionalLight* mainLight; 
 PointLight *pointLights; 
 SpotLight *spotLights; 
-AreaLight areaLights[values::MAX_AREA_LIGHTS]; 
+AreaLight *areaLights; 
 
 std::vector<Object*> pointLightObjects;
+std::vector<Object*> areaLightObjects;
 
 int pointLightCount; 
 int spotLightCount;
-int areaLightCount = 0;
+int areaLightCount;
 
 GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
 
@@ -180,25 +181,12 @@ int main(){
 
     spotLights = lightConstructor.getSpotLight();
     spotLightCount = lightConstructor.getSpotLightCount();
+
+    areaLights = lightConstructor.getAreaLight();
+    areaLightCount = lightConstructor.getAreaLightCount();
+    areaLightObjects = lightConstructor.getAreaLightObjects();
+    objectLightShader.addObjects(areaLightObjects);
     
-	for (int i=0; i<1; i++) {
-		glm::vec3 pos = glm::vec3(Utils::getRandom(-20,20),1,Utils::getRandom(-20,20));
-		glm::vec3 rot = glm::vec3(glm::radians(-90.0), Utils::getRandom(glm::radians(-90.0),glm::radians(90.0)), 0);//getRandom(glm::radians(-90.0),glm::radians(90.0)), getRandom(0.,2*3.14), 0);
-		glm::vec3 scale = glm::vec3(1);
-        glm::vec3 color = Utils::getRandom3(0, 1);
-		Object* plane = new Object(geometry::plane, ShaderType::LIGHT, Textures::Dirt(), Materials::Empty(), PHYSIC::UNMOVABLE, pos, rot, scale, color);
-        addToShaders(plane);
-
-
-		areaLights[i] = AreaLight(plane->color.x,plane->color.y, plane->color.z, 
-							  0.9f, 10.,
-							  plane->getPosition(),
-							  0.003f, 0.002f, 0.001f, // not used
-							  plane->getRotation(), true, 
-							  plane->getVertexPosition(),
-							  plane->getScale());
-    	areaLightCount++; 
-    }
 
 	glfwSwapInterval(1);
 
