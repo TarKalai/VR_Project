@@ -32,9 +32,9 @@ void LightConstructor::createPointLight(){
 
 		pointLights[i] = PointLight(general::pointShadowResolution, general::pointShadowResolution,
                                     0.01, 100.0f,
-                                    color.x,color.y, color.z, 
+                                    sphere->color.x, sphere->color.y, sphere->color.z, 
                                     1.0f, 2.0,
-                                    pos.x,pos.y,pos.z,
+                                    sphere->position.x, sphere->position.y, sphere->position.z,
                                     0.3f, 0.2f, 0.1f); //0.003f, 0.002f, 0.001f
     	pointLightCount++; 
     }
@@ -44,12 +44,15 @@ void LightConstructor::createSpotLight(){
     
     createTorch();
 
+    Object* sphere = new Object(geometry::sphere,  ShaderType::LIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, 
+                                glm::vec3(-10.0f, 5.0f, -10.0f), glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.05), glm::vec3(1.));
+	spotLightObjects.push_back(sphere);
     spotLights[1] = SpotLight(general::spotShadowResolution, general::spotShadowResolution, 
                             0.01f, 100.0f,
-                            1.0f, 1.0f, 1.0f, 
-                            1.0f, 2.0f,
-                            -10.0f, 5.0f, -10.0f,
-                            -1.0f, -1.0f, 0.0f, // point to teh left (very far)
+                            sphere->color.x, sphere->color.y, sphere->color.z, 
+                            0.0f, 2.0f,
+                            sphere->position.x, sphere->position.y, sphere->position.z,
+                            sphere->rotation.x, sphere->rotation.y, sphere->rotation.z,
                             0.3f, 0.2f, 0.5f, // we don't want th elight to die off because of distance
                             30.0f);  // spread of the angle : 20°
     spotLightCount++; 
@@ -57,14 +60,17 @@ void LightConstructor::createSpotLight(){
 
 void LightConstructor::createTorch(){
     // the first one is a torch
-    spotLights[0] = SpotLight(1024, 1024, 
+    Object* sphere = new Object(geometry::sphere,  ShaderType::LIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, 
+                                glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.05), glm::vec3(1.));
+	spotLightObjects.push_back(sphere);
+    spotLights[0] = SpotLight(general::spotShadowResolution, general::spotShadowResolution, 
                             0.01f, 100.0f,
-                            1.0f, 1.0f, 1.0f, 
+                            sphere->color.x, sphere->color.y, sphere->color.z, 
                             0.0f, 2.0f,
-                            0.0f,0.0f, 0.0f, // not important for the first spotlight as this one is attached to the camera to act as a flash light.
-                            0.0f, -1.0f, 0.0f, // points straight down
-                            0.3f, 0.2f, 0.5f, //strenght/a*distance**2 + b*distance + c
-                            20.0f);  // spread of the angle : 20°
+                            sphere->position.x, sphere->position.y, sphere->position.z,
+                            sphere->rotation.x, sphere->rotation.y, sphere->rotation.z,
+                            0.3f, 0.2f, 0.5f, // we don't want th elight to die off because of distance
+                            30.0f);  // spread of the angle : 20°
     spotLightCount++;
 }
 

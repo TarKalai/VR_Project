@@ -54,6 +54,7 @@ SpotLight *spotLights;
 AreaLight *areaLights; 
 
 std::vector<Object*> pointLightObjects;
+std::vector<Object*> spotLightObjects;
 std::vector<Object*> areaLightObjects;
 
 int pointLightCount; 
@@ -181,6 +182,8 @@ int main(){
 
     spotLights = lightConstructor.getSpotLight();
     spotLightCount = lightConstructor.getSpotLightCount();
+    spotLightObjects = lightConstructor.getSpotLightObjects();
+    objectLightShader.addObjects(spotLightObjects);
 
     areaLights = lightConstructor.getAreaLight();
     areaLightCount = lightConstructor.getAreaLightCount();
