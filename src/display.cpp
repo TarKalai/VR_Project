@@ -36,7 +36,7 @@ int Display::Initialise()
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     #endif
 
-    mainWindow = glfwCreateWindow(width, height, "Project", NULL, NULL); 
+    mainWindow = glfwCreateWindow(width, height, "The Playground", NULL, NULL); 
 
 
     // glfwSetWindowMonitor(mainWindow, 0,  0, 0, width, height, GLFW_DONT_CARE);

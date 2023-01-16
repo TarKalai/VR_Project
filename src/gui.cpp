@@ -239,7 +239,7 @@ void GUI::displaySaveLoad() {
         {
             if (ImGui::BeginMenu("Load"))
             {
-                char file[256];
+                char file[256] = "";
                 #ifdef _WIN32
                 if (ImGui::InputText("##loadName", file, sizeof(file), ImGuiInputTextFlags_EnterReturnsTrue)) {
                     strcat(file, ".save");
@@ -262,21 +262,16 @@ void GUI::displaySaveLoad() {
                     if (in.fail()) { std::cout << "Error opening file" << std::endl;}
                     else {
                         // Delete World Lights
-                        for (Object *object: objectLight->objectList){;
-                            objectLight->remove(object->id);
-                        } 
-                        // Delete World Objects
-                        for (auto& pair : world->glObjects) {
-                            int idx = pair.first;
-                            shader->remove(idx);
-                            shadow->remove(idx);
-                            omniShadow->remove(idx);
-                            bumpmap->remove(idx);
-                            parallax->remove(idx);
-                            // objectLight->remove(idx);
-                        }  
-                        world->reset();
+                        objectLight->objectList.clear();
                         lightConstructor->reset();
+                        // Delete World Objects
+                        shader->objectList.clear();
+                        shadow->objectList.clear();
+                        omniShadow->objectList.clear();
+                        bumpmap->objectList.clear();
+                        parallax->objectList.clear();
+                        
+                        world->reset();
 
                         std::string line;
                         while (std::getline(in, line)) {

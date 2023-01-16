@@ -2,9 +2,9 @@
 
 LightConstructor::LightConstructor(){
     createMainLight();
-    createPointLight();
+    // createPointLight();
     createSpotLight();
-    createAreaLight();
+    // createAreaLight();
 }
 
 void LightConstructor::createMainLight(){
@@ -35,7 +35,7 @@ void LightConstructor::createSpotLight(){
                                 glm::vec3(-10.0f, 5.0f, -30.0f), glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.05), glm::vec3(1.,0.,0.));
 	
     addSpotLight(torch);
-    addSpotLight(spot1); 
+    // addSpotLight(spot1); 
 }
 
 

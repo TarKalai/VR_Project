@@ -586,7 +586,7 @@ void Shader::CompileProgram()
     uniformOmniLightPos = glGetUniformLocation(shaderID, "lightPos"); 
     uniformFarPlane = glGetUniformLocation(shaderID, "farPlane"); 
 
-    for (size_t i =0; i < 6; i++)
+    for (int i =0; i < 6; i++)
     {
         char locBuff[100] = { '\0' };
 
@@ -594,7 +594,7 @@ void Shader::CompileProgram()
         uniformLightMatrices[i] = glGetUniformLocation(shaderID, locBuff);  
     }
 
-    for (size_t i =0; i < values::MAX_POINT_LIGHTS + values::MAX_SPOT_LIGHTS ; i++)
+    for (int i =0; i < values::MAX_POINT_LIGHTS + values::MAX_SPOT_LIGHTS ; i++)
     {
         char locBuff[100] = { '\0' };
 
