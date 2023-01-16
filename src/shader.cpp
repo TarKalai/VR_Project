@@ -4,10 +4,6 @@ Shader::Shader(){
     shaderID = 0; 
     uniformModel=0; 
     uniformProjection=0; 
-
-    pointLightCount = 0;
-    spotLightCount = 0;  
-    areaLightCount = 0; 
 }
 
 
@@ -22,34 +18,16 @@ void Shader::addObjects(std::vector<Object*> objects){
     }
 }
 
-void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light){
-    UseShaderAndLink(camera, projection, view, light); 
+void Shader::RenderScene() {
+    for(Object* object : objectList) {
+        glUniform3f(uniformColor, object->color.x, object->color.y, object->color.z);
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(object->model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
+        object->texture->UseTexture(); // From now on anything drawn will be using the bricktexture loaded in. 
 
-    SetTexture(1);
-    SetNormalMap(2);
-    SetDepthMap(3);
-    SetDirectionalShadowMap(4);
-    SetLTC1(5);
-    SetLTC2(6);
-
-    light->getSpotLight()[0].SetFlash(camera.getPosition(), camera.getDirection()); 
-
-
-    RenderScene();
-}
-
-void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light){
-    UseShaderAndLink(camera, projection, view, light); 
-
-
-    SetTexture(1);
-    SetNormalMap(2);
-    SetDepthMap(3); // NOT HERE
-    SetDirectionalShadowMap(4);
-    SetLTC1(5);
-    SetLTC2(6);
-
-    RenderScene();
+        object->material->UseMaterial(uniformSpecularIntensity, uniformShininess);  
+        object->draw();
+        
+    }
 }
 
 void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light) {
@@ -76,31 +54,42 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view, Lig
     SetLTC1(5);
     SetLTC2(6);
 
-    // --------------------------------------------------------- // 
-    // spotLights[0].SetFlash(camera.getPosition(), camera.getDirection()); 
+    light->getSpotLight()[0].SetFlash(camera.getPosition(), camera.getDirection());
 
     Validate(); 
+    RenderScene();
+}
+
+void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light){
+    UseShaderAndLink(camera, projection, view, light); 
+
+    SetTexture(1);
+    SetNormalMap(2);
+    SetDepthMap(3);
+    SetDirectionalShadowMap(4);
+    SetLTC1(5);
+    SetLTC2(6);
 
     RenderScene();
 }
 
+void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light){
+    UseShaderAndLink(camera, projection, view, light); 
 
-void Shader::RenderScene() {
-    for(Object* object : objectList) {
-        glUniform3f(uniformColor, object->color.x, object->color.y, object->color.z);
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(object->model)); // need to use the value_ptr because the model does not directly have the good format to work with shaders 
-        object->texture->UseTexture(); // From now on anything drawn will be using the bricktexture loaded in. 
+    SetTexture(1);
+    SetNormalMap(2);
+    SetDepthMap(3); // NOT HERE
+    SetDirectionalShadowMap(4);
+    SetLTC1(5);
+    SetLTC2(6);
 
-        object->material->UseMaterial(uniformSpecularIntensity, uniformShininess);  
-        object->draw();
-        
-    }
+    RenderScene();
 }
 
-
-void Shader::DirectionalShadowMapPass(DirectionalLight* light) {
+void Shader::DirectionalShadowMapPass(LightConstructor* lightConstructor) {
     UseShader(); // doesn't have colors, it is the depth map. 
 
+    DirectionalLight* light = lightConstructor->getMainLight();
     glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
 
     light->GetShadowMap()->Write();
@@ -119,6 +108,35 @@ void Shader::DirectionalShadowMapPass(DirectionalLight* light) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
 }
 
+void Shader::OmniShadowMapPass(LightConstructor* lightConstructor)
+{
+    UseShader(); // doesn't have colors, it is the depth map.
+
+    for(int i = 0; i < lightConstructor->getPointLightCount();  i++ )
+        PointShadowMapPass(&(lightConstructor->getPointLight()[i]));
+    for(int i = 0; i < lightConstructor->getSpotLightCount();  i++ )
+        PointShadowMapPass(&(lightConstructor->getSpotLight()[i])); 
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
+}
+
+void Shader::PointShadowMapPass(PointLight* light) {
+    glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()); // we need to make sure the buffer we are drawing to is the same size as the viewport
+    light->GetShadowMap()->Write();
+
+    glClear(GL_DEPTH_BUFFER_BIT); // if there is already some depth infor. in the buffer we clear it
+
+    glUniform3f(GetOmniLightPosLocation(), light->GetPosition().x, light->GetPosition().y, light->GetPosition().z); // position of the light in the world
+    glUniform1f(GetFarPlaneLocation(), light->GetFarPlane()); 
+ 
+    SetLightMatrices(light->CalculateLightTransform()); 
+    
+    Validate(); 
+    RenderScene();
+} 
+
+
+
 
 void Shader::DrawLightObjects(glm::mat4 projection, glm::mat4 view) {
     UseShader(); 
@@ -132,8 +150,6 @@ void Shader::DrawLightObjects(glm::mat4 projection, glm::mat4 view) {
 
     SetTexture(1); // bound to texture unit 1
 
-    
-    // RENDER SCENE
     RenderScene();
 }
 
@@ -146,12 +162,6 @@ void Shader::remove(int objID) {
             }
         }
     }
-}
-
-
-
-void Shader::CreateFromString(const char* vertexCode, const char* fragmentCode){
-    CompileShader(vertexCode, fragmentCode); 
 }
 
 

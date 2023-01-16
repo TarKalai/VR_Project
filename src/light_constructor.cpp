@@ -53,13 +53,9 @@ void LightConstructor::createAreaLight() {
 
 void LightConstructor::reset() {
     pointLightCount = 0; 
-    pointLightObjects.clear();
-
     spotLightCount = 0;
-    spotLightObjects.clear();
-
     areaLightCount = 0;
-    areaLightObjects.clear();
+    lightObjects.clear();
 }
 
 LightConstructor::~LightConstructor(){}
