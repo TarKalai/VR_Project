@@ -1,6 +1,6 @@
 #include "gui.h"
 
-GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader, Shader* bumpMapShader, Shader* paralaxMapShader, Shader* objectLightShader) {
+GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader, Shader* bumpMapShader, Shader* paralaxMapShader, Shader* objectLightShader, LightConstructor* _lightConstructor) {
     process = processArg;
     display = displayArg;
     world = worldArg;
@@ -10,6 +10,7 @@ GUI::GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shad
     bumpmap = bumpMapShader;
     parallax = paralaxMapShader;
     objectLight = objectLightShader;
+    lightConstructor = _lightConstructor;
 }
 
 void GUI::update() {
@@ -275,6 +276,7 @@ void GUI::displaySaveLoad() {
                             // objectLight->remove(idx);
                         }  
                         world->reset();
+                        lightConstructor->reset();
 
                         std::string line;
                         while (std::getline(in, line)) {
@@ -411,12 +413,15 @@ void GUI::clear(){
 void GUI::addToShaders(Object* obj) {
     if (obj->shaderType == ShaderType::POINTLIGHT) {
         objectLight->addObject(obj);
+        lightConstructor->addPointLight(obj);
     }
     else if (obj->shaderType == ShaderType::SPOTLIGHT) {
         objectLight->addObject(obj);
+        lightConstructor->addSpotLight(obj);
     }
     else if (obj->shaderType == ShaderType::AREALIGHT) {
         objectLight->addObject(obj);
+        lightConstructor->addAreaLight(obj);
     }
     else {
         world->addObject(obj);

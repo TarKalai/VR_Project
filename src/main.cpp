@@ -197,7 +197,7 @@ int main(){
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 	process.initMousePosition();
     
-	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader, &omniShadowShader, &bumpMapShader, &paralaxMapShader, &objectLightShader);
+	GUI gui(&process, &mainWindow, &physicalWorld, &objectShader, &directionalShadowShader, &omniShadowShader, &bumpMapShader, &paralaxMapShader, &objectLightShader, &lightConstructor);
     
     camera.processKeyboardMovement(LEFT, 0.1); // DO NOT REMOVE ! Fix bug updating camera position
     while(!mainWindow.getShouldClose()){

@@ -28,16 +28,7 @@ void LightConstructor::createPointLight(){
         else
             color = color::Blue;
 		Object* sphere = new Object(geometry::sphere,  ShaderType::POINTLIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, pos, rot, scale, color);
-		pointLightObjects.push_back(sphere);
-
-		pointLights[i] = PointLight(general::pointShadowResolution, general::pointShadowResolution,
-                                    0.01, 100.0f,
-                                    sphere->color.x, sphere->color.y, sphere->color.z, 
-                                    .0f, 0.1,
-                                    sphere->position.x, sphere->position.y, sphere->position.z,
-                                    0.01f, 0.005f, 0.002f); //0.003f, 0.002f, 0.001f
-    	
-    	pointLightCount++; 
+		addPointLight(sphere);
     }
 }
 
@@ -47,32 +38,14 @@ void LightConstructor::createSpotLight(){
 
     Object* sphere = new Object(geometry::sphere,  ShaderType::SPOTLIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, 
                                 glm::vec3(-10.0f, 5.0f, -30.0f), glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.05), glm::vec3(1.,0.,0.));
-	spotLightObjects.push_back(sphere);
-    spotLights[1] = SpotLight(general::spotShadowResolution, general::spotShadowResolution, 
-                            0.01f, 100.0f,
-                            sphere->color.x, sphere->color.y, sphere->color.z, 
-                            0.0f, 1.0f,
-                            sphere->position.x, sphere->position.y, sphere->position.z,
-                            sphere->rotation.x, sphere->rotation.y, sphere->rotation.z,
-                            0.01f, 0.005f, 0.002f, // we don't want th elight to die off because of distance
-                            30.0f);  // spread of the angle : 20°
-    spotLightCount++; 
+	addSpotLight(sphere); 
 }
 
 void LightConstructor::createTorch(){
     // the first one is a torch
-    Object* sphere = new Object(geometry::sphere,  ShaderType::SPOTLIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, 
+    Object* torch = new Object(geometry::sphere,  ShaderType::SPOTLIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, 
                                 glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.05), glm::vec3(1.));
-	spotLightObjects.push_back(sphere);
-    spotLights[0] = SpotLight(general::spotShadowResolution, general::spotShadowResolution, 
-                            0.01f, 100.0f,
-                            sphere->color.x, sphere->color.y, sphere->color.z, 
-                            0.0f, 1.0f,
-                            sphere->position.x, sphere->position.y, sphere->position.z,
-                            sphere->rotation.x, sphere->rotation.y, sphere->rotation.z,
-                            0.01f, 0.005f, 0.002f, // we don't want th elight to die off because of distance
-                            30.0f);  // spread of the angle : 20°
-    spotLightCount++;
+	addSpotLight(torch);
 }
 
 void LightConstructor::createAreaLight() {
@@ -82,18 +55,19 @@ void LightConstructor::createAreaLight() {
 		glm::vec3 scale = glm::vec3(1);
         glm::vec3 color = Utils::getRandom3(0, 1);
 		Object* plane = new Object(geometry::plane, ShaderType::AREALIGHT, Textures::Dirt(), Materials::Empty(), PHYSIC::UNMOVABLE, pos, rot, scale, color);
-        areaLightObjects.push_back(plane);
-
-
-		areaLights[i] = AreaLight(plane->color.x,plane->color.y, plane->color.z, 
-							  0.f, 3.,
-							  plane->getPosition(),
-							  0.0f, 0.00f, 0.00f, // not used
-							  plane->getRotation(), true, 
-							  plane->getVertexPosition(),
-							  plane->getScale());
-    	areaLightCount++; 
+        addAreaLight(plane);
     }
+}
+
+void LightConstructor::reset() {
+    pointLightCount = 0; 
+    pointLightObjects.clear();
+
+    spotLightCount = 0;
+    spotLightObjects.clear();
+
+    areaLightCount = 0;
+    areaLightObjects.clear();
 }
 
 LightConstructor::~LightConstructor(){}

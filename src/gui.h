@@ -3,6 +3,7 @@
 #include "display.h"
 #include "constant.h"
 #include "physics.h"
+#include "light_constructor.h"
 
 #include <dirent.h> // Linux
 #include <iostream>
@@ -21,7 +22,7 @@
 
 class GUI {
 public:
-    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader, Shader* bumpMapShader, Shader* paralaxMapShader, Shader* objectLightShader);
+    GUI(Process* processArg, Display* displayArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader, Shader* bumpMapShader, Shader* paralaxMapShader, Shader* objectLightShader, LightConstructor* _lightConstructor);
     void update();
     void clear();
 
@@ -35,6 +36,7 @@ private:
     Shader* bumpmap;
     Shader* parallax;
     Shader* objectLight;
+    LightConstructor* lightConstructor; 
     
     double prev = 0;
 	int deltaFrame = 0;
