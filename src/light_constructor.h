@@ -79,7 +79,6 @@ private:
     void createPointLight();
     void createSpotLight();
     void createAreaLight();
-    void createTorch();
 
     DirectionalLight mainLight;
 

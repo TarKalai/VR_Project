@@ -85,11 +85,11 @@ void CreateObjects(){
     Object* ground = new Object(geometry::plane3D, ShaderType::BUMPMAP, Textures::Brickwall(), Materials::Shiny(), PHYSIC::UNMOVABLE, glm::vec3(0., 0., 0.), glm::vec3(0.), glm::vec3(general::sceneSize.x/2., general::floorThickness, general::sceneSize.z/2), glm::vec3(1.));
     addToShaders(ground);
 
-    Object* ground2 = new Object(geometry::plane3D, ShaderType::PARALLAX, Textures::Brick2(), Materials::Shiny(), PHYSIC::UNMOVABLE, glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.));
-    addToShaders(ground2);
+    // Object* ground2 = new Object(geometry::plane3D, ShaderType::PARALLAX, Textures::Brick2(), Materials::Shiny(), PHYSIC::UNMOVABLE, glm::vec3(10., 5.0, 10.), glm::vec3(0.), glm::vec3(general::sceneSize.x/5., general::floorThickness, general::sceneSize.z/5), glm::vec3(1.));
+    // addToShaders(ground2);
 
-    Object* box = new Object(geometry::cube, ShaderType::PARALLAX, Textures::Toy(), Materials::Shiny(), PHYSIC::MOVABLE, glm::vec3(10., 15.0, 5.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.));
-    addToShaders(box);
+    // Object* box = new Object(geometry::cube, ShaderType::PARALLAX, Textures::Toy(), Materials::Shiny(), PHYSIC::MOVABLE, glm::vec3(10., 15.0, 5.), glm::vec3(0.), glm::vec3(8.0), glm::vec3(1.));
+    // addToShaders(box);
 }
 
 void CreateShaders()
