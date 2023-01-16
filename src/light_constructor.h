@@ -56,7 +56,7 @@ public:
                                 0.0f, 1.0f,
                                 sphere->position.x, sphere->position.y, sphere->position.z,
                                 sphere->rotation.x, sphere->rotation.y, sphere->rotation.z,
-                                0.01f, 0.005f, 0.002f, // we don't want th elight to die off because of distance
+                                0.01f, 0.005f, 0.002f, //cst, dist, dist**2
                                 30.0f);  // spread of the angle : 20°
         spotLightCount++;
     }

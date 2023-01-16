@@ -36,6 +36,7 @@ void Camera::processKeyboardMovement(Camera_Movement direction, float deltaTime)
         position += normalize(up * glm::vec3(0.0, 1.0, 0.0)) * velocity;
     if (direction == DOWN)
         position -= normalize(up * glm::vec3(0.0, 1.0, 0.0)) * velocity;
+    updateCameraVectors();
 }
 
 void Camera::deactivateMouse(Display* display) {
@@ -72,7 +73,6 @@ void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constr
             pitch = -89.0f;
     }   
     updateCameraVectors();
-    
 }
 
 void Camera::ScrollCallBack(GLFWwindow* window, double xoffset, double yoffset){

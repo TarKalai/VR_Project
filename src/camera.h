@@ -24,6 +24,7 @@ enum Camera_Movement {
 class Camera
 {
 public:
+    float movementSpeed;
      // Default camera values
     float YAW; // = -90.0f;
     float PITCH; //= 0.0f;
@@ -88,7 +89,6 @@ private:
     float pitch;
     float zoom;
     // camera options
-    float movementSpeed;
     float mouseSensitivity;
 
     glm::vec3 position;
