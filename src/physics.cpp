@@ -134,7 +134,9 @@ int PhysicalWorld::DeleteRayCastObj(glm::vec3 from, glm::vec3 to, int type) {
     if (body != nullptr) {
         dynamicsWorld->removeRigidBody(body);
         delete body;
-        return body->getUserIndex();
+        int idx = body->getUserIndex();
+        glObjects.erase(idx);
+        return idx;
     }
     return -1;
 }
