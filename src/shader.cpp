@@ -70,6 +70,7 @@ void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, 
     SetLTC1(5);
     SetLTC2(6);
 
+    Validate();
     RenderScene();
 }
 
@@ -83,6 +84,7 @@ void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, Lig
     SetLTC1(5);
     SetLTC2(6);
 
+    Validate();
     RenderScene();
 }
 
@@ -102,7 +104,6 @@ void Shader::DirectionalShadowMapPass(LightConstructor* lightConstructor) {
     SetDirectionalLightTransform(&resLight);
 
     Validate(); 
-
     RenderScene(); 
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // attach the default buffer
@@ -150,6 +151,7 @@ void Shader::DrawLightObjects(glm::mat4 projection, glm::mat4 view) {
 
     SetTexture(1); // bound to texture unit 1
 
+    Validate();
     RenderScene();
 }
 
@@ -227,6 +229,220 @@ void Shader::Validate()
         return; 
     }
 
+}
+
+void Shader::SetDirectionalLight(DirectionalLight * dLight){
+    dLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformColor, 
+    uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
+}
+
+
+void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset){
+
+    if(lightCount > values::MAX_POINT_LIGHTS) lightCount = values::MAX_POINT_LIGHTS; 
+
+    glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
+    glUniform1i(uniformMaxPointLight, values::MAX_POINT_LIGHTS);
+
+    for(int i=0; i < lightCount; i++){
+        pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, 
+                           uniformPointLight[i].uniformColor, 
+                           uniformPointLight[i].uniformDiffuseIntensity, 
+                           uniformPointLight[i].uniformPosition,
+                           uniformPointLight[i].uniformConstant, 
+                           uniformPointLight[i].uniformLinear, 
+                           uniformPointLight[i].uniformExponent); 
+        pLight[i].GetShadowMap()->Read(GL_TEXTURE0+ textureUnit + i); // need a new GL_TEXTURE for each pointlight
+        // the textureUnit is just the starting point: for instance if it is 0 then we will have GL_TEXTURE0 then GL_TEXTURE1, ...
+        glUniform1i(uniformOmniShadowMap[i + offset].shadowMap, textureUnit + i); // for pointlights the offset will be 0 IF WE SET THEM FIRST before the spotlights
+        glUniform1f(uniformOmniShadowMap[i + offset].farPlane, pLight[i].GetFarPlane()); 
+        
+    }
+}
+
+
+void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset){
+
+     if(lightCount > values::MAX_SPOT_LIGHTS) lightCount = values::MAX_SPOT_LIGHTS; 
+
+    glUniform1i(uniformSpotLightCount, lightCount); // make sure it is an int ! to go through the loop
+    glUniform1i(uniformMaxSpotLight, values::MAX_SPOT_LIGHTS);
+
+    for(int i=0; i < lightCount; i++){
+
+        sLight[i].UseLight(uniformSpotLight[i].uniformAmbientIntensity, 
+                           uniformSpotLight[i].uniformColor, 
+                           uniformSpotLight[i].uniformDiffuseIntensity, 
+                           uniformSpotLight[i].uniformPosition,
+                           uniformSpotLight[i].uniformDirection, 
+                           uniformSpotLight[i].uniformConstant, 
+                           uniformSpotLight[i].uniformLinear, 
+                           uniformSpotLight[i].uniformExponent,
+                           uniformSpotLight[i].uniformEdge); 
+
+        sLight[i].GetShadowMap()->Read(GL_TEXTURE0+ textureUnit + i); 
+        // need a new GL_TEXTURE for each pointlight
+        // the textureUnit is just the starting point: for instance if it is 0 then we will have GL_TEXTURE0 then GL_TEXTURE1, ...
+        glUniform1i(uniformOmniShadowMap[i + offset].shadowMap, textureUnit + i); 
+        glUniform1f(uniformOmniShadowMap[i + offset].farPlane, sLight[i].GetFarPlane()); 
+
+    }
+}
+
+
+void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
+    if(lightCount > values::MAX_AREA_LIGHTS) lightCount = values::MAX_AREA_LIGHTS; 
+
+    glUniform1i(uniformAreaLightCount, lightCount);
+    glUniform1i(uniformMaxAreaLight, values::MAX_AREA_LIGHTS);
+    glUniform1f(uniformAlbedoRoughness, 0.5);
+
+    for(int i=0; i < lightCount; i++){
+
+        aLights[i].UseLight(uniformAreaLight[i].uniformPoint0,
+                            uniformAreaLight[i].uniformPoint1,
+                            uniformAreaLight[i].uniformPoint2,
+                            uniformAreaLight[i].uniformPoint3,
+                            uniformAreaLight[i].uniformColor,
+                            uniformAreaLight[i].uniformIntensity,
+                            uniformAreaLight[i].uniformTwoSided);
+
+    }
+}
+
+void Shader::SetBlendFactor()
+{
+    float blend = pow(cos(3.14*Time::getTime()/Ttime::maxTime),4); 
+    glUniform1f(uniformBlendFactor, blend); 
+}
+
+void Shader::SetSunLightColor() {
+    float base = 1.5;
+    float x = glm::sin(2*3.14*Time::getTime()/Ttime::maxTime);
+    glm::vec3 color = glm::normalize(glm::vec3(base+color::OrangeRed.x*pow(x,20), base+color::OrangeRed.y*pow(x,20), base+color::OrangeRed.z*pow(x,20)));
+    glUniform3f(uniformSunLightColor, color.x, color.y, color.z);
+}
+
+void Shader::SetTime()
+{
+    float sinTime = -sin(2*3.14*Time::getTime()/Ttime::maxTime); 
+    glUniform1f(uniformSinTime, sinTime);
+    float cosTime = -cos(2*3.14*Time::getTime()/Ttime::maxTime); 
+    glUniform1f(uniformCosTime, cosTime);  
+}
+
+void Shader::ConnectSkyboxes()
+{
+    glUniform1i(uniformSkyboxDay, 7);
+    glUniform1i(uniformSkyboxNight, 8); 
+}
+
+void Shader::SetLightMatrices(std::vector<glm::mat4> lightMatrices)
+{
+    for(size_t i = 0; i < 6; i ++){
+
+        glUniformMatrix4fv(uniformLightMatrices[i], 1, GL_FALSE, glm::value_ptr(lightMatrices[i])); 
+        
+    }
+}
+
+void Shader::UseShader() {
+    glUseProgram(shaderID);
+}
+
+void Shader::UseShaderAndLink(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light) {
+    glUseProgram(shaderID);
+
+    uniformModel = GetModelLocation(); 
+    uniformProjection = GetProjectionLocation(); 
+    uniformView = GetViewLocation(); 
+    uniformEyePosition = GetEyePositionLocation(); 
+
+    //fog
+    SetSkyColor(0.5, 0.5, 0.5); 
+
+    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
+
+    SetDirectionalLight(light->getMainLight());
+    SetPointLights(light->getPointLight(), light->getPointLightCount(), 9, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(light->getSpotLight(), light->getSpotLightCount(), 9 + light->getPointLightCount(), light->getPointLightCount()); 
+    SetAreaLights(light->getAreaLight(), light->getAreaLightCount()); 
+
+    glm::mat4 resmainLight = light->getMainLight()->CalculateLightTransform();
+    SetDirectionalLightTransform(&resmainLight); 
+
+    light->getMainLight()->GetShadowMap()->Read(GL_TEXTURE4); 
+}
+
+
+void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_type){
+    GLuint the_shader = glCreateShader(shader_type); // create empty shader and pass the id into "the_shader"
+
+    const GLchar* the_code[1];//Pointer to the 1st elem of an array
+
+    the_code[0] = shader_code;
+
+    GLint code_length[1];
+    code_length[0] = strlen(shader_code); //strlen comes from the string.h library. 
+
+    glShaderSource(the_shader, 1, the_code, code_length);
+    glCompileShader(the_shader);
+
+    GLint result = 0; 
+    GLchar eLog[1024] = { 0 };
+
+    glGetShaderiv(the_shader, GL_COMPILE_STATUS, &result);//2scd arg: what kind of info we want, 3rd arg: where do we put the info 
+
+    if(!result){
+        glGetShaderInfoLog(the_shader, sizeof(eLog), NULL, eLog); 
+        printf("Error compiling the %d shader : %s\n", shader_type, eLog);
+        return; 
+    }
+    glAttachShader(program, the_shader);
+}
+
+void Shader::ClearShader(){
+    if(shaderID != 0){
+        glDeleteProgram(shaderID);  // delete the program of the graphics card to make more space. 
+        shaderID=0; 
+    }
+
+    uniformModel = 0; 
+    uniformProjection = 0; 
+}
+
+Shader::~Shader() { ClearShader(); }
+
+void Shader::CompileShader(const char* vertexCode, const char* geometryCode, const char* fragmentCode){
+    shaderID = glCreateProgram(); // Outputs the Ids of the shaders. 
+
+    if (!shaderID){
+        printf("Error Creating shader program");
+        return; 
+    }
+
+    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER); //GL_VERTEX_SHADER is the type of shader, it needs to know what type the shaders are. 
+    AddShader(shaderID, geometryCode, GL_GEOMETRY_SHADER);
+    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
+
+    CompileProgram(); 
+
+}
+
+void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
+    shaderID = glCreateProgram(); // Outputs the Ids of the shaders. 
+
+    if (!shaderID){
+        printf("Error Creating shader program");
+        return; 
+    }
+
+    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER); //GL_VERTEX_SHADER is the type of shader, it needs to know what type the shaders are. 
+    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
+
+    CompileProgram(); 
 }
 
 void Shader::CompileProgram()
@@ -338,7 +554,6 @@ void Shader::CompileProgram()
     uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform"); // it will bind for vertex a AND frag because it is the same name
     uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 
-
     uniformAreaLightCount = glGetUniformLocation(shaderID, "areaLightCount");
     uniformMaxAreaLight = glGetUniformLocation(shaderID, "MAX_AREA_LIGHTS");
     uniformLTC1 = glGetUniformLocation(shaderID, "LTC1");
@@ -389,338 +604,4 @@ void Shader::CompileProgram()
         snprintf(locBuff, sizeof(locBuff), "omniShadowMaps[%d].farPlane", i); 
         uniformOmniShadowMap[i].farPlane = glGetUniformLocation(shaderID, locBuff);
     } 
-}
-
-void Shader::CompileShader(const char* vertexCode, const char* geometryCode, const char* fragmentCode){
-    shaderID = glCreateProgram(); // Outputs the Ids of the shaders. 
-
-    if (!shaderID){
-        printf("Error Creating shader program");
-        return; 
-    }
-
-    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER); //GL_VERTEX_SHADER is the type of shader, it needs to know what type the shaders are. 
-    AddShader(shaderID, geometryCode, GL_GEOMETRY_SHADER);
-    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
-
-    CompileProgram(); 
-
-}
-
-void Shader::CompileShader(const char* vertexCode, const char* fragmentCode){
-    shaderID = glCreateProgram(); // Outputs the Ids of the shaders. 
-
-    if (!shaderID){
-        printf("Error Creating shader program");
-        return; 
-    }
-
-    AddShader(shaderID, vertexCode, GL_VERTEX_SHADER); //GL_VERTEX_SHADER is the type of shader, it needs to know what type the shaders are. 
-    AddShader(shaderID, fragmentCode, GL_FRAGMENT_SHADER);
-
-    CompileProgram(); 
-}
-
-void Shader::SetDirectionalLight(DirectionalLight * dLight){
-    dLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformColor, 
-    uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
-}
-
-
-void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset){
-
-    if(lightCount > values::MAX_POINT_LIGHTS) lightCount = values::MAX_POINT_LIGHTS; 
-
-    glUniform1i(uniformPointLightCount, lightCount); // make sure it is an int ! to go through the loop
-    glUniform1i(uniformMaxPointLight, values::MAX_POINT_LIGHTS);
-
-    for(int i=0; i < lightCount; i++){
-        pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, 
-                           uniformPointLight[i].uniformColor, 
-                           uniformPointLight[i].uniformDiffuseIntensity, 
-                           uniformPointLight[i].uniformPosition,
-                           uniformPointLight[i].uniformConstant, 
-                           uniformPointLight[i].uniformLinear, 
-                           uniformPointLight[i].uniformExponent); 
-        pLight[i].GetShadowMap()->Read(GL_TEXTURE0+ textureUnit + i); // need a new GL_TEXTURE for each pointlight
-        // the textureUnit is just the starting point: for instance if it is 0 then we will have GL_TEXTURE0 then GL_TEXTURE1, ...
-        glUniform1i(uniformOmniShadowMap[i + offset].shadowMap, textureUnit + i); // for pointlights the offset will be 0 IF WE SET THEM FIRST before the spotlights
-        glUniform1f(uniformOmniShadowMap[i + offset].farPlane, pLight[i].GetFarPlane()); 
-        
-    }
-}
-
-
-void Shader::SetSpotLights(SpotLight * sLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset){
-
-     if(lightCount > values::MAX_SPOT_LIGHTS) lightCount = values::MAX_SPOT_LIGHTS; 
-
-    glUniform1i(uniformSpotLightCount, lightCount); // make sure it is an int ! to go through the loop
-    glUniform1i(uniformMaxSpotLight, values::MAX_SPOT_LIGHTS);
-
-    for(int i=0; i < lightCount; i++){
-
-        sLight[i].UseLight(uniformSpotLight[i].uniformAmbientIntensity, 
-                           uniformSpotLight[i].uniformColor, 
-                           uniformSpotLight[i].uniformDiffuseIntensity, 
-                           uniformSpotLight[i].uniformPosition,
-                           uniformSpotLight[i].uniformDirection, 
-                           uniformSpotLight[i].uniformConstant, 
-                           uniformSpotLight[i].uniformLinear, 
-                           uniformSpotLight[i].uniformExponent,
-                           uniformSpotLight[i].uniformEdge); 
-
-        sLight[i].GetShadowMap()->Read(GL_TEXTURE0+ textureUnit + i); 
-        // need a new GL_TEXTURE for each pointlight
-        // the textureUnit is just the starting point: for instance if it is 0 then we will have GL_TEXTURE0 then GL_TEXTURE1, ...
-        glUniform1i(uniformOmniShadowMap[i + offset].shadowMap, textureUnit + i); 
-        glUniform1f(uniformOmniShadowMap[i + offset].farPlane, sLight[i].GetFarPlane()); 
-
-    }
-}
-
-
-void Shader::SetAreaLights(AreaLight *  aLights, int lightCount){
-    if(lightCount > values::MAX_AREA_LIGHTS) lightCount = values::MAX_AREA_LIGHTS; 
-
-    glUniform1i(uniformAreaLightCount, lightCount);
-    glUniform1i(uniformMaxAreaLight, values::MAX_AREA_LIGHTS);
-    glUniform1f(uniformAlbedoRoughness, 0.5);
-
-    for(int i=0; i < lightCount; i++){
-
-        aLights[i].UseLight(uniformAreaLight[i].uniformPoint0,
-                            uniformAreaLight[i].uniformPoint1,
-                            uniformAreaLight[i].uniformPoint2,
-                            uniformAreaLight[i].uniformPoint3,
-                            uniformAreaLight[i].uniformColor,
-                            uniformAreaLight[i].uniformIntensity,
-                            uniformAreaLight[i].uniformTwoSided);
-
-    }
-}
-
-void Shader::SetLTC1(GLuint textureUnit){
-    glUniform1i(uniformLTC1, textureUnit);
-}
-
-void Shader::SetLTC2(GLuint textureUnit){
-    glUniform1i(uniformLTC2, textureUnit);
-}
-
-void Shader::SetBlendFactor()
-{
-    float blend = pow(cos(3.14*Time::getTime()/Ttime::maxTime),4); 
-    glUniform1f(uniformBlendFactor, blend); 
-}
-
-void Shader::SetSunLightColor() {
-    float base = 1.5;
-    float x = glm::sin(2*3.14*Time::getTime()/Ttime::maxTime);
-    glm::vec3 color = glm::normalize(glm::vec3(base+color::OrangeRed.x*pow(x,20), base+color::OrangeRed.y*pow(x,20), base+color::OrangeRed.z*pow(x,20)));
-    glUniform3f(uniformSunLightColor, color.x, color.y, color.z);
-}
-
-void Shader::SetTime()
-{
-    float sinTime = -sin(2*3.14*Time::getTime()/Ttime::maxTime); 
-    glUniform1f(uniformSinTime, sinTime);
-    float cosTime = -cos(2*3.14*Time::getTime()/Ttime::maxTime); 
-    glUniform1f(uniformCosTime, cosTime);  
-}
-
-void Shader::ConnectSkyboxes()
-{
-    glUniform1i(uniformSkyboxDay, 7);
-    glUniform1i(uniformSkyboxNight, 8); 
-}
-
-void Shader::SetSkyColor(float r, float g, float b)
-{
-    glUniform3f(uniformSkyColor, r, g, b); 
-}
-
-void Shader::SetTexture(GLuint textureUnit){
-    glUniform1i(uniformTexture, textureUnit);
-}
-
-void Shader::SetNormalMap(GLuint textureUnit){
-    glUniform1i(uniformNormalMap, textureUnit);
-}
-
-void Shader::SetDepthMap(GLuint textureUnit){
-    glUniform1i(uniformDepthMap, textureUnit);
-}
-
-void Shader::SetDirectionalShadowMap(GLuint textureUnit){
-    glUniform1i(uniformDirectionalShadowMap, textureUnit);
-}
-
-void Shader::SetDirectionalLightTransform(glm::mat4* lTransform){
-    glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)); 
-}
-
-void Shader::SetLightMatrices(std::vector<glm::mat4> lightMatrices)
-{
-    for(size_t i = 0; i < 6; i ++){
-
-        glUniformMatrix4fv(uniformLightMatrices[i], 1, GL_FALSE, glm::value_ptr(lightMatrices[i])); 
-        
-    }
-}
-
-void Shader::UseShader() {
-    glUseProgram(shaderID);
-}
-
-void Shader::UseShaderAndLink(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light) {
-    glUseProgram(shaderID);
-
-    uniformModel = GetModelLocation(); 
-    uniformProjection = GetProjectionLocation(); 
-    uniformView = GetViewLocation(); 
-    uniformEyePosition = GetEyePositionLocation(); 
-
-    //fog
-    SetSkyColor(0.5, 0.5, 0.5); 
-
-    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
-
-    SetDirectionalLight(light->getMainLight());
-    SetPointLights(light->getPointLight(), light->getPointLightCount(), 9, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(light->getSpotLight(), light->getSpotLightCount(), 9 + light->getPointLightCount(), light->getPointLightCount()); 
-    SetAreaLights(light->getAreaLight(), light->getAreaLightCount()); 
-
-    glm::mat4 resmainLight = light->getMainLight()->CalculateLightTransform();
-    SetDirectionalLightTransform(&resmainLight); 
-
-    light->getMainLight()->GetShadowMap()->Read(GL_TEXTURE4); 
-}
-
-
-
-void Shader::ClearShader(){
-    if(shaderID != 0){
-        glDeleteProgram(shaderID);  // delete the program of the graphics card to make more space. 
-        shaderID=0; 
-    }
-
-    uniformModel = 0; 
-    uniformProjection = 0; 
-}
-
-void Shader::AddShader(GLuint program, const char* shader_code, GLenum shader_type){
-    GLuint the_shader = glCreateShader(shader_type); // create empty shader and pass the id into "the_shader"
-
-    const GLchar* the_code[1];//Pointer to the 1st elem of an array
-
-    the_code[0] = shader_code;
-
-    GLint code_length[1];
-    code_length[0] = strlen(shader_code); //strlen comes from the string.h library. 
-
-    glShaderSource(the_shader, 1, the_code, code_length);
-    glCompileShader(the_shader);
-
-    GLint result = 0; 
-    GLchar eLog[1024] = { 0 };
-
-    glGetShaderiv(the_shader, GL_COMPILE_STATUS, &result);//2scd arg: what kind of info we want, 3rd arg: where do we put the info 
-
-    if(!result){
-        glGetShaderInfoLog(the_shader, sizeof(eLog), NULL, eLog); 
-        printf("Error compiling the %d shader : %s\n", shader_type, eLog);
-        return; 
-    }
-    glAttachShader(program, the_shader);
-}
-
-GLuint Shader::GetProjectionLocation(){
-    return uniformProjection; 
-}
-
-GLuint Shader::GetModelLocation(){
-    return uniformModel; 
-}
-
-GLuint Shader::GetUniformSkyboxDay(){
-    return uniformSkyboxDay; 
-}
-
-GLuint Shader::GetUniformSkyboxNight(){
-    return uniformSkyboxNight; 
-}
-
-GLuint Shader::GetUniformBlendFactor(){
-    return uniformBlendFactor; 
-}
-
-GLuint Shader::GetUniformSunLightColor(){
-    return uniformSunLightColor; 
-}
-
-GLuint Shader::GetUniformSinTime(){
-    return uniformSinTime; 
-}
-
-GLuint Shader::GetUniformCosTime(){
-    return uniformCosTime; 
-}
-
-GLuint Shader::GetViewLocation(){
-    return uniformView; 
-}
-
-GLuint Shader::GetAmbientColorLocation(){
-    return uniformDirectionalLight.uniformColor; 
-}
-
-GLuint Shader::GetAmbientIntensityLocation(){
-    return uniformDirectionalLight.uniformAmbientIntensity;     
-}
-
-GLuint Shader::GetDiffuseIntensityLocation(){
-    return uniformDirectionalLight.uniformDiffuseIntensity; 
-}
-
-GLuint Shader::GetDirectionLocation(){
-    return uniformDirectionalLight.uniformDirection; 
-}
-
-GLuint Shader::GetSpecularIntensityLocation(){
-    return uniformSpecularIntensity; 
-}
-
-GLuint Shader::GetShininessLocation(){
-    return uniformShininess; 
-}
-
-GLuint Shader::GetEyePositionLocation(){
-    return uniformEyePosition; 
-}
-
-GLuint Shader::GetReflectivityLocation() {
-    return uniformReflectivity;
-} 
-
-GLuint Shader::GetRefractivityLocation() {
-    return uniformRefractivity;
-} 
-
-GLuint Shader::GetCoefRefractionLocation() {
-    return uniformCoefRefraction;
-}
-
-GLuint Shader::GetOmniLightPosLocation(){
-    return uniformOmniLightPos; 
-}
-
-GLuint Shader::GetFarPlaneLocation(){
-    return uniformFarPlane; 
-}
-
-Shader::~Shader(){
-    ClearShader(); 
 }

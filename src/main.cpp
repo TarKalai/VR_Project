@@ -109,9 +109,11 @@ int main(){
 
     physicalWorld.clear();
     gui.clear();
-    
+
     return 0; 
 }
+
+
 
 void addToShaders(Object* obj) {
     if (obj->shaderType == ShaderType::POINTLIGHT || obj->shaderType == ShaderType::SPOTLIGHT || obj->shaderType == ShaderType::AREALIGHT) {

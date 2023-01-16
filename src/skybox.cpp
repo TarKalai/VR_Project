@@ -90,7 +90,7 @@ void Skybox::DrawSkyBox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     
     glDepthMask(GL_FALSE); // so that the sky box is infinitely far away, no depth perception
 
-    skyShader->UseShader(); 
+    glUseProgram(skyShader->shaderID);
     BindTextures();
     skyShader->ConnectSkyboxes();
 

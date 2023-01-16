@@ -26,7 +26,6 @@
 class Shader
 {
 public:
-
     std::vector<Object*> objectList;
     GLuint shaderID;
 
@@ -35,10 +34,6 @@ public:
     void CreateFromFiles(const char* vertexLocation, const char* fragmentLocation); 
     void CreateFromFiles(const char* vertexLocation, const char* geometryLocation, const char* fragmentLocation);
 
-
-    void addObject(Object *obj);
-    void addObjects(std::vector<Object*> objects);
-
     void RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* lightConstructor); // RenderPass
     void RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* lightConstructor);      
     void RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* lightConstructor);
@@ -46,59 +41,59 @@ public:
     void OmniShadowMapPass(LightConstructor* lightConstructor);
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
 
+    void addObject(Object *obj);
+    void addObjects(std::vector<Object*> objects);
     void remove(int objID);
     void ClearShader();
+    void Validate(); 
 
-    GLuint GetProjectionLocation(); 
-    GLuint GetModelLocation(); 
-    GLuint GetViewLocation();
-    GLuint GetAmbientIntensityLocation(); 
-    GLuint GetAmbientColorLocation(); 
-    GLuint GetDiffuseIntensityLocation(); 
-    GLuint GetDirectionLocation(); 
-    GLuint GetSpecularIntensityLocation(); 
-    GLuint GetShininessLocation(); 
-    GLuint GetEyePositionLocation();
-    GLuint GetUniformSkyboxDay(); 
-    GLuint GetUniformSkyboxNight(); 
-    GLuint GetUniformBlendFactor(); 
-    GLuint GetUniformSunLightColor(); 
-    GLuint GetUniformSinTime(); 
-    GLuint GetUniformCosTime(); 
-    GLuint GetReflectivityLocation(); 
-    GLuint GetRefractivityLocation(); 
-    GLuint GetCoefRefractionLocation(); 
-    GLuint GetOmniLightPosLocation(); 
-    GLuint GetFarPlaneLocation(); 
+    // SETTERS
 
     void SetDirectionalLight(DirectionalLight * dLight);
     void SetPointLights(PointLight * pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset); 
     void SetSpotLights(SpotLight * sLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset);
     void SetAreaLights(AreaLight *  aLights, int lightCount);
-    void SetLTC1(GLuint textureUnit);
-    void SetLTC2(GLuint textureUnit);
     void SetLightMatrices(std::vector<glm::mat4> lightMatrices); 
-    void SetTexture(GLuint textureUnit); 
-    void SetNormalMap(GLuint textureUnit); 
-    void SetDepthMap(GLuint textureUnit); 
-    void SetDirectionalShadowMap(GLuint textureUnit);
-    void SetDirectionalLightTransform(glm::mat4* ltransform);  
     void SetTime();
-    void SetSkyColor(float r, float g, float b); 
     void SetSunLightColor(); 
     void SetBlendFactor(); 
     void ConnectSkyboxes(); 
 
-    
-
-    void UseShader();
-    void UseShaderAndLink(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light); 
-    void CompileProgram(); 
-    void RenderScene();
-    void Validate(); 
-    std::string ReadFile(const char* fileLocation); 
+    void SetLTC1(GLuint textureUnit){glUniform1i(uniformLTC1, textureUnit);}
+    void SetLTC2(GLuint textureUnit){glUniform1i(uniformLTC2, textureUnit);}
+    void SetSkyColor(float r, float g, float b){glUniform3f(uniformSkyColor, r, g, b); }
+    void SetTexture(GLuint textureUnit){glUniform1i(uniformTexture, textureUnit);}
+    void SetNormalMap(GLuint textureUnit){glUniform1i(uniformNormalMap, textureUnit);}
+    void SetDepthMap(GLuint textureUnit){glUniform1i(uniformDepthMap, textureUnit);}
+    void SetDirectionalShadowMap(GLuint textureUnit){glUniform1i(uniformDirectionalShadowMap, textureUnit);}
+    void SetDirectionalLightTransform(glm::mat4* lTransform){glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform));}
  
+    // GETTERS
 
+    // General 
+    GLuint GetProjectionLocation(){return uniformProjection;}
+    GLuint GetModelLocation(){return uniformModel;}
+    GLuint GetViewLocation(){return uniformView;}
+    GLuint GetEyePositionLocation(){return uniformEyePosition;}
+    // Skybox & Reflection
+    GLuint GetUniformSkyboxDay(){return uniformSkyboxDay;}
+    GLuint GetUniformSkyboxNight(){return uniformSkyboxNight;}
+    GLuint GetUniformBlendFactor(){return uniformBlendFactor;}
+    GLuint GetUniformSunLightColor(){return uniformSunLightColor;}
+    GLuint GetUniformSinTime(){return uniformSinTime;}
+    GLuint GetUniformCosTime(){return uniformCosTime;}
+    GLuint GetReflectivityLocation(){return uniformReflectivity;} 
+    GLuint GetRefractivityLocation(){return uniformRefractivity;} 
+    GLuint GetCoefRefractionLocation(){return uniformCoefRefraction;}
+    // Light & Material
+    GLuint GetAmbientColorLocation(){return uniformDirectionalLight.uniformColor;}
+    GLuint GetAmbientIntensityLocation(){return uniformDirectionalLight.uniformAmbientIntensity;}
+    GLuint GetDiffuseIntensityLocation(){return uniformDirectionalLight.uniformDiffuseIntensity;}
+    GLuint GetDirectionLocation(){return uniformDirectionalLight.uniformDirection;}
+    GLuint GetSpecularIntensityLocation(){return uniformSpecularIntensity;}
+    GLuint GetShininessLocation(){return uniformShininess;}
+    GLuint GetOmniLightPosLocation(){return uniformOmniLightPos;}
+    GLuint GetFarPlaneLocation(){return uniformFarPlane;}
 
     ~Shader(); 
 private: 
@@ -113,6 +108,17 @@ private:
     uniformOmniLightPos, uniformFarPlane, uniformAlbedoRoughness;  
 
     GLuint uniformLightMatrices[6]; 
+
+    void RenderScene();
+    void UseShader();
+    void UseShaderAndLink(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light); 
+    void CompileProgram(); 
+    std::string ReadFile(const char* fileLocation); 
+    void CompileShader(const char* vertexCode, const char* fragmentCode);
+    void CompileShader(const char* vertexCode, const char* geometryCode, const char* fragmentCode); 
+
+    void AddShader(GLuint program, const char* shader_code, GLenum shader_type); 
+    void PointShadowMapPass(PointLight* light);
 
 
     struct {
@@ -172,10 +178,4 @@ private:
         GLuint shadowMap; 
         GLuint farPlane; 
     } uniformOmniShadowMap[values::MAX_POINT_LIGHTS + values::MAX_SPOT_LIGHTS];
-
-    void CompileShader(const char* vertexCode, const char* fragmentCode);
-    void CompileShader(const char* vertexCode, const char* geometryCode, const char* fragmentCode); 
-
-    void AddShader(GLuint program, const char* shader_code, GLenum shader_type); 
-    void PointShadowMapPass(PointLight* light);
 };
