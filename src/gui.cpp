@@ -409,7 +409,13 @@ void GUI::clear(){
 }
 
 void GUI::addToShaders(Object* obj) {
-    if (obj->shaderType == ShaderType::POINTLIGHT || obj->shaderType == ShaderType::SPOTLIGHT || obj->shaderType == ShaderType::AREALIGHT) {
+    if (obj->shaderType == ShaderType::POINTLIGHT) {
+        objectLight->addObject(obj);
+    }
+    else if (obj->shaderType == ShaderType::SPOTLIGHT) {
+        objectLight->addObject(obj);
+    }
+    else if (obj->shaderType == ShaderType::AREALIGHT) {
         objectLight->addObject(obj);
     }
     else {

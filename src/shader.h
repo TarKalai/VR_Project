@@ -10,6 +10,7 @@
 
 #include "directionalLight.h"
 #include "pointLight.h"
+#include "light_constructor.h"
 
 #include "constant.h"
 #include "spotLight.h"
@@ -92,32 +93,11 @@ public:
     void addObjects(std::vector<Object*> objects);
 
 
-    void RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view, 
-                         DirectionalLight *mainLight, 
-                         PointLight * pointLights, 
-                         int pointLightCount, 
-                         SpotLight * spotLights, 
-                         int spotLightCount, 
-                         AreaLight * areaLights, 
-                         int areaLightCount); // RenderPass
+    void RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* lightConstructor); // RenderPass
 
-    void RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, 
-                    DirectionalLight* mainLight,
-                    PointLight* pointLights, 
-                    int pointLightCount, 
-                    SpotLight* spotLights, 
-                    int spotLightCount, 
-                    AreaLight* areaLights, 
-                    int areaLightCount);      
+    void RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* lightConstructor);      
 
-    void RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, 
-                         DirectionalLight* mainLight,
-                         PointLight* pointLights, 
-                         int pointLightCount, 
-                         SpotLight* spotLights, 
-                         int spotLightCount, 
-                         AreaLight* areaLights, 
-                         int areaLightCount);
+    void RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* lightConstructor);
 
     void DirectionalShadowMapPass(DirectionalLight* light); // DirectionalShadowMapPass
     void DrawLightObjects(glm::mat4 projection, glm::mat4 view); // DrawLightObjects
@@ -127,7 +107,8 @@ public:
 
     void CompileProgram(); 
 
-    void UseShader(); 
+    void UseShader();
+    void UseShaderAndLink(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light); 
     void remove(int objID);
     void ClearShader();
 

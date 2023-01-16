@@ -238,10 +238,10 @@ int main(){
 		glActiveTexture(GL_TEXTURE6);
 		glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
 
-        bumpMapShader.RenderBump(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
-        paralaxMapShader.RenderParalax(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
+        bumpMapShader.RenderBump(camera, projection, view, &lightConstructor); 
+        paralaxMapShader.RenderParalax(camera, projection, view, &lightConstructor); 
         
-        objectShader.RenderPass(camera, projection, view, mainLight, pointLights, pointLightCount, spotLights, spotLightCount, areaLights, areaLightCount); 
+        objectShader.RenderPass(camera, projection, view, &lightConstructor); 
         objectLightShader.DrawLightObjects(projection, view);
         shader2D.drawObject();
              

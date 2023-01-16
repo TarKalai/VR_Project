@@ -36,6 +36,7 @@ void LightConstructor::createPointLight(){
                                     .0f, 0.1,
                                     sphere->position.x, sphere->position.y, sphere->position.z,
                                     0.01f, 0.005f, 0.002f); //0.003f, 0.002f, 0.001f
+    	
     	pointLightCount++; 
     }
 }
@@ -45,7 +46,7 @@ void LightConstructor::createSpotLight(){
     createTorch();
 
     Object* sphere = new Object(geometry::sphere,  ShaderType::SPOTLIGHT, Textures::White(), Materials::Empty(), PHYSIC::UNMOVABLE, 
-                                glm::vec3(-10.0f, 5.0f, -10.0f), glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.05), glm::vec3(1.));
+                                glm::vec3(-10.0f, 5.0f, -30.0f), glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.05), glm::vec3(1.,0.,0.));
 	spotLightObjects.push_back(sphere);
     spotLights[1] = SpotLight(general::spotShadowResolution, general::spotShadowResolution, 
                             0.01f, 100.0f,

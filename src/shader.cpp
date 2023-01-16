@@ -1,7 +1,4 @@
 #include "shader.h"
-#include <iostream>
-#include <chrono>
-#include <thread>
 
 Shader::Shader(){
     shaderID = 0; 
@@ -25,39 +22,8 @@ void Shader::addObjects(std::vector<Object*> objects){
     }
 }
 
-void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, 
-                         DirectionalLight* mainLight,
-                         PointLight* pointLights, 
-                         int pointLightCount, 
-                         SpotLight* spotLights, 
-                         int spotLightCount, 
-                         AreaLight* areaLights, 
-                         int areaLightCount){
-    UseShader(); 
-
-    uniformModel = GetModelLocation(); 
-    uniformProjection = GetProjectionLocation(); 
-    uniformView = GetViewLocation(); 
-    uniformEyePosition = GetEyePositionLocation(); 
-
-    //fog
-    SetSkyColor(0.5, 0.5, 0.5); 
-
-    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
-
-    SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 9, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 9 + pointLightCount, pointLightCount); 
-    SetAreaLights(areaLights, areaLightCount); 
-
-    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
-    SetDirectionalLightTransform(&resmainLight); 
-
-
-    mainLight->GetShadowMap()->Read(GL_TEXTURE4);
-
+void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light){
+    UseShaderAndLink(camera, projection, view, light); 
 
     SetTexture(1);
     SetNormalMap(2);
@@ -66,81 +32,36 @@ void Shader::RenderParalax(Camera camera, glm::mat4 projection, glm::mat4 view,
     SetLTC1(5);
     SetLTC2(6);
 
-    spotLights[0].SetFlash(camera.getPosition(), camera.getDirection()); 
+    light->getSpotLight()[0].SetFlash(camera.getPosition(), camera.getDirection()); 
 
 
     RenderScene();
 }
 
-void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, 
-                         DirectionalLight* mainLight,
-                         PointLight* pointLights, 
-                         int pointLightCount, 
-                         SpotLight* spotLights, 
-                         int spotLightCount, 
-                         AreaLight* areaLights, 
-                         int areaLightCount){
-    UseShader(); 
-
-    uniformModel = GetModelLocation(); 
-    uniformProjection = GetProjectionLocation(); 
-    uniformView = GetViewLocation(); 
-    uniformEyePosition = GetEyePositionLocation(); 
-
-    //fog
-    SetSkyColor(0.5, 0.5, 0.5); 
-
-    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
-
-    SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 9, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 9 + pointLightCount, pointLightCount); 
-    SetAreaLights(areaLights, areaLightCount); 
-
-    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
-    SetDirectionalLightTransform(&resmainLight); 
-
-
-    mainLight->GetShadowMap()->Read(GL_TEXTURE4);
+void Shader::RenderBump(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light){
+    UseShaderAndLink(camera, projection, view, light); 
 
 
     SetTexture(1);
     SetNormalMap(2);
+    SetDepthMap(3); // NOT HERE
     SetDirectionalShadowMap(4);
     SetLTC1(5);
     SetLTC2(6);
 
-    spotLights[0].SetFlash(camera.getPosition(), camera.getDirection()); 
-
-
     RenderScene();
 }
 
-void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,  
-                         DirectionalLight* mainLight,
-                         PointLight* pointLights, 
-                         int pointLightCount, 
-                         SpotLight* spotLights, 
-                         int spotLightCount, 
-                         AreaLight* areaLights, 
-                         int areaLightCount) {
-
+void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light) {
     // glViewport(0, 0, 960, 540); 
     // glClearColor(0.5f, 0.5f, 0.5f, 1.0f); // Clear all the frame so that you will be able to draw another frame (can chose the color of the clear)
     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // A pixel does not only have color as data, it also has depth and other things. We are specifying here that we want to clear the color. 
     // //glClear is also clearing the depth buffer bit.
     
-    UseShader(); 
+    UseShaderAndLink(camera, projection, view, light); 
 
-    uniformModel = GetModelLocation(); 
-    uniformProjection = GetProjectionLocation(); 
-    uniformView = GetViewLocation(); 
-    uniformEyePosition = GetEyePositionLocation(); 
     uniformSpecularIntensity = GetSpecularIntensityLocation();
     uniformShininess = GetShininessLocation();
-
     
     glUniform1i(uniformSkyboxDay, 7); 
     glUniform1i(uniformSkyboxNight, 8); 
@@ -149,30 +70,6 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     glUniform1f(GetReflectivityLocation(), Optic::getReflectivity());
     glUniform1f(GetRefractivityLocation(), Optic::getRefractivity());
     glUniform1f(GetCoefRefractionLocation(), Optic::getCoefRefractivity());
-    
-    
-
-    //fog
-    SetSkyColor(0.5, 0.5, 0.5); 
-
-    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
-
-    
-    SetDirectionalLight(mainLight);
-    SetPointLights(pointLights, pointLightCount, 9, 0);//since it is an array we don't need to pass the address. 
-    SetSpotLights(spotLights, spotLightCount, 9 + pointLightCount, pointLightCount); 
-    SetAreaLights(areaLights, areaLightCount); 
-   
-    // --------------------------------------------------------- // 
-    glm::mat4 resmainLight = mainLight->CalculateLightTransform();
-    SetDirectionalLightTransform(&resmainLight); 
-
-
-    mainLight->GetShadowMap()->Read(GL_TEXTURE4);// we are binding to a given textureUnit and we are binding that texture to that tewture unti. 
-    // we use GL_TEXTURE1 because GL_TECTURE0 is taken for the normal texture of the objects
-    // shadowMap is going to be bound to GL_TEXTURE1
 
     SetTexture(1); // bound to texture unit 0 
     SetDirectionalShadowMap(4); // bound to GL_TEXTURE1
@@ -180,7 +77,7 @@ void Shader::RenderPass(Camera camera, glm::mat4 projection, glm::mat4 view,
     SetLTC2(6);
 
     // --------------------------------------------------------- // 
-    spotLights[0].SetFlash(camera.getPosition(), camera.getDirection()); 
+    // spotLights[0].SetFlash(camera.getPosition(), camera.getDirection()); 
 
     Validate(); 
 
@@ -662,8 +559,34 @@ void Shader::SetLightMatrices(std::vector<glm::mat4> lightMatrices)
     }
 }
 
-void Shader::UseShader(){
-    glUseProgram(shaderID); 
+void Shader::UseShader() {
+    glUseProgram(shaderID);
+}
+
+void Shader::UseShaderAndLink(Camera camera, glm::mat4 projection, glm::mat4 view, LightConstructor* light) {
+    glUseProgram(shaderID);
+
+    uniformModel = GetModelLocation(); 
+    uniformProjection = GetProjectionLocation(); 
+    uniformView = GetViewLocation(); 
+    uniformEyePosition = GetEyePositionLocation(); 
+
+    //fog
+    SetSkyColor(0.5, 0.5, 0.5); 
+
+    glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(uniformEyePosition, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z); 
+
+    SetDirectionalLight(light->getMainLight());
+    SetPointLights(light->getPointLight(), light->getPointLightCount(), 9, 0);//since it is an array we don't need to pass the address. 
+    SetSpotLights(light->getSpotLight(), light->getSpotLightCount(), 9 + light->getPointLightCount(), light->getPointLightCount()); 
+    SetAreaLights(light->getAreaLight(), light->getAreaLightCount()); 
+
+    glm::mat4 resmainLight = light->getMainLight()->CalculateLightTransform();
+    SetDirectionalLightTransform(&resmainLight); 
+
+    light->getMainLight()->GetShadowMap()->Read(GL_TEXTURE4); 
 }
 
 

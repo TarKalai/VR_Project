@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string> 
 #include <math.h>
 #include <glad/glad.h>
@@ -8,6 +9,7 @@
 #include "texture.h"
 #include "material.h"
 #include "constant.h"
+#include "pointLight.h"
 
 class Utils { 
 	public: 
