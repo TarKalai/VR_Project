@@ -93,7 +93,7 @@ namespace shaderfiles
 namespace general
 {
     static constexpr glm::vec3 sceneSize = glm::vec3(100, 100, 100); // size of the scene, the scene is a cube (where the shadow are rendered in). (shadow box)
-    static constexpr float floorThickness = 0.05; // If too law, do not work (0.05 is a good value)
+    static constexpr float floorThickness = 0.1; // If too law, do not work (0.05 is a good value)
     static constexpr float pushingExponent = 1.5; 
     static constexpr float mainShadowResolution = 16384;
     static constexpr float pointShadowResolution = 2048;
@@ -105,7 +105,9 @@ namespace ShaderType
     static constexpr int OBJECT = 0;
     static constexpr int BUMPMAP = 1;
     static constexpr int PARALLAX = 2;
-    static constexpr int LIGHT = 3;
+    static constexpr int POINTLIGHT = 3;
+    static constexpr int SPOTLIGHT = 4;
+    static constexpr int AREALIGHT = 5;
 }
 
 namespace Ttime

@@ -1,4 +1,7 @@
 #include "shader.h"
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 Shader::Shader(){
     shaderID = 0; 
@@ -242,18 +245,6 @@ void Shader::remove(int objID) {
         for (int i = 0; i < objectList.size(); i++) {
             if (objectList[i]->id==objID) {
                 objectList.erase(objectList.begin() + i);
-                break;
-            }
-        }
-    }
-}
-
-void Shader::deletePointer(int objID) {
-    if (objID != -1) {
-        for (int i = 0; i < objectList.size(); i++) {
-            if (objectList[i]->id==objID) {
-                Object* obj = objectList[i];
-                delete obj;
                 break;
             }
         }

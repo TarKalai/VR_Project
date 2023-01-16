@@ -79,4 +79,6 @@ public:
 	glm::vec3 getColor(){return color;}
 	const char* getGeometryPath();
 	void print();
+
+	~Object() { printf("DESTROY\n"); }
 };

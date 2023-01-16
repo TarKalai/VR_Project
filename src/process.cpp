@@ -1,6 +1,6 @@
 #include "process.h"
 
-Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader) {
+Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg, Shader* shaderArg, Shader* shadowArg, Shader* omniShadowShader, Shader* bumpMapShader, Shader* paralaxMapShader) {
 	display = displayArg;
 	window = display->getWindow();
 	camera = cameraArg;
@@ -8,6 +8,8 @@ Process::Process(Display* displayArg, Camera* cameraArg, PhysicalWorld* worldArg
 	shader = shaderArg;
 	shadow = shadowArg;
 	omniShadow = omniShadowShader;
+	bumpmap = bumpMapShader;
+	parallax = paralaxMapShader;
 }
 
 
@@ -268,9 +270,11 @@ void Process::DeleteDominos() {
 		double dist = 200; // Distance to delete object (May vary depending of the farplane)
 		glm::vec3 to = glm::vec3(pos.x+dist*dir.x, pos.y+dist*dir.y, pos.z+dist*dir.z);
 		int objID = world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::MOVABLE);
-		shader->remove(objID);
 		shadow->remove(objID);
-		shader->deletePointer(objID);
+		shader->remove(objID);
+		omniShadow->remove(objID);
+		bumpmap->remove(objID);
+		parallax->remove(objID);
 	}
 }
 
@@ -328,10 +332,10 @@ void Process::FlashLight() {
 		// INTENSITY
 		// ambiant
 		if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-			Torch::setIntensity(glm::max(0., Torch::getIntensity()-5.0));
+			Torch::setIntensity(glm::max(0., Torch::getIntensity()-.1));
 		} 
 		else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
-			Torch::setIntensity(glm::min(1000., Torch::getIntensity()+5.0));
+			Torch::setIntensity(glm::min(10., Torch::getIntensity()+0.1));
 		}
 		// SIZE
 		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {

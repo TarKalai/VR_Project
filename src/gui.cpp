@@ -260,7 +260,11 @@ void GUI::displaySaveLoad() {
                     // Check if the file was successfully opened
                     if (in.fail()) { std::cout << "Error opening file" << std::endl;}
                     else {
-                        // Delete World
+                        // Delete World Lights
+                        for (Object *object: objectLight->objectList){;
+                            objectLight->remove(object->id);
+                        } 
+                        // Delete World Objects
                         for (auto& pair : world->glObjects) {
                             int idx = pair.first;
                             shader->remove(idx);
@@ -268,9 +272,9 @@ void GUI::displaySaveLoad() {
                             omniShadow->remove(idx);
                             bumpmap->remove(idx);
                             parallax->remove(idx);
-                            objectLight->remove(idx);
-                            objectLight->deletePointer(idx);
+                            // objectLight->remove(idx);
                         }  
+                        world->reset();
 
                         std::string line;
                         while (std::getline(in, line)) {
@@ -287,6 +291,7 @@ void GUI::displaySaveLoad() {
                             glm::vec3 color = glm::vec3(colX, colY, colZ);
                             Texture* texture = Textures::Get(tex);
                             Material* material= Materials::Get(mat);
+
                             Object* obj = new Object(type, shaderType, texture, material, physicType,  pos, rot, scale, color);	
                             addToShaders(obj);
                         }
@@ -300,9 +305,18 @@ void GUI::displaySaveLoad() {
                 if (ImGui::InputText("##saveName", name, sizeof(name), ImGuiInputTextFlags_EnterReturnsTrue)) {
                     strcat(name, ".save");
                     std::cout << "Save: " << name << std::endl;
-                    // Open a file for writing
                     std::ofstream out("../../save/"+std::string(name));
-                    // Write to the file
+                    // Lights
+                    for (Object *object: objectLight->objectList){
+                        out << object->id << " " << object->shaderType << " " << object->physicType << " " << object->type << " ";
+                        out << object->position.x << " " << object->position.y << " " << object->position.z << " ";
+                        out << object->rotation.x << " " << object->rotation.y << " " << object->rotation.z << " ";
+                        out << object->scale.x << " " << object->scale.y << " " << object->scale.z << " ";
+                        out << object->color.x << " " << object->color.y << " " << object->color.z << " ";
+                        out << object->texture->name << " ";
+                        out << object->material->name << std::endl;
+                    } 
+                    // Objects
                     for (auto& pair : world->glObjects) {
                         int idx = pair.first;
                         Object* object = pair.second;
@@ -395,7 +409,7 @@ void GUI::clear(){
 }
 
 void GUI::addToShaders(Object* obj) {
-    if (obj->shaderType == ShaderType::LIGHT) {
+    if (obj->shaderType == ShaderType::POINTLIGHT || obj->shaderType == ShaderType::SPOTLIGHT || obj->shaderType == ShaderType::AREALIGHT) {
         objectLight->addObject(obj);
     }
     else {

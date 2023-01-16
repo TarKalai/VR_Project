@@ -40,6 +40,7 @@ public:
     void RayCastPush(glm::vec3 from, glm::vec3 to, int type, int power);
     
     void animate();
+    void reset();
     void clear();
     ~PhysicalWorld();
 };

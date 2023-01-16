@@ -64,7 +64,7 @@ int areaLightCount;
 GLuint uniformModel = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;  //TODO
 
 void addToShaders(Object* obj) {
-    if (obj->shaderType == ShaderType::LIGHT) {
+    if (obj->shaderType == ShaderType::POINTLIGHT || obj->shaderType == ShaderType::SPOTLIGHT || obj->shaderType == ShaderType::AREALIGHT) {
         objectLightShader.addObject(obj);
     }
     else {
@@ -193,7 +193,7 @@ int main(){
 
 	glfwSwapInterval(1);
 
-    Process process = Process(&mainWindow, &camera, &physicalWorld, &objectShader, &directionalShadowShader, &omniShadowShader);
+    Process process = Process(&mainWindow, &camera, &physicalWorld, &objectShader, &directionalShadowShader, &omniShadowShader, &bumpMapShader, &paralaxMapShader);
     glfwSetWindowUserPointer(mainWindow.getWindow(), reinterpret_cast<void *>(&camera));
 	process.initMousePosition();
     

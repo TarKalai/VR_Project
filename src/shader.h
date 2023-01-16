@@ -129,7 +129,6 @@ public:
 
     void UseShader(); 
     void remove(int objID);
-    void deletePointer(int objID);
     void ClearShader();
 
 

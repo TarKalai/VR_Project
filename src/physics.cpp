@@ -239,12 +239,8 @@ void PhysicalWorld::animate()
     }
 }
 
-void PhysicalWorld::clear(){
-        //cleanup in the reverse order of creation/initialization
-
-        ///-----cleanup_start-----
-
-        //remove the rigidbodies from the dynamics world and delete them
+void PhysicalWorld::reset() {
+    //remove the rigidbodies from the dynamics world and delete them
         for (int i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
         {
             btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
@@ -264,6 +260,14 @@ void PhysicalWorld::clear(){
             collisionShapes[j] = 0;
             delete shape;
         }
+}
+
+void PhysicalWorld::clear(){
+        //cleanup in the reverse order of creation/initialization
+
+        ///-----cleanup_start-----
+
+        reset();
 
         //delete dynamics world
         delete this->dynamicsWorld;
