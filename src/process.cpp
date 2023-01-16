@@ -270,6 +270,7 @@ void Process::DeleteDominos() {
 		int objID = world->DeleteRayCastObj(camera->getPosition(), to, PHYSIC::MOVABLE);
 		shader->remove(objID);
 		shadow->remove(objID);
+		shader->deletePointer(objID);
 	}
 }
 

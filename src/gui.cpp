@@ -269,6 +269,7 @@ void GUI::displaySaveLoad() {
                             bumpmap->remove(idx);
                             parallax->remove(idx);
                             objectLight->remove(idx);
+                            objectLight->deletePointer(idx);
                         }  
 
                         std::string line;

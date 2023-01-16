@@ -248,6 +248,18 @@ void Shader::remove(int objID) {
     }
 }
 
+void Shader::deletePointer(int objID) {
+    if (objID != -1) {
+        for (int i = 0; i < objectList.size(); i++) {
+            if (objectList[i]->id==objID) {
+                Object* obj = objectList[i];
+                delete obj;
+                break;
+            }
+        }
+    }
+}
+
 
 
 void Shader::CreateFromString(const char* vertexCode, const char* fragmentCode){
