@@ -20,7 +20,6 @@ void GUI::update() {
 
     menuTitle();
     reflectionRefraction();
-    shortcutList();
     displayFPS();
     displayTime();
     displaySpeedAnimation();

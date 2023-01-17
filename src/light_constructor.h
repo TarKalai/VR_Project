@@ -51,7 +51,7 @@ public:
         spotLights[spotLightCount] = SpotLight(general::spotShadowResolution, general::spotShadowResolution, 
                                 0.01f, 100.0f,
                                 sphere->color.x, sphere->color.y, sphere->color.z, 
-                                0.0f, 1.0f,
+                                0.0f, .5f,
                                 sphere->position.x, sphere->position.y, sphere->position.z,
                                 sphere->rotation.x, sphere->rotation.y, sphere->rotation.z,
                                 0.01f, 0.005f, 0.002f, //cst, dist, dist**2
@@ -62,7 +62,7 @@ public:
     void addAreaLight(Object* plane) {
         lightObjects.push_back(plane);
 		areaLights[areaLightCount] = AreaLight(plane->color.x,plane->color.y, plane->color.z, 
-							  0.f, 3.,
+							  0.f, 4.,
 							  plane->getPosition(),
 							  0.0f, 0.00f, 0.00f, // not used
 							  plane->getRotation(), true, 

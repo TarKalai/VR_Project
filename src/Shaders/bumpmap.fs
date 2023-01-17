@@ -8,9 +8,9 @@ in mat3 TBN;
 in vec4 DirectionalLightSpacePos; 
 in float visibility; 
 
-const int MAX_POINT_LIGHTS = 33;
-const int MAX_SPOT_LIGHTS = 33;
-const int MAX_AREA_LIGHTS = 33;
+const int MAX_POINT_LIGHTS = 10;
+const int MAX_SPOT_LIGHTS = 10;
+const int MAX_AREA_LIGHTS = 15;
 
 struct Light{
     vec3 color; 
