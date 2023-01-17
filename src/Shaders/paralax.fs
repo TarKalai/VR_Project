@@ -434,10 +434,21 @@ vec4 CalcAreaLights(){
     }
 }
 
+vec4 saturate2(vec4 totalColor){
+    float maximum = max(max(totalColor.x, totalColor.y), totalColor.z);
+    if (maximum>1){
+        totalColor.x /= maximum;
+        totalColor.y /= maximum;
+        totalColor.z /= maximum;
+        return totalColor;
+    }
+    return totalColor;
+}
+
 void main(){       
     vec4 finalColor = CalcDirectionalLight();
     finalColor += CalcPointLights();
-    finalColor += saturate(CalcSpotLights()); 
+    finalColor += saturate2(CalcSpotLights()); 
 
     finalColor += CalcAreaLights();
 
