@@ -368,31 +368,48 @@ void GUI::shortcutList() {
         ImGui::Text("'X' : Deleting dominos (pressed)");
         ImGui::Text("'Enter' : Pushing force (proportionnal to time pressed)");
 
-        ImGui::Text("'T' : Increase size of next domino (keep pressed)");
-        ImGui::Text("'T + I' : Decrease size of next domino (keep pressed)");
-        ImGui::Text("'Y' : Random color for following dominos (keep pressed)");
-        ImGui::Text("'H' : Rainbow color for following dominos (keep pressed)");
-        ImGui::Text("'R' : Increase red component of following dominos");
-        ImGui::Text("'R + I' : Decrease red component of following dominos");
-        ImGui::Text("'G' : Increase red component of following dominos");
-        ImGui::Text("'G + I' : Decrease red component of following dominos");
-        ImGui::Text("'B' : Increase red component of following dominos");
-        ImGui::Text("'B + I' : Decrease red component of following dominos");
-        ImGui::Text("'M + Esc' : Modifying the appearance of the targeted domino");
-
+        ImGui::Text("Keypad 0 : Stop time");
+        ImGui::Text("keypad 1 : Slow motion");
+        ImGui::Text("keypad 2 : Normal time");
+        ImGui::Text("keypad 3 : Fast motion");
+        ImGui::Text("F10 : Decrease screen size");
+        //ImGui::Text("F11 : Toogle fullscreen");
+        ImGui::Text("F12 : Increase screen size");
+        // Movement
+        ImGui::Text("'TAB': Sprint (movement speed x5)");
+        ImGui::Text("'TAB + I': Precision mode (movement speed x0.2)");
         ImGui::Text("'Q | Left': Left direction");
         ImGui::Text("'D | Right': Right direction");
         ImGui::Text("'Z | Up': Forward direction");
         ImGui::Text("'S | Down': Backward direction");
         ImGui::Text("'Space | Right Shift': Up direction");
         ImGui::Text("'Left Shift | Right Ctrl': Down direction");
-        ImGui::Text("Keypad 0 : Stop time");
-        ImGui::Text("keypad 1 : Slow motion");
-        ImGui::Text("keypad 2 : Normal time");
-        ImGui::Text("keypad 3 : Fast motion");
-        ImGui::Text("F10 : Decrease screen size");
-        ImGui::Text("F11 : Toogle fullscreen");
-        ImGui::Text("F12 : Increase screen size");
+        // Paramatrizing domino
+        ImGui::Text("'T' : Increase size of next domino (keep pressed)");
+        ImGui::Text("'T + I' : Decrease size of next domino (keep pressed)");
+        ImGui::Text("'Y' : Random color for following dominos (keep pressed)");
+        ImGui::Text("'H' : Rainbow color for following dominos (keep pressed)");
+        ImGui::Text("'R' : Increase red component of following dominos");
+        ImGui::Text("'R + I' : Decrease red component of following dominos");
+        ImGui::Text("'G' : Increase green component of following dominos");
+        ImGui::Text("'G + I' : Decrease green component of following dominos");
+        ImGui::Text("'B' : Increase blue component of following dominos");
+        ImGui::Text("'B + I' : Decrease blue component of following dominos");
+        ImGui::Text("'M + Esc' : Modifying the appearance of the targeted domino");
+        // Flashlight
+        ImGui::Text("'V' : Flashlight on (keep pressed)");
+        ImGui::Text("'V + T' : Increase angle of the flashlight");
+        ImGui::Text("'V + T + I' : Decrease angle of the flashlight");
+        ImGui::Text("'V + C' : Increase intensity of the flashlight");
+        ImGui::Text("'V + C + I' : Decrease intensity of the flashlight");
+        ImGui::Text("'V + Y' : Random color for the flashlight");
+        ImGui::Text("'V + H' : Rainbow color for the flashlight");
+        ImGui::Text("'V + R' : Increase red component of the flashlight");
+        ImGui::Text("'V + R + I' : Decrease red component of the flashlight");
+        ImGui::Text("'V + G' : Increase green component of the flashlight");
+        ImGui::Text("'V + G + I' : Decrease green component of the flashlight");
+        ImGui::Text("'V + B' : Increase blue component of the flashlight");
+        ImGui::Text("'V + B + I' : Decrease blue component of the flashlight");      
             
         ImGui::EndChild();
         ImGui::End();

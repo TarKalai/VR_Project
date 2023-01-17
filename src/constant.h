@@ -19,9 +19,9 @@ namespace optic {
 
 namespace values
 {
-    static constexpr int MAX_POINT_LIGHTS = 10;
-    static constexpr int MAX_SPOT_LIGHTS = 10;
-    static constexpr int MAX_AREA_LIGHTS = 10;
+    static constexpr int MAX_POINT_LIGHTS = 33;
+    static constexpr int MAX_SPOT_LIGHTS = 33;
+    static constexpr int MAX_AREA_LIGHTS = 33;
 }
 
 namespace image

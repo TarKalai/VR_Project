@@ -208,7 +208,6 @@ void Process::Deplacement() {
 		camera->movementSpeed = 0.4f; // PRECISION
 	} else if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
 		camera->movementSpeed = 10.f; // SPRINT
-		printf("speed\n");
 	} else { camera->movementSpeed = 2.f; } // NORMAL
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		camera->processKeyboardMovement(LEFT, 0.1);
