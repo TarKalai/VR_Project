@@ -262,6 +262,7 @@ void PhysicalWorld::reset() {
             collisionShapes[j] = 0;
             delete shape;
         }
+        glObjects.clear();
 }
 
 void PhysicalWorld::clear(){

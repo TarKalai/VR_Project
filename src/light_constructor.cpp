@@ -2,9 +2,9 @@
 
 LightConstructor::LightConstructor(){
     createMainLight();
-    // createPointLight();
+    createPointLight();
     createSpotLight();
-    // createAreaLight();
+    createAreaLight();
 }
 
 void LightConstructor::createMainLight(){
